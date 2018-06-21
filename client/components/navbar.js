@@ -4,27 +4,50 @@ import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {logout} from '../store'
 
-const Navbar = ({handleClick, isLoggedIn}) => (
-  <div>
-    <h1>BOILERMAKER</h1>
-    <nav>
-      {isLoggedIn ? (
-        <div>
-          {/* The navbar will show these links after you log in */}
-          <Link to="/home">Home</Link>
-          <a href="#" onClick={handleClick}>
-            Logout
-          </a>
-        </div>
-      ) : (
-        <div>
-          {/* The navbar will show these links before you log in */}
-          <Link to="/login">Login</Link>
-          <Link to="/signup">Sign Up</Link>
-        </div>
-      )}
-    </nav>
-    <hr />
+import { withStyles } from '@material-ui/core/styles'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
+
+const styles = {
+  root: {
+    flexGrow: 1,
+  },
+  flex: {
+    flex: 1,
+  }
+}
+
+const Navbar = ({handleClick, isLoggedIn, classes}) => (
+  <div className={classes.root}>
+    <AppBar position="static" color="default">
+      <Toolbar>
+
+        <Typography variant="title" color="inherit" className={classes.flex}>
+          <Link to="/">Code Map</Link>
+        </Typography>
+
+        {isLoggedIn ? (
+          <div>
+            {/* The navbar will show these links after you log in */}
+            <Button onClick={handleClick}>
+              Logout
+            </Button>
+          </div>
+        ) : (
+          <div>
+            {/* The navbar will show these links before you log in */}
+            <Link to="/login">
+              <Button color="inherit">Login</Button>
+            </Link>
+            <Link to="/signup">
+              <Button color="inherit">Sign up</Button>
+            </Link>
+          </div>
+        )}
+      </Toolbar>
+    </AppBar>
   </div>
 )
 
@@ -45,7 +68,7 @@ const mapDispatch = dispatch => {
   }
 }
 
-export default connect(mapState, mapDispatch)(Navbar)
+export default connect(mapState, mapDispatch)(withStyles(styles)(Navbar))
 
 /**
  * PROP TYPES
