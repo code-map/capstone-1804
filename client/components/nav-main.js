@@ -19,7 +19,7 @@ const styles = {
   }
 }
 
-const Navbar = ({handleClick, isLoggedIn, classes}) => (
+const MainNav = ({handleClick, isLoggedIn, classes}) => (
   <div className={classes.root}>
     <AppBar position="static" color="default">
       <Toolbar>
@@ -68,12 +68,12 @@ const mapDispatch = dispatch => {
   }
 }
 
-export default connect(mapState, mapDispatch)(withStyles(styles)(Navbar))
+export default connect(mapState, mapDispatch)(withStyles(styles)(MainNav))
 
 /**
  * PROP TYPES
  */
-Navbar.propTypes = {
+MainNav.propTypes = {
   handleClick: PropTypes.func.isRequired,
   isLoggedIn: PropTypes.bool.isRequired
 }
