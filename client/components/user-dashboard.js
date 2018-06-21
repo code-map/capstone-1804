@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
-import { UserPathDirectory } from './Path'
+import { UserPathDirectory, SinglePath } from './Path'
+import { getSinglePathThunk, getSingleUserPathsThunk } from '../store'
 import Grid from '@material-ui/core/Grid'
 
 const styles = {
@@ -14,7 +16,18 @@ const styles = {
 }
 
 class UserDashboard extends Component {
+
+  componentDidMount (){
+    this.props.getSingleUserPaths(this.props.user.id)
+  }
+
+  handleSelect = (event) => {
+    const pathId = event.target.value
+    this.props.getSinglePath(pathId)
+  }
+
   render () {
+    const { allUserPaths } = this.props
     return (
       <div style={styles.container}>
 
@@ -22,14 +35,18 @@ class UserDashboard extends Component {
 
         <NavDashboard />
 
-        <Grid container spacing={16}>
-
-          <Grid item xs={4}>
-            <UserPathDirectory />
+        <Grid container spacing={40}>
+          <Grid item xs={3}>
+          { allUserPaths &&
+            <UserPathDirectory
+              paths={allUserPaths}
+              handleSelect={this.handleSelect}
+            />
+          }
           </Grid>
 
           <Grid item xs={8}>
-            <p>Placeholder for path display</p>
+            <SinglePath path={this.props.singlePath} />
           </Grid>
 
         </Grid>
@@ -39,4 +56,23 @@ class UserDashboard extends Component {
   }
 }
 
-export default UserDashboard
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+    singlePath: state.pathReducer.singlePath,
+    allUserPaths: state.pathReducer.allUserPaths
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getSinglePath: (id) => {
+      dispatch(getSinglePathThunk(id))
+    },
+    getSingleUserPaths: (userId) => {
+      dispatch(getSingleUserPathsThunk(userId))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserDashboard)

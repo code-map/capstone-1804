@@ -31,6 +31,9 @@ const MainNav = ({handleClick, isLoggedIn, classes}) => (
         {isLoggedIn ? (
           <div>
             {/* The navbar will show these links after you log in */}
+            <Link to="/user/dashboard">
+              <Button color="inherit">Dashboard</Button>
+            </Link>
             <Button onClick={handleClick}>
               Logout
             </Button>
