@@ -28,12 +28,14 @@ class UserDashboard extends Component {
 
   render () {
     const { allUserPaths } = this.props
+    const view = this.props.match.params.view
+
     return (
       <div style={styles.container}>
 
         <h1 style={styles.header}>User dashboard</h1>
 
-        <NavDashboard />
+        <NavDashboard view={view} />
 
         <Grid container spacing={40}>
           <Grid item xs={3}>
@@ -46,7 +48,17 @@ class UserDashboard extends Component {
           </Grid>
 
           <Grid item xs={8}>
-            <SinglePath path={this.props.singlePath} />
+            { view === 'my-paths' &&
+              <SinglePath path={this.props.singlePath} />
+            }
+
+            { view === 'add-new-path' &&
+              <p>Add new path view coming soon....</p>
+            }
+
+            { view === 'my-stats' &&
+              <p>My stats view coming soon....</p>
+            }
           </Grid>
 
         </Grid>

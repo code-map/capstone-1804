@@ -42,7 +42,6 @@ class SinglePath extends Component {
 
   render(){
     const { path } = this.props
-    console.log(path)
 
     if(!path.modules) {
       return (<h3>Please select a path</h3>)

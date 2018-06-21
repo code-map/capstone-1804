@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper'
@@ -12,6 +13,12 @@ class NavDashboard extends React.Component {
     this.state = {
       value: 'my-paths'
     }
+  }
+
+  componentDidMount(){
+    this.setState({
+      value: this.props.view
+    })
   }
 
   handleChange = (event, value) => {
@@ -29,9 +36,26 @@ class NavDashboard extends React.Component {
               textColor="primary"
               onChange={this.handleChange}
             >
-              <Tab label="My Paths" value="my-paths" />
-              <Tab label="Add New Path" value="add-new-path" />
-              <Tab label="My Stats" value="my-stats" />
+              <Tab
+                label="My Paths"
+                value="my-paths"
+                component={Link}
+                to="/user/dashboard/my-paths"
+              />
+
+              <Tab
+                label="Add New Path"
+                value="add-new-path"
+                component={Link}
+                to="/user/dashboard/add-new-path"
+              />
+
+              <Tab
+                label="My Stats"
+                value="my-stats"
+                component={Link}
+                to="/user/dashboard/my-stats"
+              />
             </Tabs>
           </Paper>
         </Grid>
