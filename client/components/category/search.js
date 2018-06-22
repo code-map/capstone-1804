@@ -26,7 +26,6 @@ class CategorySearch extends React.Component {
     const categoryId = this.props.categoryId
     const searchVal = this.state.searchBox
     this.props.searchPathsInCategory(categoryId, searchVal)
-    console.log('submitting query, this is: ', this)
     this.renderRedirect()
   }
 

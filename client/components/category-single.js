@@ -4,7 +4,6 @@ import { CategoryAllPaths, CategorySearch, CategoryPopularPaths } from './catego
 class CategorySinglePage extends Component {
   
   render() {
-    console.log(this)
     const categoryId = this.props.match.params.categoryId
     return (
       <div>

@@ -31,13 +31,11 @@ class CategoryPopularPaths extends React.Component {
   }
 
   async componentDidMount(){
-    console.log('this is x:', this)
     const categoryId = this.props.categoryId
     await this.props.getPopularPathsInCategory(categoryId)
   }
 
   render() {
-    console.log('this is: ', this)
     const paths = this.props.paths
     return (
       <div style={styles.container} >

@@ -19,7 +19,6 @@ router.get('/:categoryId/all-paths', (req,res,next) => {
 router.get('/:categoryId/search', (req,res,next) => {
   //dummy code
   const searchVal = req.body
-  console.log('req.body is', searchVal)
   res.send(dummyData.slice(0,2))
   //end of dummy code
 })

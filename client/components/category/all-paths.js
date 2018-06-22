@@ -11,7 +11,6 @@ class CategoryAllPaths extends React.Component {
   }
 
   async componentDidMount(){
-    console.log('this is x:', this)
     const categoryId = this.props.categoryId
     await this.props.getAllPathsInCategory(categoryId)
   }
