@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
 import Checkbox from '@material-ui/core/Checkbox'
 import Collapse from '@material-ui/core/Collapse'
 import ExpandLess from '@material-ui/icons/ExpandLess'
@@ -24,9 +23,7 @@ class SinglePath extends Component {
     super()
 
     this.state = {
-      checked: [0],
-      open: false,
-      selectedItems: []
+      open: false
     }
   }
 
@@ -35,24 +32,24 @@ class SinglePath extends Component {
   }
 
   handleCompletedClick = value => () => {
-    const { checked } = this.state;
-    const currentIndex = checked.indexOf(value)
-    const newChecked = [...checked]
+    console.log('toggle completed click!', value)
+    // To complete when DB is operational
+  }
 
-    if (currentIndex === -1) {
-      newChecked.push(value)
-    } else {
-      newChecked.splice(currentIndex, 1)
+  checkForComplete = (url) => {
+    const pathSteps = this.props.steps
+    let found = false
+    for(var i = 0; i < pathSteps.length; i++) {
+      if (pathSteps[i].url === url && pathSteps[i].completed) {
+        found = true
+        break
+      }
     }
-
-    this.setState({
-      checked: newChecked
-    })
+    return found
   }
 
   render(){
     const { path } = this.props
-    console.log(this.state.open)
 
     if(!path.modules) {
       return (<h3>Please select a path</h3>)
@@ -65,26 +62,29 @@ class SinglePath extends Component {
           <List>
             { path.modules &&
               path.modules.map(module => (
-              <div key={module.id}>
+              <div key={module.url}>
               <ListItem
-                key={module.id}
+                key={module.url}
                 role={undefined}
                 dense
                 button
+                disableRipple
               >
                 <Checkbox
-                  onChange={this.handleCompletedClick(module.id)}
-                  checked={this.state.checked.indexOf(module.id) !== -1}
-                  tabIndex={-1}
+                  onChange={this.handleCompletedClick(module.url)}
+                  checked={this.checkForComplete(module.url)}
                   disableRipple
                 />
-                <img src="https://i.imgur.com/4nEBtUT.png" width={75} />
+
+                <img src={module.imageUrl} width={75} />
+
                 <ListItemText primary={module.name} />
 
                 {this.state.open ?
                   <ExpandLess onClick={this.handleDropdownClick} /> :
                   <ExpandMore onClick={this.handleDropdownClick} />
                 }
+
               </ListItem>
 
               <Collapse in={this.state.open} timeout="auto" unmountOnExit>
@@ -104,4 +104,4 @@ class SinglePath extends Component {
   }
 }
 
-export default SinglePath
+export default (SinglePath)

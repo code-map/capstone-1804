@@ -6,6 +6,7 @@ import { pathsDemo } from './path_demo_data'
 const GET_ALL_PATHS = 'GET_ALL_PATH'
 const GET_SINGLE_PATH = 'GET_SINGLE_PATH'
 const GET_USER_PATHS = 'GET_USER_PATHS'
+const GET_PATH_STEPS = 'GET_PATH_STEPS'
 
 /**
  * ACTION CREATORS
@@ -28,6 +29,13 @@ const getSingleUserPaths = (paths) => {
   return {
     type: GET_USER_PATHS,
     paths
+  }
+}
+
+const getPathSteps = (steps) => {
+  return {
+    type: GET_PATH_STEPS,
+    steps
   }
 }
 
@@ -65,10 +73,27 @@ export const getSingleUserPathsThunk = (userId) => {
   }
 }
 
+export const getPathStepsThunk = (pathId) => {
+  return async (dispatch) => {
+    const data = await pathsDemo
+
+    const singlePath = data.filter((path) => {
+      return path.id === pathId
+    })
+
+    const steps = singlePath[0].modules
+
+    console.log('getPathStepsThunk', steps)
+
+    dispatch(getPathSteps(steps))
+  }
+}
+
 const initialState = {
   allPaths: [],
   allUserPaths: [],
-  singlePath: {}
+  singlePath: {},
+  pathSteps: []
 }
 
 /**
@@ -82,6 +107,8 @@ export const pathReducer = ( state = initialState, action) => {
       return {...state, singlePath: action.path}
     case GET_USER_PATHS:
       return {...state, allUserPaths: action.paths}
+    case GET_PATH_STEPS:
+      return {...state, pathSteps: action.steps}
     default:
       return state
   }
