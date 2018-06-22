@@ -21,9 +21,8 @@ class CategoryAllPaths extends React.Component {
       <div>
         <Grid container spacing={40}>
           {paths.map((path) => 
-            <Grid item xs={6}>
+            <Grid item xs={6} key = {path.id}>
               <PathCardSmall
-                key = {path.id}
                 id = {path.id}
                 imagePath={path.image}
                 name={path.name} 

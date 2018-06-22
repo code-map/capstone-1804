@@ -93,21 +93,21 @@ export const getSingleUserPathsThunk = (userId) => {
 
 export const getPopularPathsInCategory = (categoryId) => {
   return async (dispatch) => {
-    const res = await axios.get(`/api/category/${categoryId}/popular-paths`)
+    const res = await axios.get(`/api/categories/${categoryId}/popular-paths`)
     dispatch(setPopularPathsInCategory(res.data))
   }
 }
 
 export const getAllPathsInCategory = (categoryId) => {
   return async (dispatch) => {
-    const res = await axios.get(`/api/category/${categoryId}/all-paths`)
+    const res = await axios.get(`/api/categories/${categoryId}/all-paths`)
     dispatch(setAllPathsInCategory(res.data))
   }
 }
 
 export const searchPathsInCategory = (categoryId, searchVal) => {
   return async (dispatch) => {
-    const res = await axios.get(`/api/category/${categoryId}/search`, searchVal)
+    const res = await axios.get(`/api/categories/${categoryId}/search`, searchVal)
     dispatch(setSearchedPathsInCategory(res.data))
   }
 }

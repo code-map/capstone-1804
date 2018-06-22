@@ -37,14 +37,13 @@ class CategoryPopularPaths extends React.Component {
 
   render() {
     const paths = this.props.paths
+    console.log('paths are: ', paths)
     return (
       <div style={styles.container} >
-        <Grid container spacing={40}>
+        <Grid container spacing={40} >
           {paths.map((path) => 
-            <Grid item xs={3}>
+            <Grid item xs={3} key={path.id} >
             <PathCard 
-              key = {path.id}
-              id = {path.id}
               imagePath={path.image}
               name={path.name} 
               username={path.username} 
