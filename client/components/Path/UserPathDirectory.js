@@ -2,7 +2,6 @@ import React from 'react'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
 
 const styles = {
   container: {
@@ -29,7 +28,7 @@ const UserPathDirectory = ({paths, handleSelect}) => {
                 value={path.id}
                 onClick={(event) => handleSelect(event)}
               >
-                {path.title}
+                {path.name}
               </ListItem>
             )
           })

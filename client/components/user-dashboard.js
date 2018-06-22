@@ -39,6 +39,7 @@ class UserDashboard extends Component {
 
         <Grid container spacing={40}>
           <Grid item xs={3}>
+
           { allUserPaths &&
             <UserPathDirectory
               paths={allUserPaths}

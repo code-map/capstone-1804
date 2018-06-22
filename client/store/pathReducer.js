@@ -58,7 +58,7 @@ export const getSingleUserPathsThunk = (userId) => {
     const data = await pathsDemo
 
     const singleUserPaths = data.filter((item) => {
-      return item.userId === userId
+      return item.ownerId === userId
     })
 
     dispatch(getSingleUserPaths(singleUserPaths))

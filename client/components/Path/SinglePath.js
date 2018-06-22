@@ -3,7 +3,11 @@ import React, { Component } from 'react'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
 import Checkbox from '@material-ui/core/Checkbox'
+import Collapse from '@material-ui/core/Collapse'
+import ExpandLess from '@material-ui/icons/ExpandLess'
+import ExpandMore from '@material-ui/icons/ExpandMore'
 
 const styles = {
   container: {
@@ -20,8 +24,14 @@ class SinglePath extends Component {
     super()
 
     this.state = {
-      checked: [0]
+      checked: [0],
+      open: false,
+      selectedItems: []
     }
+  }
+
+  handleDropdownClick = () => {
+    this.setState({ open: !this.state.open })
   }
 
   handleCompletedClick = value => () => {
@@ -42,6 +52,7 @@ class SinglePath extends Component {
 
   render(){
     const { path } = this.props
+    console.log(this.state.open)
 
     if(!path.modules) {
       return (<h3>Please select a path</h3>)
@@ -49,25 +60,42 @@ class SinglePath extends Component {
 
     return (
       <div>
-        <h3>{path.title}</h3>
+        <h3>{path.name}</h3>
         <div style={styles.container}>
           <List>
             { path.modules &&
               path.modules.map(module => (
+              <div key={module.id}>
               <ListItem
                 key={module.id}
                 role={undefined}
                 dense
                 button
-                onClick={this.handleCompletedClick(module.id)}
               >
                 <Checkbox
+                  onChange={this.handleCompletedClick(module.id)}
                   checked={this.state.checked.indexOf(module.id) !== -1}
                   tabIndex={-1}
                   disableRipple
                 />
-                <ListItemText primary={module.title} />
+                <img src="https://i.imgur.com/4nEBtUT.png" width={75} />
+                <ListItemText primary={module.name} />
+
+                {this.state.open ?
+                  <ExpandLess onClick={this.handleDropdownClick} /> :
+                  <ExpandMore onClick={this.handleDropdownClick} />
+                }
               </ListItem>
+
+              <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem button>
+                    <p>In the dropdown!</p>
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              </div>
             ))}
           </List>
         </div>
