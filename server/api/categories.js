@@ -7,7 +7,9 @@ const dummyData = require('../../script/data/path.js')
 //end of dummy code
 
 router.get('/hello', (req, res, next) => {
-  session.run(`match(p:Path {name:'HTML Starter Kit'})-[:STEPS*]->(s:Step) return properties(p),properties(s)`).then(result => result.records.forEach(rec => {
+  session.run(`match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+  where p.name='Sequelize Basics'
+  return collect({step: properties(s), resource: properties(r)})`).then(result => result.records.forEach(rec => {
     console.log(rec._fields)
   })).then(session.close())
 })
