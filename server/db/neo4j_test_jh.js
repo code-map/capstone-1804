@@ -7,3 +7,5 @@ where p.name='All About React'
 optional match (p)<-[:REVIEWS]-(rev:Review)
 return p.name as PathName, s as Step, res.name, avg(rev.score) as Rating
 order by Step.name asc`).then((result)=> console.log(result.records)).then(session.close())
+
+module.exports = session

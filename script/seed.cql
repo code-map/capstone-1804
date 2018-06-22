@@ -262,7 +262,7 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (dragonslayer)-[:PATHS]->(styled),
 (violeteyes)-[:PATHS]->(exprspath),
 (violeteyes)-[:PATHS]->(neopath)
-`).then(session.close())
+`).then(results => console.log(results).then(session.close())
 
 
 
