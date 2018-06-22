@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { pathsDemo } from './path_demo_data'
 
 /**
@@ -44,20 +45,23 @@ const getPathSteps = (steps) => {
  */
 export const getAllPathsThunk = () => {
   return async (dispatch) => {
-    const data = await pathsDemo
+    const { data } = await axios.get('/api/paths')
     dispatch(getAllPaths(data))
   }
 }
 
 export const getSinglePathThunk = (id) => {
   return async (dispatch) => {
-    const data = await pathsDemo
+    // const data = await pathsDemo
+    const { data } = await axios.get(`/api/paths/${id}`)
 
-    const singlepath = data.filter((item) => {
-      return item.id === id
-    })
+    console.log(data)
 
-    dispatch(getSinglePath(singlepath[0]))
+    // const singlepath = data.filter((item) => {
+    //   return item.id === id
+    // })
+
+    // dispatch(getSinglePath(singlepath[0]))
   }
 }
 
