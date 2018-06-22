@@ -46,7 +46,7 @@ limit 3
 
 //find the top 3 paths ordered by number of connected users, with review score
 //includes a list of languages, taken from the resources in each path
-// I think this works...need better data
+// I think this works...need to test more
 match (u:User)-[r:PATHS]->(p:Path)
 with count(u) as Users, p
 optional match (p)<-[:REVIEWS]-(rev:Review)
@@ -87,9 +87,28 @@ order by Step.name asc
 
 
 //All paths from a given category, sorted by number of users subscribed to path
-//connects row 3
+//connects row 3 of API Call Wishlist
 match (c:Category)<-[:CATEGORY]-(p:Path)<-[:PATHS]-(u:User)
 where c.name='React'
 optional match (p)<-[:REVIEWS]-(rev:Review)
 return  c.name as Category, p as Path, count(distinct u) as Users, coalesce(avg(rev.score), -1) as Rating
 order by Rating desc
+
+
+//pathReducer - getAllPathsThunk
+match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(res:Resource) return properties(p),collect({step: properties(s),resource: properties(res)})
+
+//pathReducer - getSinglePathThunk
+match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(res:Resource)
+  where p.name='Sequelize Basics'
+  return properties(p),collect({step: properties(s),resource: properties(res)})
+
+//pathReducer - getSingleUserPathsThunk
+match(a:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+  where a.name='dwn-berry'
+  return properties(p), collect({step:properties(s), resource:properties(r)})
+
+//pathReducer - getPathStepsThunk
+match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+  where p.name='Sequelize Basics'
+  return collect({step: properties(s), resource: properties(r)})
