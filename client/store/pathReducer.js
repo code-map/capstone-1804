@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { pathsDemo } from './path_demo_data'
+import axios from 'axios'
 
 /**
  * ACTION TYPES
@@ -8,6 +9,10 @@ const GET_ALL_PATHS = 'GET_ALL_PATH'
 const GET_SINGLE_PATH = 'GET_SINGLE_PATH'
 const GET_USER_PATHS = 'GET_USER_PATHS'
 const GET_PATH_STEPS = 'GET_PATH_STEPS'
+
+const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
+const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
+const SET_SEARCHED_PATHS_IN_CATEGORY = 'SET_SEARCHED_PATHS_IN_CATEGORY'
 
 /**
  * ACTION CREATORS
@@ -37,6 +42,27 @@ const getPathSteps = (steps) => {
   return {
     type: GET_PATH_STEPS,
     steps
+  }
+}
+
+const setPopularPathsInCategory = (paths) => {
+  return {
+    type: SET_POPULAR_PATHS_IN_CATEGORY,
+    paths
+  }
+}
+
+const setAllPathsInCategory = (paths) => {
+  return {
+    type: SET_ALL_PATHS_IN_CATEGORY,
+    paths
+  }
+}
+
+const setSearchedPathsInCategory = (paths) => {
+  return {
+    type: SET_SEARCHED_PATHS_IN_CATEGORY,
+    paths
   }
 }
 
@@ -91,11 +117,35 @@ export const getPathStepsThunk = (pathId) => {
   }
 }
 
+export const getPopularPathsInCategory = (categoryId) => {
+  return async (dispatch) => {
+    const res = await axios.get(`/api/categories/${categoryId}/popular-paths`)
+    dispatch(setPopularPathsInCategory(res.data))
+  }
+}
+
+export const getAllPathsInCategory = (categoryId) => {
+  return async (dispatch) => {
+    const res = await axios.get(`/api/categories/${categoryId}/all-paths`)
+    dispatch(setAllPathsInCategory(res.data))
+  }
+}
+
+export const searchPathsInCategory = (categoryId, searchVal) => {
+  return async (dispatch) => {
+    const res = await axios.get(`/api/categories/${categoryId}/search`, searchVal)
+    dispatch(setSearchedPathsInCategory(res.data))
+  }
+}
+
 const initialState = {
   allPaths: [],
   allUserPaths: [],
   singlePath: {},
-  pathSteps: []
+  pathSteps: [],
+  popularPathsInCategory: [],
+  allPathsInCategory: [],
+  searchedPathsInCategory: []
 }
 
 /**
@@ -111,6 +161,12 @@ export const pathReducer = ( state = initialState, action) => {
       return {...state, allUserPaths: action.paths}
     case GET_PATH_STEPS:
       return {...state, pathSteps: action.steps}
+    case SET_POPULAR_PATHS_IN_CATEGORY:
+      return {...state, popularPathsInCategory: action.paths}
+    case SET_ALL_PATHS_IN_CATEGORY:
+      return {...state, allPathsInCategory: action.paths}
+    case SET_SEARCHED_PATHS_IN_CATEGORY:
+      return {...state, searchedPathsInCategory: action.paths}
     default:
       return state
   }
