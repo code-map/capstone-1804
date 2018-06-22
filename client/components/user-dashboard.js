@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
-import { UserPathDirectory, SinglePath } from './Path'
+import { PathUserDirectory, PathSingle } from './Path'
 import { getSinglePathThunk, getSingleUserPathsThunk, getPathStepsThunk } from '../store'
 import Grid from '@material-ui/core/Grid'
 
@@ -42,7 +42,7 @@ class UserDashboard extends Component {
           <Grid item xs={3}>
 
           { allUserPaths &&
-            <UserPathDirectory
+            <PathUserDirectory
               paths={allUserPaths}
               handleSelect={this.handleSelect}
             />
@@ -51,7 +51,7 @@ class UserDashboard extends Component {
 
           <Grid item xs={8}>
             { view === 'my-paths' &&
-              <SinglePath
+              <PathSingle
                 steps={pathSteps}
                 path={this.props.singlePath}
               />

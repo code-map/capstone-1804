@@ -1,3 +1,3 @@
-export {default as UserPathDirectory} from './UserPathDirectory'
-export {default as SinglePath} from './SinglePath'
+export {default as PathUserDirectory} from './path-user-directory'
+export {default as PathSingle} from './path-single'
 export {default as PathProgress} from './path-progress'

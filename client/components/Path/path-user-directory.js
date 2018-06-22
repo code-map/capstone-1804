@@ -15,7 +15,7 @@ const styles = {
   }
 }
 
-const UserPathDirectory = ({paths, handleSelect}) => {
+const PathUserDirectory = ({paths, handleSelect}) => {
   return (
     <div style={styles.container}>
       <h4 style={styles.header}>My Paths Directory</h4>
@@ -38,4 +38,4 @@ const UserPathDirectory = ({paths, handleSelect}) => {
   )
 }
 
-export default UserPathDirectory
+export default PathUserDirectory
