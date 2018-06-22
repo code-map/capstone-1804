@@ -3,49 +3,32 @@ import axios from 'axios'
 /**
  * ACTION TYPES
  */
-
-const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
+const SEARCH_FOR_CATEGORY = 'SEARCH_FOR_CATEGORY'
 
 /**
  * INITIAL STATE
  */
-
-const defaultState = {
-  popularPaths: []
+const initialState = {
+  foundCategories: [],
 }
+
 
 /**
  * ACTION CREATORS
  */
 
-export const setPopularPathsInCategory = (popularPaths) => {
-  return {
-  type: SET_POPULAR_PATHS_IN_CATEGORY,
-  popularPaths,
-  }
-}
 
 /**
  * THUNK CREATORS
  */
 
-export const getPopularPathsInCategory = (categoryId) => {
-  return async (dispatch) => {
-    console.log('is our thunk being hit')
-    const res = await axios.get(`/api/category/${categoryId}/popular-paths`)
-    const popularPaths = res.data
-    console.log('res.data is ', res.data)
-    dispatch(setPopularPathsInCategory(popularPaths))
-  }
-
-}
 /**
  * REDUCER
  */
-export default function(state = defaultState, action) {
+export default function(state = initialState, action) {
   switch (action.type) {
-    case SET_POPULAR_PATHS_IN_CATEGORY:
-      return {...state, popularPaths: action.popularPaths}
+    case SEARCH_FOR_CATEGORY:
+      return {...state, foundCategories: action.foundCategories}
     default:
       return state
   }

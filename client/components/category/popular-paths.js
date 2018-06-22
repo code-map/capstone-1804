@@ -3,10 +3,17 @@ import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { getPopularPathsInCategory } from '../../store'
 import { PathCard } from '../path'
+import Grid from '@material-ui/core/Grid'
+
+const styles = {
+  container: {
+    padding: 20
+  }
+}
 
 const mapState = (state) => {
   return({
-    paths: state.category.popularPaths
+    paths: state.pathReducer.popularPathsInCategory
   })
 }
 
@@ -21,34 +28,33 @@ const mapDispatch = (dispatch) => {
 class CategoryPopularPaths extends React.Component {
   constructor(props) {
     super(props)
-  //this.state = {
-  //  popularPaths : [],
-  //}
   }
 
   async componentDidMount(){
+    console.log('this is x:', this)
     const categoryId = this.props.categoryId
     await this.props.getPopularPathsInCategory(categoryId)
-//  this.setState({
-//    popularPaths: [{image : '123', name: '2223', username : 'abl', rating: '12331'}]
-//  })
-    //console.log('poppaths = ',  this.state.category.popularPaths)
   }
 
   render() {
     console.log('this is: ', this)
     const paths = this.props.paths
     return (
-      <div>
-        <h1> Popular Paths Placeholder </h1>
-        {paths.map((path) => 
-          <PathCard 
-            imagePath={path.image}
-            name={path.name} 
-            username={path.username} 
-            rating={path.rating}
-          />
-        )}
+      <div style={styles.container} >
+        <Grid container spacing={40}>
+          {paths.map((path) => 
+            <Grid item xs={3}>
+            <PathCard 
+              key = {path.id}
+              id = {path.id}
+              imagePath={path.image}
+              name={path.name} 
+              username={path.username} 
+              rating={path.rating}
+            />
+            </Grid>
+          )}
+        </Grid>
       </div>
     )
   }

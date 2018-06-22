@@ -12,8 +12,8 @@ class CategorySinglePage extends Component {
           Category Name
         </h1>
         <CategoryPopularPaths categoryId={categoryId} />
-        <CategorySearch />
-        <CategoryAllPaths />
+        <CategorySearch categoryId={categoryId}/>
+        <CategoryAllPaths categoryId={categoryId} />
       </div>
     )
   }
