@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PathProgress from './path-progress'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -13,8 +14,7 @@ const styles = {
     backgroundColor: 'white',
     borderWidth: '1px',
     borderColor: '#efefef',
-    borderStyle: 'solid',
-    maxWidth: '600px'
+    borderStyle: 'solid'
   }
 }
 
@@ -48,6 +48,15 @@ class SinglePath extends Component {
     return found
   }
 
+  getCompletePercentage = () => {
+    const steps = this.props.steps
+    const total = this.props.steps.length
+    let completed = 0
+
+    steps.forEach(step => step.completed ? completed++ : '')
+    return Math.round( (completed / total) * 100 )
+  }
+
   render(){
     const { path } = this.props
 
@@ -58,6 +67,9 @@ class SinglePath extends Component {
     return (
       <div>
         <h3>{path.name}</h3>
+
+        <PathProgress progress={this.getCompletePercentage()} />
+
         <div style={styles.container}>
           <List>
             { path.modules &&
@@ -104,4 +116,4 @@ class SinglePath extends Component {
   }
 }
 
-export default (SinglePath)
+export default SinglePath
