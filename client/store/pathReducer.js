@@ -83,8 +83,6 @@ export const getPathStepsThunk = (pathId) => {
 
     const steps = singlePath[0].modules
 
-    console.log('getPathStepsThunk', steps)
-
     dispatch(getPathSteps(steps))
   }
 }

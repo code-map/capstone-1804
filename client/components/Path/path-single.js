@@ -23,12 +23,24 @@ class SinglePath extends Component {
     super()
 
     this.state = {
-      open: false
+      selectedItems: []
     }
   }
 
-  handleDropdownClick = () => {
-    this.setState({ open: !this.state.open })
+  handleDropdownClick = (step) => {
+    this.setState((prevState) => {
+      return {
+        selectedItems: prevState.selectedItems.filter((el) => el !== step)
+      }
+    })
+  }
+
+  handleCollapseClick = (step) => {
+    this.setState((prevState) => {
+      return {
+        selectedItems: prevState.selectedItems.concat([step])
+      }
+    })
   }
 
   handleCompletedClick = value => () => {
@@ -64,6 +76,8 @@ class SinglePath extends Component {
       return (<h3>Please select a path</h3>)
     }
 
+    console.log('render', this.state)
+
     return (
       <div>
         <h3>{path.name}</h3>
@@ -92,14 +106,20 @@ class SinglePath extends Component {
 
                 <ListItemText primary={module.name} />
 
-                {this.state.open ?
-                  <ExpandLess onClick={this.handleDropdownClick} /> :
-                  <ExpandMore onClick={this.handleDropdownClick} />
+                {this.state.selectedItems.indexOf(module.url) !== -1 ?
+                  <ExpandLess
+                    onClick={() => this.handleDropdownClick(module.url)}
+                  /> :
+                  <ExpandMore
+                    onClick={() => this.handleCollapseClick(module.url)}
+                  />
                 }
 
               </ListItem>
 
-              <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+              <Collapse
+                in={this.state.selectedItems.indexOf(module.url) !== -1}
+                timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                   <ListItem button>
                     <p>In the dropdown!</p>
