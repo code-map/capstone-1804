@@ -21,7 +21,7 @@ const PathUserDirectory = ({paths, handleSelect}) => {
       <h4 style={styles.header}>My Paths Directory</h4>
       <List>
         { paths.map((path) => {
-          const name = path[0].path.properties.name
+          const name = path[0].details.properties.name
             return (
               <ListItem
                 key={name}

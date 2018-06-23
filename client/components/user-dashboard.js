@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
-import { getSinglePathThunk, getSingleUserPathsThunk, getPathStepsThunk } from '../store'
+import { getSingleUserPathsThunk } from '../store'
 import { PathUserDirectory, PathSingle } from './paths'
 import Grid from '@material-ui/core/Grid'
 
@@ -16,6 +16,12 @@ const styles = {
 }
 
 class UserDashboard extends Component {
+  constructor(){
+    super()
+    this.state = {
+      selectedPath: []
+    }
+  }
 
   componentDidMount (){
     // This is temporary until we have a user login solution
@@ -25,12 +31,17 @@ class UserDashboard extends Component {
   }
 
   handleSelect = (name) => {
-    this.props.getSinglePath(name)
-    this.props.getPathSteps(name)
+    const selectedPath = this.props.allUserPaths.find((path) => {
+      return path[0].details.properties.name === name
+    })
+
+    this.setState({
+      selectedPath: selectedPath[0]
+    })
   }
 
   render () {
-    const { allUserPaths, pathSteps } = this.props
+    const { allUserPaths } = this.props
     const view = this.props.match.params.view
 
     return (
@@ -54,8 +65,7 @@ class UserDashboard extends Component {
           <Grid item xs={8}>
             { view === 'my-paths' &&
               <PathSingle
-                steps={pathSteps}
-                path={this.props.singlePath}
+                path={this.state.selectedPath}
               />
             }
 
@@ -76,24 +86,17 @@ class UserDashboard extends Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state.pathReducer)
   return {
     user: state.user,
-    singlePath: state.pathReducer.singlePath,
-    allUserPaths: state.pathReducer.allUserPaths,
-    pathSteps: state.pathReducer.pathSteps
+    allUserPaths: state.pathReducer.allUserPaths
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getSinglePath: (name) => {
-      dispatch(getSinglePathThunk(name))
-    },
-    getSingleUserPaths: (userId) => {
-      dispatch(getSingleUserPathsThunk(userId))
-    },
-    getPathSteps: (name) => {
-      dispatch(getPathStepsThunk(name))
+    getSingleUserPaths: (username) => {
+      dispatch(getSingleUserPathsThunk(username))
     }
   }
 }

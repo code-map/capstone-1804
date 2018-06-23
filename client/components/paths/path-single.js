@@ -49,10 +49,11 @@ class SinglePath extends Component {
   }
 
   checkForComplete = (url) => {
-    const pathSteps = this.props.steps
+    const steps = this.props.path.steps
     let found = false
-    for(var i = 0; i < pathSteps.length; i++) {
-      if (pathSteps[i].url === url && pathSteps[i].completed) {
+    for(let i = 0; i < steps.length; i++) {
+      const stepUrl = steps[i].resource.properties.url
+      if(stepUrl === url && steps[i].step.properties.completed) {
         found = true
         break
       }
@@ -71,6 +72,8 @@ class SinglePath extends Component {
 
   render(){
     const { path } = this.props
+
+    console.log('pathsingle', path)
 
     if(!path.details) {
       return (<h3>Please select a path</h3>)
@@ -128,7 +131,7 @@ class SinglePath extends Component {
                     timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItem button>
-                        <p>In the dropdown!</p>
+                        <p>In the dropdown for "{step.resource.properties.name}"</p>
                       </ListItem>
                     </List>
                   </Collapse>
