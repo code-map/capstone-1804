@@ -1,5 +1,9 @@
+let neo4j = require('neo4j-driver').v1;
+let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
+let session = driver.session();
 
-//create users
+
+session.run(`
 CREATE (Justin:User {name:'Justin',email:'justin@justin.com',password:'1234',googleId:null,isAdmin:true}),
 (Jami:User {name:'Jami',email:'jami@jami.com',password:'1234',googleId:null,isAdmin:true}),
 (Mary:User {name:'Mary',email:'mary@mary.com',password:'1234',googleId:null,isAdmin:true}),
@@ -75,6 +79,9 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (Step1)-[:RESOURCE]->(PythonChallenge),
 (Step1)-[:STEPS]->(Step2),
 (Step2)-[:RESOURCE]->(PydevManual),
+(a:Review {score:1,comments:'Maecenas eget sapien in ante tempus consectetur vel in dolor'}),
+(Jami)-[a:REVIEWS]->[:REVIEWS]->(Python101),
+(a)-[:REVIEWS]->(Python101),
 (DataScience:Path {name:'Data Science',description:'doing stuff with data',level:'beginner',status:'public'}),
 (Step3:Step {name:'Step1',completed:false, description:'nothing yet!'}),
 (Step4:Step {name:'Step2',completed:false, description:'nothing yet!'}),
@@ -171,6 +178,8 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (exps2)-[:STEPS]->(exps3),
 (exps3)-[:STEPS]->(exps4),
 (htmlpath:Path {name:'HTML Starter Kit', description: 'intro to html', level:'Beginner', status: 'public', createdDate:timestamp()}),
+(c:Review {score:2,comments:'maximus aliquam arcu.'}),
+(mporter)-[:REVIEWS]->(c)-[:REVIEWS]->(p)
 (htmls1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (htmls2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (htmls3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -257,6 +266,7 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (dragonslayer)-[:PATHS]->(styled),
 (violeteyes)-[:PATHS]->(exprspath),
 (violeteyes)-[:PATHS]->(neopath),
+
 
 
 
