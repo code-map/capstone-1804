@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
-import { UserPathDirectory, SinglePath } from './Path'
+import { UserPathDirectory, SinglePath } from './paths'
 import { getSinglePathThunk, getSingleUserPathsThunk } from '../store'
 import Grid from '@material-ui/core/Grid'
 
