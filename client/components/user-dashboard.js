@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
-import { UserPathDirectory, SinglePath } from './paths'
-import { getSinglePathThunk, getSingleUserPathsThunk } from '../store'
+import { getSinglePathThunk, getSingleUserPathsThunk, getPathStepsThunk } from '../store'
+import { PathUserDirectory, PathSingle } from './paths'
 import Grid from '@material-ui/core/Grid'
 
 const styles = {
@@ -24,10 +24,11 @@ class UserDashboard extends Component {
   handleSelect = (event) => {
     const pathId = event.target.value
     this.props.getSinglePath(pathId)
+    this.props.getPathSteps(pathId)
   }
 
   render () {
-    const { allUserPaths } = this.props
+    const { allUserPaths, pathSteps } = this.props
     const view = this.props.match.params.view
 
     return (
@@ -39,8 +40,9 @@ class UserDashboard extends Component {
 
         <Grid container spacing={40}>
           <Grid item xs={3}>
+
           { allUserPaths &&
-            <UserPathDirectory
+            <PathUserDirectory
               paths={allUserPaths}
               handleSelect={this.handleSelect}
             />
@@ -49,7 +51,10 @@ class UserDashboard extends Component {
 
           <Grid item xs={8}>
             { view === 'my-paths' &&
-              <SinglePath path={this.props.singlePath} />
+              <PathSingle
+                steps={pathSteps}
+                path={this.props.singlePath}
+              />
             }
 
             { view === 'add-new-path' &&
@@ -72,7 +77,8 @@ const mapStateToProps = (state) => {
   return {
     user: state.user,
     singlePath: state.pathReducer.singlePath,
-    allUserPaths: state.pathReducer.allUserPaths
+    allUserPaths: state.pathReducer.allUserPaths,
+    pathSteps: state.pathReducer.pathSteps
   }
 }
 
@@ -83,6 +89,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getSingleUserPaths: (userId) => {
       dispatch(getSingleUserPathsThunk(userId))
+    },
+    getPathSteps: (pathId) => {
+      dispatch(getPathStepsThunk(pathId))
     }
   }
 }
