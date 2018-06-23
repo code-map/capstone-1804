@@ -11,7 +11,7 @@ router.get('/:name', async (req, res, next) => {
 
     const query = `match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
     WHERE p.name = {name}
-    return { path: p, steps: collect( { step: s, resource: r } ) }`
+    return { details: p, steps: collect( { step: s, resource: r } ) }`
 
     const result = await session.run(query, {name: param})
 
@@ -20,6 +20,46 @@ router.get('/:name', async (req, res, next) => {
     })
 
     res.send(singlePath[0])
+    session.close()
+  } catch (err) { next(err) }
+})
+
+// GET: api/paths/:name/steps
+router.get('/:name/steps', async (req, res, next) => {
+  try {
+    const param = req.params.name
+
+    const query = `match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+    WHERE p.name = {name}
+    return { steps: collect( { step: s, resource: r } ) }`
+
+    const result = await session.run(query, {name: param})
+
+    const steps = result.records.map((record) => {
+      return record._fields
+    })
+
+    res.send(steps[0])
+    session.close()
+  } catch (err) { next(err) }
+})
+
+// GET: api/paths/user/:email
+router.get('/user/:name/', async (req, res, next) => {
+  try {
+    const param = req.params.name
+
+    const query = `match(a:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+    where a.name = {name}
+    return {path: p, steps: collect({step: s, resource: r })}`
+
+    const result = await session.run(query, {name: param})
+
+    const steps = result.records.map((record) => {
+      return record._fields
+    })
+
+    res.send(steps)
     session.close()
   } catch (err) { next(err) }
 })

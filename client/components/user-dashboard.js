@@ -18,13 +18,15 @@ const styles = {
 class UserDashboard extends Component {
 
   componentDidMount (){
-    this.props.getSingleUserPaths(this.props.user.id)
+    // This is temporary until we have a user login solution
+    // integrated with Neo4j
+    const userName = 'shark-week365'
+    this.props.getSingleUserPaths(userName)
   }
 
-  handleSelect = (event) => {
-    const pathId = event.target.value
-    this.props.getSinglePath(pathId)
-    this.props.getPathSteps(pathId)
+  handleSelect = (name) => {
+    this.props.getSinglePath(name)
+    this.props.getPathSteps(name)
   }
 
   render () {
@@ -84,14 +86,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getSinglePath: (id) => {
-      dispatch(getSinglePathThunk(id))
+    getSinglePath: (name) => {
+      dispatch(getSinglePathThunk(name))
     },
     getSingleUserPaths: (userId) => {
       dispatch(getSingleUserPathsThunk(userId))
     },
-    getPathSteps: (pathId) => {
-      dispatch(getPathStepsThunk(pathId))
+    getPathSteps: (name) => {
+      dispatch(getPathStepsThunk(name))
     }
   }
 }

@@ -20,15 +20,14 @@ const PathUserDirectory = ({paths, handleSelect}) => {
     <div style={styles.container}>
       <h4 style={styles.header}>My Paths Directory</h4>
       <List>
-        {
-          paths.map((path) => {
+        { paths.map((path) => {
+          const name = path[0].path.properties.name
             return (
               <ListItem
-                key={path.id}
-                value={path.id}
-                onClick={(event) => handleSelect(event)}
+                key={name}
+                onClick={() => handleSelect(name)}
               >
-                {path.name}
+                {name}
               </ListItem>
             )
           })
