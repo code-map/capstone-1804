@@ -44,22 +44,26 @@ router.get('/:name/steps', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-// GET: api/paths/user/:email
+// GET: api/paths/user/:name
 router.get('/user/:name/', async (req, res, next) => {
   try {
     const param = req.params.name
 
+    // const query = `match(u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+    // where u.name = {name}
+    // return {path: p, steps: collect({step: s, resource: r })}`
+
     const query = `match(a:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-    where a.name = {name}
-    return {path: p, steps: collect({step: s, resource: r })}`
+    where a.name='dwn-berry'
+    return properties(p), collect({step:properties(s), resource:properties(r)})`
 
     const result = await session.run(query, {name: param})
 
-    const steps = result.records.map((record) => {
+    const paths = result.records.map((record) => {
       return record._fields
     })
 
-    res.send(steps)
+    res.send(paths)
     session.close()
   } catch (err) { next(err) }
 })
