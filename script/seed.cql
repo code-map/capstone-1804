@@ -79,9 +79,6 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (Step1)-[:RESOURCE]->(PythonChallenge),
 (Step1)-[:STEPS]->(Step2),
 (Step2)-[:RESOURCE]->(PydevManual),
-(a:Review {score:1,comments:'Maecenas eget sapien in ante tempus consectetur vel in dolor'}),
-(Jami)-[a:REVIEWS]->[:REVIEWS]->(Python101),
-(a)-[:REVIEWS]->(Python101),
 (DataScience:Path {name:'Data Science',description:'doing stuff with data',level:'beginner',status:'public'}),
 (Step3:Step {name:'Step1',completed:false, description:'nothing yet!'}),
 (Step4:Step {name:'Step2',completed:false, description:'nothing yet!'}),
@@ -178,8 +175,6 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (exps2)-[:STEPS]->(exps3),
 (exps3)-[:STEPS]->(exps4),
 (htmlpath:Path {name:'HTML Starter Kit', description: 'intro to html', level:'Beginner', status: 'public', createdDate:timestamp()}),
-(c:Review {score:2,comments:'maximus aliquam arcu.'}),
-(mporter)-[:REVIEWS]->(c)-[:REVIEWS]->(p)
 (htmls1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (htmls2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (htmls3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -265,92 +260,10 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (dragonslayer)-[:PATHS]->(rpath),
 (dragonslayer)-[:PATHS]->(styled),
 (violeteyes)-[:PATHS]->(exprspath),
-(violeteyes)-[:PATHS]->(neopath),
+(violeteyes)-[:PATHS]->(neopath)
+`).then(results => console.log(results)).then(session.close())
 
 
-
-
-MATCH (u:User {name:'Jami'}), (p:Path {name:'Beginner Python'})
-CREATE (a:Review {score:1,comments:'Maecenas eget sapien in ante tempus consectetur vel in dolor'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p)
-MATCH (u:User {name:'Mary'}), (p:Path {name:'Beginner Python'})
-CREATE (a:Review {score:2,comments:'elementum. Sed quis justo at'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'Mary'}), (p:Path {name:'Data Science Toolkit'})
-CREATE (a:Review {score:4,comments:'Very useful!'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'Chan'}), (p:Path {name:'Data Science Toolkit'})
-CREATE (a:Review {score:2,comments:'Site is frequently offline'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'chrisBP'}), (p:Path {name:'rpath'})
-CREATE (a:Review {score:4,comments:'Mauris id urna in nulla pulvinar'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'chrisBP'}), (p:Path {name:'styled'})
-CREATE (a:Review {score:5,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'sharkweek365'}), (p:Path {name:'jsbasic'})
-CREATE (a:Review {score:5,comments:'quam laoreet bibendum in a odio'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'sharkweek365'}), (p:Path {name:'espath'})
-CREATE (a:Review {score:5,comments:'in nulla pulvinar viverra sed '}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dwnberry'}), (p:Path {name:'neopath'})
-CREATE (a:Review {score:4,comments:'ullamcorper ex venenatis in'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dwnberry'}), (p:Path {name:'seqpath'})
-CREATE (a:Review {score:3,comments:'dapibus elit, quis venenatis justo'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dwnberry'}), (p:Path {name:'seqpath'})
-CREATE (a:Review {score:3,comments:' Nunc nisl eros, pellentesque eu justo nec'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'mporter'}), (p:Path {name:'exprspath'})
-CREATE (a:Review {score:4,comments:'elit, quis venenatis justo malesuada sed.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'mporter'}), (p:Path {name:'htmlpath'})
-CREATE (a:Review {score:2,comments:'maximus aliquam arcu.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'devDebb'}), (p:Path {name:'Beginner Python'})
-CREATE (a:Review {score:4,comments:'et ullamcorper ex venenatis in'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'devDebb'}), (p:Path {name:'DataScience'})
-CREATE (a:Review {score:3,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'silverfox'}), (p:Path {name:'rpath'})
-CREATE (a:Review {score:1,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'silverfox'}), (p:Path {name:'styled'})
-CREATE (a:Review {score:4,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'blueTuna'}), (p:Path {name:'jsbasic'})
-CREATE (a:Review {score:5,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'blueTuna'}), (p:Path {name:'espath'})
-CREATE (a:Review {score:4,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'therealclyde'}), (p:Path {name:'seqpath'})
-CREATE (a:Review {score:3,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'therealclyde'}), (p:Path {name:'neopath'})
-CREATE (a:Review {score:2,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'avaK'}), (p:Path {name:'exprspath'})
-CREATE (a:Review {score:2,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'avaK'}), (p:Path {name:'htmlpath'})
-CREATE (a:Review {score:2,comments:'luctus tristique ac id sem.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dragonslayer'}), (p:Path {name:'rpath'})
-CREATE (a:Review {score:5,comments:'luctus tristique ac id sem.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dragonslayer'}), (p:Path {name:'styled'})
-CREATE (a:Review {score:3,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'violeteyes'}), (p:Path {name:'exprspath'})
-CREATE (a:Review {score:3,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'violeteyes'}), (p:Path {name:'neopath'})
-CREATE (a:Review {score:5,comments:'ullamcorper ex venenatis in. Suspendisse lacinia urna a blandit dignissim.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
 
 
 
