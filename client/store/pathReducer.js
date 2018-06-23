@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { pathsDemo } from './path_demo_data'
-import axios from 'axios'
 
 /**
  * ACTION TYPES
