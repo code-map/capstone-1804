@@ -151,41 +151,6 @@ const resourcesPath6 = [
   }
 ]
 
-//html
-
-
-
-
-
-
-
-// (Python101:Path {name:'Beginner Python',description:'hello world',category:'python',level:'beginner',status:'public'}),
-
-// (DataScience:Path {name:'Data Science',description:'doing stuff with data',level:'beginner',status:'public'}),
-
-// (rpath:Path {name:'All About React', level:'intermediate',status:'public', createdDate:timestamp()}),
-
-// (styled:Path {name: 'All about styled components', description: 'learn about how to style CSS', level:'Beginner', status: 'public', createdDate:timestamp()}),
-
-// (jsbasic:Path {name: 'Basic JavaScript', description: 'intro course', level: 'Beginner', status: 'public', createdDate:timestamp()}),
-
-// (espath:Path {name: 'ES6 Highlights', description: 'useful tips for es6', level: 'Intermediate', status: 'public', createdDate:timestamp()}),
-
-// (neopath:Path {name: 'getting started with neo4j', description: 'a great graph database', level: 'Beginner', status: 'public', createdDate:timestamp()}),
-
-// (seqpath:Path {name: 'Sequelize Basics', description: 'learn about this relational database', level: 'Beginner', status: 'public', createdDate:timestamp()}),
-
-// (exprspath:Path {name: 'Make your own server', description: 'learn how to set up a server useing Express.js', level: 'Beginner', status: 'public', createdDate:timestamp()})
-
-// (htmlpath:Path {name:'HTML Starter Kit', description: 'intro to html', level:'Beginner', status: 'public', createdDate:timestamp()})
-
-
-
-
-
-
-
-
 
 
 const resourcesPath7 = [
@@ -216,27 +181,4 @@ const resourcesPath7 = [
 ]
 
 
-// Run these in next query!!
 
-// add review to dstk by chan
-// MATCH (u:User {name:'Chan'}), (r:Resource {name:'Data Science Toolkit'})
-// CREATE (a:Review {score:2,comments:'Site is frequently offline'}),
-// (u)-[:REVIEWS]->(a)-[:REVIEWS]->(r)
-
-// // add review to dstk by Mary
-// MATCH (u:User {name:'Mary'}), (r:Resource {name:'Data Science Toolkit'})
-// CREATE (a:Review {score:4,comments:'Very useful!'}),
-// (u)-[:REVIEWS]->(a)-[:REVIEWS]->(r)
-
-// // add categories
-// MATCH (p:Path {name:'Data Science'}), (r:Resource {name:'Data Science Toolkit'})
-// CREATE
-
-
-
-
-
-
-
-
-// creating more stuff

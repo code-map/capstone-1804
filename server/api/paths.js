@@ -49,13 +49,9 @@ router.get('/user/:name/', async (req, res, next) => {
   try {
     const param = req.params.name
 
-    // const query = `match(u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-    // where u.name = {name}
-    // return {path: p, steps: collect({step: s, resource: r })}`
-
     const query = `match(a:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-    where a.name='dwn-berry'
-    return properties(p), collect({step:properties(s), resource:properties(r)})`
+    where a.name = {name}
+    return {path: p, steps: collect({step: s, resource: r })}`
 
     const result = await session.run(query, {name: param})
 
