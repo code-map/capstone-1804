@@ -4,7 +4,6 @@ import { pathsDemo } from './path_demo_data'
 /**
  * ACTION TYPES
  */
-const GET_ALL_PATHS = 'GET_ALL_PATH'
 const GET_SINGLE_PATH = 'GET_SINGLE_PATH'
 const GET_USER_PATHS = 'GET_USER_PATHS'
 const GET_PATH_STEPS = 'GET_PATH_STEPS'
@@ -16,12 +15,6 @@ const SET_SEARCHED_PATHS_IN_CATEGORY = 'SET_SEARCHED_PATHS_IN_CATEGORY'
 /**
  * ACTION CREATORS
  */
-const getAllPaths = (paths) => {
-  return {
-    type: GET_ALL_PATHS,
-    paths
-  }
-}
 
 const getSinglePath = (path) => {
   return {
@@ -68,25 +61,22 @@ const setSearchedPathsInCategory = (paths) => {
 /**
  * THUNK CREATORS
  */
-export const getAllPathsThunk = () => {
-  return async (dispatch) => {
-    const { data } = await axios.get('/api/paths')
-    dispatch(getAllPaths(data))
-  }
-}
-
 export const getSinglePathThunk = (id) => {
   return async (dispatch) => {
-    // const data = await pathsDemo
-    const { data } = await axios.get(`/api/paths/${id}`)
 
-    console.log(data)
+    // const { data } = await axios.get(`/api/paths/${id}`)
 
-    // const singlepath = data.filter((item) => {
-    //   return item.id === id
-    // })
+    // console.log(data)
 
-    // dispatch(getSinglePath(singlepath[0]))
+    // dispatch(getSinglePath(data))
+
+    const data = await pathsDemo
+
+    const singlepath = data.filter((item) => {
+      return item.id === id
+    })
+
+    dispatch(getSinglePath(singlepath[0]))
   }
 }
 
@@ -138,9 +128,8 @@ export const searchPathsInCategory = (categoryId, searchVal) => {
 }
 
 const initialState = {
-  allPaths: [],
   allUserPaths: [],
-  singlePath: {},
+  singlePath: [],
   pathSteps: [],
   popularPathsInCategory: [],
   allPathsInCategory: [],
@@ -152,8 +141,6 @@ const initialState = {
  */
 export const pathReducer = ( state = initialState, action) => {
   switch (action.type) {
-    case GET_ALL_PATHS:
-      return {...state, allPaths: action.paths}
     case GET_SINGLE_PATH:
       return {...state, singlePath: action.path}
     case GET_USER_PATHS:
