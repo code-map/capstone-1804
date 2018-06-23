@@ -40,10 +40,10 @@ class CategorySearch extends React.Component {
       <div>
         <form>
           <label> Search within category: </label>
-          <input 
-            type='text' 
-            className='searchBox' 
-            onChange={this.handleChange} 
+          <input
+            type='text'
+            className='searchBox'
+            onChange={this.handleChange}
             value={this.state.searchBox}
           />
           <button onClick={this.handleSubmit}> Search </button>

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import  Grid from '@material-ui/core/Grid'
 import { getAllPathsInCategory } from '../../store'
-import { PathCardSmall } from '../path'
+import { PathCardSmall } from '../paths'
 
 class CategoryAllPaths extends React.Component {
   constructor(){
@@ -20,13 +20,13 @@ class CategoryAllPaths extends React.Component {
     return(
       <div>
         <Grid container spacing={40}>
-          {paths.map((path) => 
+          {paths.map((path) =>
             <Grid item xs={6} key = {path.id}>
               <PathCardSmall
                 id = {path.id}
                 imagePath={path.image}
-                name={path.name} 
-                username={path.username} 
+                name={path.name}
+                username={path.username}
                 rating={path.rating}
               />
             </Grid>

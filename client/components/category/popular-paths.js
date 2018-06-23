@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { getPopularPathsInCategory } from '../../store'
-import { PathCard } from '../path'
+import { PathCard } from '../paths'
 import Grid from '@material-ui/core/Grid'
 
 const styles = {
@@ -41,12 +41,12 @@ class CategoryPopularPaths extends React.Component {
     return (
       <div style={styles.container} >
         <Grid container spacing={40} >
-          {paths.map((path) => 
+          {paths.map((path) =>
             <Grid item xs={3} key={path.id} >
-            <PathCard 
+            <PathCard
               imagePath={path.image}
-              name={path.name} 
-              username={path.username} 
+              name={path.name}
+              username={path.username}
               rating={path.rating}
             />
             </Grid>
