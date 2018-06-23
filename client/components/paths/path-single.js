@@ -62,18 +62,21 @@ class SinglePath extends Component {
   }
 
   getCompletePercentage = () => {
-    const steps = this.props.steps
-    const total = this.props.steps.length
-    let completed = 0
 
-    steps.forEach(step => step.completed ? completed++ : '')
-    return Math.round( (completed / total) * 100 )
+    // To be completed when db data is available
+
+    // const steps = this.props.steps
+    // const total = this.props.steps.length
+    // let completed = 0
+
+    // steps.forEach(step => step.completed ? completed++ : '')
+    // return Math.round( (completed / total) * 100 )
+
+    return '50'
   }
 
   render(){
     const { path } = this.props
-
-    console.log('pathsingle', path)
 
     if(!path.details) {
       return (<h3>Please select a path</h3>)
@@ -83,7 +86,7 @@ class SinglePath extends Component {
       <div>
         <h3>{path.details.properties.name}</h3>
 
-        {/* <PathProgress progress={this.getCompletePercentage()} /> */}
+        <PathProgress progress={this.getCompletePercentage()} />
 
         <div style={styles.container}>
           <List>

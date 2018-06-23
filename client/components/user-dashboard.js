@@ -86,7 +86,6 @@ class UserDashboard extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.pathReducer)
   return {
     user: state.user,
     allUserPaths: state.pathReducer.allUserPaths
