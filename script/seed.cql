@@ -79,10 +79,15 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (Step1)-[:RESOURCE]->(PythonChallenge),
 (Step1)-[:STEPS]->(Step2),
 (Step2)-[:RESOURCE]->(PydevManual),
-(a:Review {score:1,comments:'Maecenas eget sapien in ante tempus consectetur vel in dolor'}),
-(Jami)-[a:REVIEWS]->[:REVIEWS]->(Python101),
-(a)-[:REVIEWS]->(Python101),
+(pyr1:Review {score:1,comments:'Maecenas eget sapien in ante tempus consectetur vel in dolor'}),
+(Jami)-[:REVIEWS]->(pyr1)-[:REVIEWS]->(Python101),
+(pyr2:Review {score:2,comments:'hendrerit in, lobortis e'}),
+(Mary)-[:REVIEWS]->(pyr2)-[:REVIEWS]->(Python101),
 (DataScience:Path {name:'Data Science',description:'doing stuff with data',level:'beginner',status:'public'}),
+(dsr1:Review {score:4,comments:'Very useful!'}),
+(Mary)-[:REVIEWS]->(dsr1)-[:REVIEWS]->(DataScience),
+(dsr2:Review {score:2,comments:'Site is frequently offline'}),
+(Chan)-[:REVIEWS]->(dsr2)-[:REVIEWS]->(DataScience),
 (Step3:Step {name:'Step1',completed:false, description:'nothing yet!'}),
 (Step4:Step {name:'Step2',completed:false, description:'nothing yet!'}),
 (DataScience)-[:STEPS]->(Step3),
@@ -90,6 +95,12 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (Step3)-[:STEPS]->(Step4),
 (Step4)-[:RESOURCE]->(DSTK),
 (rpath:Path {name:'All About React', level:'intermediate',status:'public', createdDate:timestamp()}),
+(rpr1:Review {score:4,comments:'Mauris id urna in nulla pulvinar'}),
+(chrisBP)-[:REVIEWS]->(rpr1)-[:REVIEWS]->(rpath),
+(rpr2:Review {score:3,comments:'massa quis, efficitur neque'}),
+(silverfox)-[:REVIEWS]->(rpr2)-[:REVIEWS]->(rpath),
+(rpr3:Review {score:5,comments:'luctus tristique ac id sem.'}),
+(dragonslayer)-[:REVIEWS]->(rpr3)-[:REVIEWS]->(rpath),
 (rs1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (rs2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (rs3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -100,6 +111,12 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (rs1)-[:STEPS]->(rs2),
 (rs2)-[:STEPS]->(rs3),
 (styled:Path {name: 'All about styled components', description: 'learn about how to style CSS', level:'Beginner', status: 'public', createdDate:timestamp()}),
+(spr1:Review {score:5,comments:'massa quis, efficitur neque'}),
+(chrisBP)-[:REVIEWS]->(spr1)-[:REVIEWS]->(styled),
+(spr2:Review {score:4,comments:'massa quis, efficitur neque'}),
+(silverfox)-[:REVIEWS]->(spr2)-[:REVIEWS]->(styled),
+(spr3:Review {score:3,comments:'hendrerit in, lobortis et risus.'}),
+(dragonslayer)-[:REVIEWS]->(spr3)-[:REVIEWS]->(styled),
 (sty1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (sty2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (sty3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -113,6 +130,10 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (sty2)-[:STEPS]->(sty3),
 (sty3)-[:STEPS]->(sty4),
 (jsbasic:Path {name: 'Basic JavaScript', description: 'intro course', level: 'Beginner', status: 'public', createdDate:timestamp()}),
+(jsbr1:Review {score:5,comments:'quam laoreet bibendum in a odio'}),
+(sharkweek365)-[:REVIEWS]->(jsbr1)-[:REVIEWS]->(jsbasic),
+(jsbr2:Review {score:3,comments:'hendrerit in, lobortis et risus.'}),
+(blueTuna)-[:REVIEWS]->(jsbr2)-[:REVIEWS]->(jsbasic),
 (jss1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (jss2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (jss3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -126,6 +147,10 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (jss2)-[:STEPS]->(jss3),
 (jss3)-[:STEPS]->(jss4),
 (espath:Path {name: 'ES6 Highlights', description: 'useful tips for es6', level: 'Intermediate', status: 'public', createdDate:timestamp()}),
+(espr1:Review {score:5,comments:'in nulla pulvinar viverra sed '}),
+(sharkweek365)-[:REVIEWS]->(espr1)-[:REVIEWS]->(espath),
+(espr2:Review {score:4,comments:'hendrerit in, lobortis et risus.'}),
+(blueTuna)-[:REVIEWS]->(espr2)-[:REVIEWS]->(espath),
 (esp1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (esp2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (esp3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -139,6 +164,12 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (esp2)-[:STEPS]->(esp3),
 (esp3)-[:STEPS]->(esp4),
 (neopath:Path {name: 'getting started with neo4j', description: 'a great graph database', level: 'Beginner', status: 'public', createdDate:timestamp()}),
+(npr1:Review {score:4,comments:'ullamcorper ex venenatis in'}),
+(dwnberry)-[:REVIEWS]->(npr1)-[:REVIEWS]->(neopath),
+(npr2:Review {score:2,comments:'massa quis, efficitur neque'}),
+(therealclyde)-[:REVIEWS]->(npr2)-[:REVIEWS]->(neopath),
+(npr3:Review {score:5,comments:'ullamcorper ex venenatis in. Suspendisse lacinia urna a blandit dignissim.'}),
+(violeteyes)-[:REVIEWS]->(npr3)-[:REVIEWS]->(neopath),
 (neos1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (neos2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (neos3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -152,6 +183,10 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (neos2)-[:STEPS]->(neos3),
 (neos3)-[:STEPS]->(neos4),
 (seqpath:Path {name: 'Sequelize Basics', description: 'learn about this relational database', level: 'Beginner', status: 'public', createdDate:timestamp()}),
+(sqpr1:Review {score:3,comments:'dapibus elit, quis venenatis justo'}),
+(dwnberry)-[:REVIEWS]->(sqpr1)-[:REVIEWS]->(seqpath),
+(sqpr2:Review {score:3,comments:' Nunc nisl eros, pellentesque eu justo nec'}),
+(therealclyde)-[:REVIEWS]->(sqpr2)-[:REVIEWS]->(seqpath),
 (seqs1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (seqs2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (seqs3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -165,6 +200,12 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (seqs2)-[:STEPS]->(seqs3),
 (seqs3)-[:STEPS]->(seqs4),
 (exprspath:Path {name: 'Make your own server', description: 'learn how to set up a server useing Express.js', level: 'Beginner', status: 'public', createdDate:timestamp()}),
+(expr1:Review {score:4,comments:'elit, quis venenatis justo malesuada sed.'}),
+(mporter)-[:REVIEWS]->(expr1)-[:REVIEWS]->(exprspath),
+(expr2:Review {score:2,comments:'massa quis, efficitur neque'}),
+(avaK)-[:REVIEWS]->(expr2)-[:REVIEWS]->(exprspath),
+(expr3:Review {score:3,comments:'hendrerit in, lobortis et risus.'}),
+(violeteyes)-[:REVIEWS]->(expr3)-[:REVIEWS]->(exprspath),
 (exps1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (exps2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (exps3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -178,8 +219,10 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (exps2)-[:STEPS]->(exps3),
 (exps3)-[:STEPS]->(exps4),
 (htmlpath:Path {name:'HTML Starter Kit', description: 'intro to html', level:'Beginner', status: 'public', createdDate:timestamp()}),
-(c:Review {score:2,comments:'maximus aliquam arcu.'}),
-(mporter)-[:REVIEWS]->(c)-[:REVIEWS]->(p)
+(hr1:Review {score:2,comments:'maximus aliquam arcu.'}),
+(mporter)-[:REVIEWS]->(hr1)-[:REVIEWS]->(htmlpath),
+(hr2:Review {score:1,comments:'maximus aliquam arcu.'}),
+(avaK)-[:REVIEWS]->(hr2)-[:REVIEWS]->(htmlpath),
 (htmls1:Step {name:'Step 1',completed:false, description:'nothing yet!'}),
 (htmls2:Step {name:'Step 2',completed:false, description:'nothing yet!'}),
 (htmls3:Step {name:'Step 3',completed:false, description:'nothing yet!'}),
@@ -265,92 +308,12 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (dragonslayer)-[:PATHS]->(rpath),
 (dragonslayer)-[:PATHS]->(styled),
 (violeteyes)-[:PATHS]->(exprspath),
-(violeteyes)-[:PATHS]->(neopath),
+(violeteyes)-[:PATHS]->(neopath)
+`).then(results => console.log(results)).then(session.close())
 
 
 
 
-MATCH (u:User {name:'Jami'}), (p:Path {name:'Beginner Python'})
-CREATE (a:Review {score:1,comments:'Maecenas eget sapien in ante tempus consectetur vel in dolor'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p)
-MATCH (u:User {name:'Mary'}), (p:Path {name:'Beginner Python'})
-CREATE (a:Review {score:2,comments:'elementum. Sed quis justo at'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'Mary'}), (p:Path {name:'Data Science Toolkit'})
-CREATE (a:Review {score:4,comments:'Very useful!'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'Chan'}), (p:Path {name:'Data Science Toolkit'})
-CREATE (a:Review {score:2,comments:'Site is frequently offline'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'chrisBP'}), (p:Path {name:'rpath'})
-CREATE (a:Review {score:4,comments:'Mauris id urna in nulla pulvinar'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'chrisBP'}), (p:Path {name:'styled'})
-CREATE (a:Review {score:5,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'sharkweek365'}), (p:Path {name:'jsbasic'})
-CREATE (a:Review {score:5,comments:'quam laoreet bibendum in a odio'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'sharkweek365'}), (p:Path {name:'espath'})
-CREATE (a:Review {score:5,comments:'in nulla pulvinar viverra sed '}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dwnberry'}), (p:Path {name:'neopath'})
-CREATE (a:Review {score:4,comments:'ullamcorper ex venenatis in'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dwnberry'}), (p:Path {name:'seqpath'})
-CREATE (a:Review {score:3,comments:'dapibus elit, quis venenatis justo'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dwnberry'}), (p:Path {name:'seqpath'})
-CREATE (a:Review {score:3,comments:' Nunc nisl eros, pellentesque eu justo nec'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'mporter'}), (p:Path {name:'exprspath'})
-CREATE (a:Review {score:4,comments:'elit, quis venenatis justo malesuada sed.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'mporter'}), (p:Path {name:'htmlpath'})
-CREATE (a:Review {score:2,comments:'maximus aliquam arcu.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'devDebb'}), (p:Path {name:'Beginner Python'})
-CREATE (a:Review {score:4,comments:'et ullamcorper ex venenatis in'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'devDebb'}), (p:Path {name:'DataScience'})
-CREATE (a:Review {score:3,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'silverfox'}), (p:Path {name:'rpath'})
-CREATE (a:Review {score:1,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'silverfox'}), (p:Path {name:'styled'})
-CREATE (a:Review {score:4,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'blueTuna'}), (p:Path {name:'jsbasic'})
-CREATE (a:Review {score:5,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'blueTuna'}), (p:Path {name:'espath'})
-CREATE (a:Review {score:4,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'therealclyde'}), (p:Path {name:'seqpath'})
-CREATE (a:Review {score:3,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'therealclyde'}), (p:Path {name:'neopath'})
-CREATE (a:Review {score:2,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'avaK'}), (p:Path {name:'exprspath'})
-CREATE (a:Review {score:2,comments:'massa quis, efficitur neque'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'avaK'}), (p:Path {name:'htmlpath'})
-CREATE (a:Review {score:2,comments:'luctus tristique ac id sem.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dragonslayer'}), (p:Path {name:'rpath'})
-CREATE (a:Review {score:5,comments:'luctus tristique ac id sem.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'dragonslayer'}), (p:Path {name:'styled'})
-CREATE (a:Review {score:3,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'violeteyes'}), (p:Path {name:'exprspath'})
-CREATE (a:Review {score:3,comments:'hendrerit in, lobortis et risus.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
-MATCH (u:User {name:'violeteyes'}), (p:Path {name:'neopath'})
-CREATE (a:Review {score:5,comments:'ullamcorper ex venenatis in. Suspendisse lacinia urna a blandit dignissim.'}),
-(u)-[:REVIEWS]->(a)-[:REVIEWS]->(p),
 
 
 
