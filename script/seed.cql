@@ -3,6 +3,8 @@ let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
 
 
+session.run('MATCH (n) detach delete n')
+
 session.run(`
 CREATE (Justin:User {name:'Justin',email:'justin@justin.com',password:'1234',googleId:null,isAdmin:true}),
 (Jami:User {name:'Jami',email:'jami@jami.com',password:'1234',googleId:null,isAdmin:true}),
