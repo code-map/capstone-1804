@@ -56,6 +56,7 @@ class UserDashboard extends Component {
 
           { allUserPaths &&
             <PathUserDirectory
+              selected={this.state.selectedPath}
               paths={allUserPaths}
               handleSelect={this.handleSelect}
             />

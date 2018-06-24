@@ -72,7 +72,7 @@ class SinglePath extends Component {
     // steps.forEach(step => step.completed ? completed++ : '')
     // return Math.round( (completed / total) * 100 )
 
-    return '50'
+    return 50
   }
 
   render(){
