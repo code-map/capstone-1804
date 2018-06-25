@@ -43,7 +43,6 @@ class UserDashboard extends Component {
   render () {
     const { allUserPaths } = this.props
     const view = this.props.match.params.view
-
     return (
       <div style={styles.container}>
 
