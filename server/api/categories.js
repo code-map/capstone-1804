@@ -4,6 +4,7 @@ let session = driver.session();
 const router = require('express').Router()
 //dummy code
 const dummyData = require('../../script/data/path.js')
+const dummyCategories = require('../../script/data/category.js')
 //end of dummy code
 
 router.get('/hello', (req, res, next) => {
@@ -15,9 +16,15 @@ router.get('/hello', (req, res, next) => {
 })
 
 
+router.get('/popular', (req,res,next) => {
+  //dummy code
+  const searchVal = req.body
+  res.send(dummyCategories.slice(0,4))
+  //end of dummy code
+})
+
 router.get('/:categoryId/popular-paths', (req,res,next) => {
   //dummy code
-  console.log('dummyData =', dummyData)
   const sortedDummyData = dummyData.slice().sort()
   res.send(sortedDummyData.slice(0,4))
   //end of dummy code

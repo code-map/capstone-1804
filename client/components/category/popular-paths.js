@@ -5,6 +5,9 @@ import { getPopularPathsInCategory } from '../../store'
 import { PathCard } from '../paths'
 import Grid from '@material-ui/core/Grid'
 
+//to differentiate this component from /paths/popular-paths.js, 
+//these only bring in the popular paths of a specific category
+
 const styles = {
   container: {
     padding: 20
@@ -37,7 +40,6 @@ class CategoryPopularPaths extends React.Component {
 
   render() {
     const paths = this.props.paths
-    console.log('paths are: ', paths)
     return (
       <div style={styles.container} >
         <Grid container spacing={40} >

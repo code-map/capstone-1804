@@ -7,6 +7,7 @@ const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
+const SET_POPULAR_PATHS_IN_ALL_CATEGORIES = 'SET_POPULAR_PATHS_IN_ALL_CATEGORIES'
 const SET_SEARCHED_PATHS_IN_CATEGORY = 'SET_SEARCHED_PATHS_IN_CATEGORY'
 
 /**
@@ -22,6 +23,13 @@ const getSingleUserPaths = (paths) => {
 const setPopularPathsInCategory = (paths) => {
   return {
     type: SET_POPULAR_PATHS_IN_CATEGORY,
+    paths
+  }
+}
+
+const setPopularPathsInAllCategories = (paths) => {
+  return {
+    type: SET_POPULAR_PATHS_IN_ALL_CATEGORIES,
     paths
   }
 }
@@ -51,6 +59,13 @@ export const getSingleUserPathsThunk = (username) => {
   }
 }
 
+export const getPopularPathsInAllCategories = (categoryId) => {
+  return async (dispatch) => {
+    const res = await axios.get(`/api/paths/popular-paths`)
+    dispatch(setPopularPathsInAllCategories(res.data))
+  }
+}
+
 export const getPopularPathsInCategory = (categoryId) => {
   return async (dispatch) => {
     const res = await axios.get(`/api/categories/${categoryId}/popular-paths`)
@@ -75,6 +90,7 @@ export const searchPathsInCategory = (categoryId, searchVal) => {
 const initialState = {
   allUserPaths: [],
   popularPathsInCategory: [],
+  popularPathsInAllCategories: [],
   allPathsInCategory: [],
   searchedPathsInCategory: []
 }
@@ -88,6 +104,8 @@ export const pathReducer = ( state = initialState, action) => {
       return {...state, allUserPaths: action.paths}
     case SET_POPULAR_PATHS_IN_CATEGORY:
       return {...state, popularPathsInCategory: action.paths}
+    case SET_POPULAR_PATHS_IN_ALL_CATEGORIES:
+      return {...state, popularPathsInAllCategories: action.paths}
     case SET_ALL_PATHS_IN_CATEGORY:
       return {...state, allPathsInCategory: action.paths}
     case SET_SEARCHED_PATHS_IN_CATEGORY:
