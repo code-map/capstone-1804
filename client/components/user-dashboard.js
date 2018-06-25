@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
-import { getSingleUserPathsThunk } from '../store'
+import { getSingleUserPathsThunk, getSinglePathThunk } from '../store'
 import { PathUserDirectory, PathSingle, PathBuilder } from './paths'
 import Grid from '@material-ui/core/Grid'
 
@@ -39,10 +39,12 @@ class UserDashboard extends Component {
     this.setState({
       selectedPath: selectedPath[0]
     })
+
+    this.props.getSinglePath(name)
   }
 
   render () {
-    const { allUserPaths } = this.props
+    const { allUserPaths, singlePath } = this.props
     const view = this.props.match.params.view
 
     return (
@@ -65,14 +67,16 @@ class UserDashboard extends Component {
           </Grid>
 
           <Grid item xs={8}>
-            { view === 'my-paths' &&
+            { view === 'my-paths' && singlePath[0] &&
               <PathSingle
-                path={this.state.selectedPath}
+                path={singlePath[0]}
               />
             }
 
             { view === 'add-new-path' &&
-              <PathBuilder user={userName} />
+              <PathBuilder
+                user={userName}
+              />
             }
 
             { view === 'my-stats' &&
@@ -90,7 +94,8 @@ class UserDashboard extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    allUserPaths: state.pathReducer.allUserPaths
+    allUserPaths: state.pathReducer.allUserPaths,
+    singlePath: state.pathReducer.singlePath
   }
 }
 
@@ -98,6 +103,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getSingleUserPaths: (username) => {
       dispatch(getSingleUserPathsThunk(username))
+    },
+    getSinglePath: (name) => {
+      dispatch(getSinglePathThunk(name))
     }
   }
 }

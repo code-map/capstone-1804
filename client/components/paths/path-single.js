@@ -76,7 +76,7 @@ class SinglePath extends Component {
   }
 
   render(){
-    const { path } = this.props
+    const path = this.props.path
 
     if(!path.details) {
       return (<h3>Please select a path</h3>)
@@ -90,7 +90,7 @@ class SinglePath extends Component {
 
         <div style={styles.container}>
           <List>
-            { path.steps &&
+            { path.steps.length > 1 &&
               path.steps.map(step => {
                 const stepUrl = step.resource.properties.url
                 return (
