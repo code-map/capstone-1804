@@ -246,8 +246,8 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (DSTKr2:Review {score:4,comments:'hendrerit in, lobortis et risus.'}),
 (Chan)-[:REVIEWS]->(DSTKr2)-[:REVIEWS]->(DSTK),
 (Python101:Path {name:'Beginner Python',description:'hello world',category:'python',level:'beginner',status:'public'}),
-(Step1:Step {name:'Step1',completed:false, description:'nothing yet!'}),
-(Step2:Step {name:'Step2',completed:false, description:'nothing yet!'}),
+(Step1:Step {name:'Step1',completed:false}),
+(Step2:Step {name:'Step2',completed:false}),
 (Python101)-[:STEPS]->(Step1),
 (Step1)-[:RESOURCE]->(PythonChallenge),
 (Step1)-[:STEPS]->(Step2),
@@ -494,3 +494,7 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 
 
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
