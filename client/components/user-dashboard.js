@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
-import { getSinglePathThunk, getSingleUserPathsThunk, getPathStepsThunk } from '../store'
-import { PathUserDirectory, PathSingle } from './paths'
+import { getSingleUserPathsThunk } from '../store'
+import { PathUserDirectory, PathSingle, PathBuilder } from './paths'
 import Grid from '@material-ui/core/Grid'
 
 const styles = {
@@ -16,19 +16,32 @@ const styles = {
 }
 
 class UserDashboard extends Component {
-
-  componentDidMount (){
-    this.props.getSingleUserPaths(this.props.user.id)
+  constructor(){
+    super()
+    this.state = {
+      selectedPath: []
+    }
   }
 
-  handleSelect = (event) => {
-    const pathId = event.target.value
-    this.props.getSinglePath(pathId)
-    this.props.getPathSteps(pathId)
+  componentDidMount (){
+    // This is temporary until we have a user login solution
+    // integrated with Neo4j
+    const userName = 'shark-week365'
+    this.props.getSingleUserPaths(userName)
+  }
+
+  handleSelect = (name) => {
+    const selectedPath = this.props.allUserPaths.find((path) => {
+      return path[0].details.properties.name === name
+    })
+
+    this.setState({
+      selectedPath: selectedPath[0]
+    })
   }
 
   render () {
-    const { allUserPaths, pathSteps } = this.props
+    const { allUserPaths } = this.props
     const view = this.props.match.params.view
 
     return (
@@ -43,6 +56,7 @@ class UserDashboard extends Component {
 
           { allUserPaths &&
             <PathUserDirectory
+              selected={this.state.selectedPath}
               paths={allUserPaths}
               handleSelect={this.handleSelect}
             />
@@ -52,13 +66,12 @@ class UserDashboard extends Component {
           <Grid item xs={8}>
             { view === 'my-paths' &&
               <PathSingle
-                steps={pathSteps}
-                path={this.props.singlePath}
+                path={this.state.selectedPath}
               />
             }
 
             { view === 'add-new-path' &&
-              <p>Add new path view coming soon....</p>
+              <PathBuilder />
             }
 
             { view === 'my-stats' &&
@@ -76,22 +89,14 @@ class UserDashboard extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    singlePath: state.pathReducer.singlePath,
-    allUserPaths: state.pathReducer.allUserPaths,
-    pathSteps: state.pathReducer.pathSteps
+    allUserPaths: state.pathReducer.allUserPaths
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getSinglePath: (id) => {
-      dispatch(getSinglePathThunk(id))
-    },
-    getSingleUserPaths: (userId) => {
-      dispatch(getSingleUserPathsThunk(userId))
-    },
-    getPathSteps: (pathId) => {
-      dispatch(getPathStepsThunk(pathId))
+    getSingleUserPaths: (username) => {
+      dispatch(getSingleUserPathsThunk(username))
     }
   }
 }
