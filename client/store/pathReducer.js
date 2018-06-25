@@ -4,6 +4,7 @@ import axios from 'axios'
  * ACTION TYPES
  */
 const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
+const ADD_NEW_PATH = 'ADD_NEW_PATH'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
@@ -12,6 +13,13 @@ const SET_SEARCHED_PATHS_IN_CATEGORY = 'SET_SEARCHED_PATHS_IN_CATEGORY'
 /**
  * ACTION CREATORS
  */
+const addNewPath = (path) => {
+  return {
+    type: ADD_NEW_PATH,
+    path
+  }
+}
+
 const getSingleUserPaths = (paths) => {
   return {
     type: GET_PATHS_SINGLE_USER,
@@ -43,6 +51,12 @@ const setSearchedPathsInCategory = (paths) => {
 /**
  * THUNK CREATORS
  */
+export const addNewPathThunk = (path) => {
+  return async (dispatch) => {
+    const { data } = await axios.post('/api/paths/add', path)
+    dispatch(addNewPath(data))
+  }
+}
 
 export const getSingleUserPathsThunk = (username) => {
   return async (dispatch) => {
@@ -84,6 +98,8 @@ const initialState = {
  */
 export const pathReducer = ( state = initialState, action) => {
   switch (action.type) {
+    case ADD_NEW_PATH:
+      return {...state, allUserPaths: [...state.allUserPaths, action.path]}
     case GET_PATHS_SINGLE_USER:
       return {...state, allUserPaths: action.paths}
     case SET_POPULAR_PATHS_IN_CATEGORY:

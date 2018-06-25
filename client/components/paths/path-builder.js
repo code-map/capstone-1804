@@ -1,10 +1,13 @@
 import React, {Component} from 'react'
+import { connect } from 'react-redux'
+
+import { addNewPathThunk } from '../../store'
 
 import BuilderTitle from './builder-title'
 import BuilderDescription from './builder-description'
 import BuilderCategory from './builder-category'
 import BuilderTags from './builder-tags'
-import BuilderSkills from './builder-skills'
+import BuilderLevel from './builder-level'
 
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
@@ -30,11 +33,11 @@ class PathBuilder extends Component {
   constructor(){
     super()
     this.state = {
-      title: '',
+      name: '',
       description: '',
-      category: '',
+      language: '',
       tags: '',
-      skill: ''
+      level: ''
     }
   }
 
@@ -44,32 +47,49 @@ class PathBuilder extends Component {
     })
   }
 
+  handleSubmit = (event) => {
+    event.preventDefault()
+
+    const username = this.props.user
+    this.props.addNewPath({...this.state, user: username})
+
+    this.setState({
+      name: '',
+      description: '',
+      language: '',
+      tags: '',
+      level: ''
+    })
+  }
+
   render(){
     const { classes } = this.props
     return (
       <div style={{maxWidth: 700}}>
-        <h3>Add A New Path: {this.state.title}</h3>
+        <h3>Add A New Path: {this.state.name}</h3>
           <form
             className={classes.container}
             onChange={this.handleChange}
+            onSubmit={this.handleSubmit}
             noValidate autoComplete="off"
           >
 
-            <BuilderTitle title={this.state.title} />
+            <BuilderTitle name={this.state.name} />
 
             <BuilderDescription description={this.state.description} />
 
-            <BuilderCategory category={this.state.category} />
+            <BuilderCategory category={this.state.language} />
 
             <BuilderTags tags={this.state.tags} />
 
-            <BuilderSkills skill={this.state.skill} />
+            <BuilderLevel level={this.state.level} />
 
             <Button
+              type="submit"
               size="large"
               className={classes.button}
               variant="outlined">
-              Start Adding Resources
+              Build Your Path
             </Button>
 
           </form>
@@ -78,4 +98,12 @@ class PathBuilder extends Component {
   }
 }
 
-export default withStyles(styles)(PathBuilder);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addNewPath: (path) => {
+      dispatch(addNewPathThunk(path))
+    }
+  }
+}
+
+export default connect(null, mapDispatchToProps)(withStyles(styles)(PathBuilder))

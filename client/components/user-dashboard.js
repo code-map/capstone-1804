@@ -5,6 +5,10 @@ import { getSingleUserPathsThunk } from '../store'
 import { PathUserDirectory, PathSingle, PathBuilder } from './paths'
 import Grid from '@material-ui/core/Grid'
 
+// This is temporary until we have a user login solution
+// integrated with Neo4j
+const userName = 'shark-week365'
+
 const styles = {
   header: {
     textAlign: 'center',
@@ -24,9 +28,6 @@ class UserDashboard extends Component {
   }
 
   componentDidMount (){
-    // This is temporary until we have a user login solution
-    // integrated with Neo4j
-    const userName = 'shark-week365'
     this.props.getSingleUserPaths(userName)
   }
 
@@ -71,7 +72,7 @@ class UserDashboard extends Component {
             }
 
             { view === 'add-new-path' &&
-              <PathBuilder />
+              <PathBuilder user={userName} />
             }
 
             { view === 'my-stats' &&

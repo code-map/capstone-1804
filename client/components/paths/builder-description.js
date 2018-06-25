@@ -6,7 +6,7 @@ const BuilderDescription = ({description}) => {
     <TextField
       multiline={true}
       id="path-description"
-      label="Give your path a short description:"
+      label="Give your path a short description"
       name="description"
       value={description}
       // InputLabelProps={{

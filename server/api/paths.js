@@ -23,4 +23,30 @@ router.get('/all/user/:username/', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// POST: api/paths/add
+router.post('/add', async (req, res, next) => {
+  try {
+    const userNode = `
+    MATCH (u:User) WHERE u.name = {username}
+    CREATE (p:Path {name: {name}, description: {description}, level: {level}, status: {status}, owner: {username}}),
+    (u)-[:PATHS {notes: {notes}}]->(p)`
+
+    const created = await session.run(userNode, {
+      username: req.body.user,
+      name: req.body.name,
+      description: req.body.description,
+      level: req.body.level,
+      status: 'draft',
+      notes: ''
+    })
+
+    const result = [
+      { details: { properties: created.summary.statement.parameters } }
+    ]
+
+    res.send(result)
+    session.close()
+  } catch (err) { next(err) }
+})
+
 module.exports = router

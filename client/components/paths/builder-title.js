@@ -1,13 +1,13 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField'
 
-const BuilderTitle = ({title}) => {
+const BuilderTitle = ({name}) => {
   return (
     <TextField
     id="path-title"
     label="What is the title of your path?"
-    name="title"
-    value={title}
+    name="name"
+    value={name}
     // InputLabelProps={{
     //   shrink: true,
     // }}
