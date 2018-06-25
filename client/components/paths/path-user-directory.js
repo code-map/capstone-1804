@@ -1,7 +1,7 @@
 import React from 'react'
 
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
+import MenuList from '@material-ui/core/MenuList'
+import MenuItem from '@material-ui/core/MenuItem'
 
 const styles = {
   container: {
@@ -15,25 +15,29 @@ const styles = {
   }
 }
 
-const PathUserDirectory = ({paths, handleSelect}) => {
+const PathUserDirectory = ({paths, handleSelect, selected}) => {
+  let active = false
   return (
     <div style={styles.container}>
       <h4 style={styles.header}>My Paths Directory</h4>
-      <List>
-        {
-          paths.map((path) => {
+      <MenuList>
+        { paths.map((path) => {
+          const name = path[0].details.properties.name
+          if (selected.details){
+            active = selected.details.properties.name === name
+          }
             return (
-              <ListItem
-                key={path.id}
-                value={path.id}
-                onClick={(event) => handleSelect(event)}
+              <MenuItem
+                key={name}
+                onClick={() => handleSelect(name)}
+                selected={active}
               >
-                {path.name}
-              </ListItem>
+                {name}
+              </MenuItem>
             )
           })
         }
-      </List>
+      </MenuList>
     </div>
   )
 }

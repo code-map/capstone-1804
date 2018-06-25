@@ -49,10 +49,11 @@ class SinglePath extends Component {
   }
 
   checkForComplete = (url) => {
-    const pathSteps = this.props.steps
+    const steps = this.props.path.steps
     let found = false
-    for(var i = 0; i < pathSteps.length; i++) {
-      if (pathSteps[i].url === url && pathSteps[i].completed) {
+    for(let i = 0; i < steps.length; i++) {
+      const stepUrl = steps[i].resource.properties.url
+      if(stepUrl === url && steps[i].step.properties.completed) {
         found = true
         break
       }
@@ -61,74 +62,86 @@ class SinglePath extends Component {
   }
 
   getCompletePercentage = () => {
-    const steps = this.props.steps
-    const total = this.props.steps.length
-    let completed = 0
 
-    steps.forEach(step => step.completed ? completed++ : '')
-    return Math.round( (completed / total) * 100 )
+    // To be completed when db data is available
+
+    // const steps = this.props.steps
+    // const total = this.props.steps.length
+    // let completed = 0
+
+    // steps.forEach(step => step.completed ? completed++ : '')
+    // return Math.round( (completed / total) * 100 )
+
+    return 50
   }
 
   render(){
     const { path } = this.props
 
-    if(!path.modules) {
+    if(!path.details) {
       return (<h3>Please select a path</h3>)
     }
 
-    console.log('render', this.state)
-
     return (
       <div>
-        <h3>{path.name}</h3>
+        <h3>{path.details.properties.name}</h3>
 
         <PathProgress progress={this.getCompletePercentage()} />
 
         <div style={styles.container}>
           <List>
-            { path.modules &&
-              path.modules.map(module => (
-              <div key={module.url}>
-              <ListItem
-                key={module.url}
-                role={undefined}
-                dense
-                button
-                disableRipple
-              >
-                <Checkbox
-                  onChange={this.handleCompletedClick(module.url)}
-                  checked={this.checkForComplete(module.url)}
-                  disableRipple
-                />
+            { path.steps &&
+              path.steps.map(step => {
+                const stepUrl = step.resource.properties.url
+                return (
+                <div key={stepUrl}>
+                  <ListItem
+                    key={stepUrl}
+                    role={undefined}
+                    dense
+                    button
+                    disableRipple
+                  >
+                    <Checkbox
+                      onChange={this.handleCompletedClick(stepUrl)}
+                      checked={this.checkForComplete(stepUrl)}
+                      disableRipple
+                    />
 
-                <img src={module.imageUrl} width={75} />
+                    {
+                      step.resource.properties.imageUrl ? (
+                        <img src={step.resource.properties.imageUrl} width={75} />
+                      ) : (
+                        <img src="../../default.png" width={75} />
+                      )
+                    }
 
-                <ListItemText primary={module.name} />
+                    <ListItemText primary={step.resource.properties.name} />
 
-                {this.state.selectedItems.indexOf(module.url) !== -1 ?
-                  <ExpandLess
-                    onClick={() => this.handleDropdownClick(module.url)}
-                  /> :
-                  <ExpandMore
-                    onClick={() => this.handleCollapseClick(module.url)}
-                  />
-                }
+                    {this.state.selectedItems.indexOf(stepUrl) !== -1 ?
+                      <ExpandLess
+                        onClick={() => this.handleDropdownClick(stepUrl)}
+                      /> :
+                      <ExpandMore
+                        onClick={() => this.handleCollapseClick(stepUrl)}
+                      />
+                    }
 
-              </ListItem>
-
-              <Collapse
-                in={this.state.selectedItems.indexOf(module.url) !== -1}
-                timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItem button>
-                    <p>In the dropdown!</p>
                   </ListItem>
-                </List>
-              </Collapse>
 
-              </div>
-            ))}
+                  <Collapse
+                    in={this.state.selectedItems.indexOf(stepUrl) !== -1}
+                    timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <ListItem button>
+                        <p>In the dropdown for "{step.resource.properties.name}"</p>
+                      </ListItem>
+                    </List>
+                  </Collapse>
+
+                  </div>
+                )
+            } ) }
           </List>
         </div>
       </div>
