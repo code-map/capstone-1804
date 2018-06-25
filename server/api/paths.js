@@ -7,11 +7,6 @@ const router = require('express').Router()
 router.get('/all/user/:username/', async (req, res, next) => {
   try {
     const param = req.params.username
-
-    // const query = `match(u:User)-[:PATHS*]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-    // where u.name = {username}
-    // return {details: p, steps: collect({step: s, resource: r })}`
-
     const query = `match(u:User) - [:PATHS*]->(p:Path)
     where u.name = {username}
     return {details: p}`
@@ -29,7 +24,6 @@ router.get('/all/user/:username/', async (req, res, next) => {
 
 // GET: api/paths/:name
 router.get('/:name', async (req, res, next) => {
-
   try {
     const param = req.params.name
 
@@ -75,6 +69,22 @@ router.post('/', async (req, res, next) => {
     ]
 
     res.send(result)
+    session.close()
+  } catch (err) { next(err) }
+})
+
+// DELETE: api/paths/:name
+router.delete('/:name', async (req, res, next) => {
+  try {
+    const name = req.params.name
+
+    const query = `
+    MATCH (p:Path) WHERE p.name = {name}
+    DETACH DELETE p`
+
+    await session.run(query, {name})
+
+    res.send(name)
     session.close()
   } catch (err) { next(err) }
 })

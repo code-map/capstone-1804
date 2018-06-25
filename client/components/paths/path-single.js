@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import PathProgress from './path-progress'
+
+import { deleteSinglePathThunk } from '../../store'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -8,6 +11,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import Collapse from '@material-ui/core/Collapse'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
+import Button from '@material-ui/core/Button'
 
 const styles = {
   container: {
@@ -48,6 +52,14 @@ class SinglePath extends Component {
     // To complete when DB is operational
   }
 
+  handleDeletePath = (event) => {
+    event.preventDefault()
+    const pathName = this.props.path.details.properties.name
+    if (window.confirm(`Are you sure you want to delete ${pathName}?`)){
+      this.props.deleteSinglePath(pathName)
+    }
+  }
+
   checkForComplete = (url) => {
     const steps = this.props.path.steps
     let found = false
@@ -74,6 +86,7 @@ class SinglePath extends Component {
 
     return 50
   }
+
 
   render(){
     const path = this.props.path
@@ -143,10 +156,28 @@ class SinglePath extends Component {
                 )
             } ) }
           </List>
+
         </div>
+
+          <Button
+            onClick={this.handleDeletePath}
+            variant="outlined"
+            color="secondary"
+          >
+            Delete Path
+          </Button>
+
       </div>
     )
   }
 }
 
-export default SinglePath
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteSinglePath: (name) => {
+      dispatch(deleteSinglePathThunk(name))
+    }
+  }
+}
+
+export default connect(null, mapDispatchToProps)(SinglePath)

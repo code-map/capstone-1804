@@ -6,6 +6,7 @@ import axios from 'axios'
 const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
 const ADD_NEW_PATH = 'ADD_NEW_PATH'
 const GET_SINGLE_PATH = 'GET_SINGLE_PATH'
+const DELETE_SINGLE_PATH = 'DELETE_SINGLE_PATH'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
@@ -32,6 +33,13 @@ const getSinglePath = (path) => {
   return {
     type: GET_SINGLE_PATH,
     path
+  }
+}
+
+const deleteSinglePath = (name) => {
+  return {
+    type: DELETE_SINGLE_PATH,
+    name
   }
 }
 
@@ -73,10 +81,17 @@ export const getSingleUserPathsThunk = (username) => {
   }
 }
 
-export const getSinglePathThunk = (pathName) => {
+export const getSinglePathThunk = (name) => {
   return async (dispatch) => {
-    const { data } = await axios.get(`/api/paths/${pathName}`)
+    const { data } = await axios.get(`/api/paths/${name}`)
     dispatch(getSinglePath(data))
+  }
+}
+
+export const deleteSinglePathThunk = (name) => {
+  return async (dispatch) => {
+    await axios.delete(`/api/paths/${name}`)
+    dispatch(deleteSinglePath(name))
   }
 }
 
@@ -116,6 +131,10 @@ export const pathReducer = ( state = initialState, action) => {
   switch (action.type) {
     case ADD_NEW_PATH:
       return {...state, allUserPaths: [...state.allUserPaths, action.path]}
+    case DELETE_SINGLE_PATH: {
+      const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.name !== action.name)
+      return {...state, allUserPaths}
+    }
     case GET_PATHS_SINGLE_USER:
       return {...state, allUserPaths: action.paths}
     case GET_SINGLE_PATH:

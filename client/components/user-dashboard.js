@@ -4,6 +4,7 @@ import NavDashboard from './nav-dashboard'
 import { getSingleUserPathsThunk, getSinglePathThunk } from '../store'
 import { PathUserDirectory, PathSingle, PathBuilder } from './paths'
 import Grid from '@material-ui/core/Grid'
+import history from '../history'
 
 // This is temporary until we have a user login solution
 // integrated with Neo4j
@@ -41,6 +42,7 @@ class UserDashboard extends Component {
     })
 
     this.props.getSinglePath(name)
+    history.push('/user/dashboard/my-paths')
   }
 
   render () {
