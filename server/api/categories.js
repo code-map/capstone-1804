@@ -3,7 +3,7 @@ let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
 const router = require('express').Router()
 //dummy code
-const dummyData = require('../../script/data/path.js')
+const dummyCategories = require('../../script/data/category.js')
 //end of dummy code
 
 router.get('/hello', (req, res, next) => {
@@ -34,7 +34,6 @@ router.get(`/all/parent`, async (req, res, next) => {
     session.close()
   } catch (err) { next(err) }
 })
-
 
 router.get('/:categoryName/popular-paths', async (req,res,next) => {
   const category = req.params.categoryName
@@ -70,5 +69,14 @@ router.get('/:categoryName/search', async(req,res,next) => {
   const allPathsAndResourcesByCategory = response.records
   res.json(allPathsAndResourcesByCategory)
 })
+
+//route for getting the most popular categories
+router.get('/popular', (req,res,next) => {
+  //dummy code
+  const searchVal = req.body
+  res.send(dummyCategories.slice(0,4))
+  //end of dummy code
+})
+
 
 module.exports = router

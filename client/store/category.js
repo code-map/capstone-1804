@@ -5,6 +5,15 @@ import axios from 'axios'
  */
 const SEARCH_FOR_CATEGORY = 'SEARCH_FOR_CATEGORY'
 const GET_ALL_PARENT_CATEGORIES = 'GET_ALL_PARENT_CATEGORIES'
+const SET_POPULAR_CATEGORIES = 'SET_POPULAR_CATEGORIES'
+
+/**
+ * INITIAL STATE
+ */
+const initialState = {
+  foundCategories: [],
+  popularCategories: [],
+}
 
 /**
  * ACTION CREATORS
@@ -16,13 +25,26 @@ const getAllParentCategories = (categories) => {
   }
 }
 
+const setPopularCategoriesAC = (popularCategories) => {
+  return {
+    type: SET_POPULAR_CATEGORIES,
+    popularCategories,
+  }
+}
+
 /**
  * THUNK CREATORS
  */
+
 export const getAllParentCategoriesThunk = () => {
   return async (dispatch) => {
     const { data } = await axios.get('/api/categories/all/parent')
     dispatch(getAllParentCategories(data))
+
+export const getPopularCategoriesThunk = () => {
+  return async (dispatch) => {
+    const res = await axios.get('/api/categories/popular')
+    dispatch(setPopularCategoriesAC(res.data))
   }
 }
 
@@ -41,6 +63,8 @@ export default function(state = initialState, action) {
       return {...state, foundCategories: action.foundCategories}
     case GET_ALL_PARENT_CATEGORIES:
       return {...state, allParentCategories: action.categories}
+    case SET_POPULAR_CATEGORIES:
+      return {...state, popularCategories: action.popularCategories}
     default:
       return state
   }
