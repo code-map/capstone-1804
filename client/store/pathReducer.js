@@ -3,9 +3,10 @@ import axios from 'axios'
 /**
  * ACTION TYPES
  */
-const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
-const ADD_NEW_PATH = 'ADD_NEW_PATH'
 const GET_SINGLE_PATH = 'GET_SINGLE_PATH'
+const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
+const GET_STEP_COMPLETIONS_FOR_USER = 'GET_STEP_COMPLETIONS_FOR_USER'
+const ADD_NEW_PATH = 'ADD_NEW_PATH'
 const DELETE_SINGLE_PATH = 'DELETE_SINGLE_PATH'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
@@ -33,6 +34,13 @@ const getSinglePath = (path) => {
   return {
     type: GET_SINGLE_PATH,
     path
+  }
+}
+
+const getStepCompletionSingleUser = (completed) => {
+  return {
+    type: GET_STEP_COMPLETIONS_FOR_USER,
+    completed
   }
 }
 
@@ -88,6 +96,13 @@ export const getSinglePathThunk = (name) => {
   }
 }
 
+export const getStepCompletionSingleUserThunk = (pathName, username) => {
+  return async (dispatch) => {
+    const { data } = await axios.get(`/api/paths/${pathName}/user/${username}/completed`)
+    dispatch(getStepCompletionSingleUser(data))
+  }
+}
+
 export const deleteSinglePathThunk = (name) => {
   return async (dispatch) => {
     await axios.delete(`/api/paths/${name}`)
@@ -119,6 +134,7 @@ export const searchPathsInCategory = (categoryId, searchVal) => {
 const initialState = {
   allUserPaths: [],
   singlePath: [],
+  completedSteps: [],
   popularPathsInCategory: [],
   allPathsInCategory: [],
   searchedPathsInCategory: []
@@ -127,7 +143,7 @@ const initialState = {
 /**
  * REDUCER
  */
-export const pathReducer = ( state = initialState, action) => {
+export const pathReducer = ( state = initialState, action) => { // eslint-disable-line
   switch (action.type) {
     case ADD_NEW_PATH:
       return {...state, allUserPaths: [...state.allUserPaths, action.path]}
@@ -139,6 +155,8 @@ export const pathReducer = ( state = initialState, action) => {
       return {...state, allUserPaths: action.paths}
     case GET_SINGLE_PATH:
       return {...state, singlePath: action.path}
+    case GET_STEP_COMPLETIONS_FOR_USER:
+      return {...state, completedSteps: action.completed}
     case SET_POPULAR_PATHS_IN_CATEGORY:
       return {...state, popularPathsInCategory: action.paths}
     case SET_ALL_PATHS_IN_CATEGORY:

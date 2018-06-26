@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PathProgress from './path-progress'
 
-import { deleteSinglePathThunk } from '../../store'
+import { deleteSinglePathThunk, getStepCompletionSingleUserThunk } from '../../store'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -28,6 +28,20 @@ class SinglePath extends Component {
 
     this.state = {
       selectedItems: []
+    }
+  }
+
+  componentDidMount = () => {
+    const pathName = this.props.path.details.properties.name
+    const username = this.props.user
+    this.props.getCompletedSteps(pathName, username)
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(nextProps.path !== this.props.path){
+      const pathName = nextProps.path.details.properties.name
+      const username = this.props.user
+      this.props.getCompletedSteps(pathName, username)
     }
   }
 
@@ -61,35 +75,34 @@ class SinglePath extends Component {
   }
 
   checkForComplete = (url) => {
-    const steps = this.props.path.steps
+    const completedSteps = this.props.completedSteps
     let found = false
-    for(let i = 0; i < steps.length; i++) {
-      const stepUrl = steps[i].resource.properties.url
-      if(stepUrl === url && steps[i].step.properties.completed) {
+
+    for(let i = 0; i < completedSteps.length; i++) {
+      const stepUrl = completedSteps[i].stepUrl
+      if(stepUrl === url && completedSteps[i].completed) {
         found = true
         break
       }
     }
+
     return found
   }
 
   getCompletePercentage = () => {
+    const steps = this.props.completedSteps
+    const total = this.props.completedSteps.length
+    let completed = 0
 
-    // To be completed when db data is available
-
-    // const steps = this.props.steps
-    // const total = this.props.steps.length
-    // let completed = 0
-
-    // steps.forEach(step => step.completed ? completed++ : '')
-    // return Math.round( (completed / total) * 100 )
-
-    return 50
+    steps.forEach(step => step.completed ? completed++ : '')
+    return Math.round( (completed / total) * 100 )
   }
 
 
   render(){
     const path = this.props.path
+
+    console.log('completed steps', this.props.completedSteps)
 
     if(!path.details) {
       return (<h3>Please select a path</h3>)
@@ -172,12 +185,21 @@ class SinglePath extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    completedSteps: state.pathReducer.completedSteps
+  }
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     deleteSinglePath: (name) => {
       dispatch(deleteSinglePathThunk(name))
+    },
+    getCompletedSteps: (pathName, username) => {
+      dispatch(getStepCompletionSingleUserThunk(pathName, username))
     }
   }
 }
 
-export default connect(null, mapDispatchToProps)(SinglePath)
+export default connect(mapStateToProps, mapDispatchToProps)(SinglePath)

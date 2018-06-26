@@ -61,9 +61,9 @@ class UserDashboard extends Component {
 
           { allUserPaths &&
             <PathUserDirectory
-              selected={this.state.selectedPath}
               paths={allUserPaths}
               handleSelect={this.handleSelect}
+              selected={this.state.selectedPath}
             />
           }
           </Grid>
@@ -71,6 +71,7 @@ class UserDashboard extends Component {
           <Grid item xs={8}>
             { view === 'my-paths' && singlePath[0] &&
               <PathSingle
+                user={userName}
                 path={singlePath[0]}
               />
             }
