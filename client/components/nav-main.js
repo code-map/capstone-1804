@@ -34,6 +34,10 @@ const MainNav = ({handleClick, isLoggedIn, classes}) => (
           <CategoryDropdown />
         </div>
 
+        <Link to="/about">
+          <Button color="inherit">About</Button>
+        </Link>
+
         {isLoggedIn ? (
           <div>
             {/* The navbar will show these links after you log in */}
