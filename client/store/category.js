@@ -6,6 +6,10 @@ import axios from 'axios'
 const SEARCH_FOR_CATEGORY = 'SEARCH_FOR_CATEGORY'
 const SET_POPULAR_CATEGORIES = 'SET_POPULAR_CATEGORIES'
 
+
+
+
+
 /**
  * INITIAL STATE
  */
@@ -32,7 +36,6 @@ const setPopularCategoriesAC = (popularCategories) => {
 export const getPopularCategoriesThunk = () => {
   return async (dispatch) => {
     const res = await axios.get('/api/categories/popular')
-    console.log('res in getPopularCategoriesThunk is: ', res)
     dispatch(setPopularCategoriesAC(res.data))
   }
 }

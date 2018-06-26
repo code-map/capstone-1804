@@ -16,7 +16,7 @@ const styles = theme => ({
 const BuilderCategory = ({classes, category}) => {
   return (
     <FormControl className={classes.formControl}>
-      <InputLabel htmlFor="age-native-simple">Select a Language Category</InputLabel>
+      <InputLabel htmlFor="age-native-simple">Select a language category</InputLabel>
       <Select
         native
         value={category}

@@ -15,7 +15,7 @@ const styles = {
 const CategoryCard = (props) => {
   return(
     <div>
-      <Link to={`/category/${props.category.id}`}>
+      <Link to={`/category/${props.category.name}`}>
         <Card>
           <h4>
             {props.category.name}

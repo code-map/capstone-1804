@@ -14,7 +14,6 @@ class PopularCategories extends React.Component {
   }
 
   render() {
-    console.log('props inside popularCategories is: ', this.props)
     const popularCategories = this.props.popularCategories
     return( 
       <div>

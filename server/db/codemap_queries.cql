@@ -86,17 +86,22 @@ return p.name as PathName, s as Step, res.name, avg(rev.score) as Rating
 order by Step.name asc
 
 
-//All paths from a given category, sorted by number of users subscribed to path
-//connects row 3 of API Call Wishlist
+//All paths from a given category, with user count and rating, sorted by rating
+
 match (c:Category)<-[:CATEGORY]-(p:Path)<-[:PATHS]-(u:User)
-where c.name='React'
-optional match (p)<-[:REVIEWS]-(rev:Review)
-return  c.name as Category, p as Path, count(distinct u) as Users, coalesce(avg(rev.score), -1) as Rating
-order by Rating desc
+where c.name='Express'
+with c, p, count(u) as Users
+optional match (p)<-[:REVIEWS]-(r:Review)
+return c, p, Users, avg(r.score) as Rating
+order by Rating
+
+//connects row 3 of API Call Wishlist
+
 
 
 //pathReducer - getAllPathsThunk
-match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(res:Resource) return properties(p),collect({step: properties(s),resource: properties(res)})
+match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(res:Resource)
+  return properties(p),collect({step: properties(s),resource: properties(res)})
 
 //pathReducer - getSinglePathThunk
 match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(res:Resource)

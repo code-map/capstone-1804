@@ -14,7 +14,6 @@ class PopularPaths extends React.Component {
   }
 
   render() {
-    console.log('props inside popularPaths is: ', this.props)
     const popularPaths = this.props.popularPaths
     return( 
       <div>
