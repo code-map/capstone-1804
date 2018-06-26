@@ -15,7 +15,8 @@ const recordsReducer = (records) => {
 }
 
 module.exports = recordsReducer
-/*
+
+  /*
 EXAMPLE INPUT: queryResult.records =
 [
   {
@@ -28,17 +29,17 @@ EXAMPLE INPUT: queryResult.records =
     ],
     length: 5,
     _fields: [
-      "ES6 Highlights",
-      "Chan",
+      "All About React",
+      "dragon-slayer",
       {
-        low: 4,
+        low: 9,
         high: 0
       },
       {
-        low: 2,
+        low: 3,
         high: 0
       },
-      4.5
+      4
     ],
     _fieldLookup: {
       name: 0,
@@ -52,7 +53,6 @@ EXAMPLE INPUT: queryResult.records =
   .
   .
 ]
-
 
 EXAMPLE OUTPUT: returnedArray = 
 [
