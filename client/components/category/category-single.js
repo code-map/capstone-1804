@@ -43,9 +43,9 @@ const Container = styled.div`
   flex-direction: column;
   width: 95vw;
   margin-top: 50px
+  padding: 50px;
+  box-sizing: border-box;
 `
-
-
 
 const Headline = styled.div`
 margin: 10px;
@@ -110,11 +110,16 @@ class CategorySinglePage extends Component {
     const stuff = await this.props.getAllItemsInCategory(categoryName)
   }
 
+  redirect = () => {
+    console.log('hist', this.props)
+
+  }
 
 
 
   render() {
-    const { paths, resources, name } = this.props.categoryItems
+    const { paths, resources, name, url } = this.props.categoryItems
+    console.log('ure', url)
     if(paths.length) {
       return(
         <Container>
@@ -137,29 +142,27 @@ class CategorySinglePage extends Component {
         </HeadlineCol>
         <Headline>
           <Grid container spacing={24}>
-              <Grid item item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
             <ListContainer>
             <SubHeader style={{marginTop:'15px'}}>Popular resources in Javascript</SubHeader>
               <ul>
               {
                 resources.map((resource) => {
-                  return <Link to={resource.name} key={resource.name}>
-                  <li>{resource.name}</li>
-                    </Link>
+                  return <li key={resource.name}><a href={resource.url}>{resource.name}</a></li>
                 })
               }
               </ul>
             </ListContainer>
             </Grid>
-          <Grid item item xs={12} sm={6}>
+          <Grid item xs={12} sm={6}>
           <ListContainer>
           <SubHeader style={{marginTop:'15px'}}>All paths in Javascript</SubHeader>
               <ul>
               {
                 paths.map((path) => {
-                  return <Link to={path.name} key={path.name}>
-                  <li>{path.name}</li>
-                    </Link>
+                  return
+                  <li><Link to={path.name} key={path.name}>{path.name}</Link></li>
+
                 })
               }
               </ul>
