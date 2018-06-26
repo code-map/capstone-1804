@@ -59,7 +59,7 @@ const MainNav = ({handleClick, isLoggedIn, classes}) => (
  */
 const mapState = state => {
   return {
-    isLoggedIn: !!state.user.id
+    isLoggedIn: !!state.user.name
   }
 }
 

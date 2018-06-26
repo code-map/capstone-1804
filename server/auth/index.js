@@ -15,7 +15,7 @@ router.post('/signup', async (req, res, next) => {
 
     console.log('in route: name', name, 'email', email, 'pass', pass)
     const query = `
-    CREATE (newuser:User {name: {name}, email: {email}, password: {password}, googleId: '', createdDate: timestamp(), isAdmin: false, id: 1})
+    CREATE (newuser:User {name: {name}, email: {email}, password: {password}, googleId: '', createdDate: timestamp(), isAdmin: false, id: 2})
     RETURN newuser
   `
 
@@ -34,7 +34,27 @@ router.post('/signup', async (req, res, next) => {
 })
 
 router.post('/login', async (req, res, next) => {
-  console.log('req body', req.body)
+  try{
+
+  const name = req.body.name
+  const pass = req.body.password
+
+  const query = `
+    MATCH (u:User)
+    WHERE u.name = {name} and u.password = {password}
+    RETURN properties(u)
+  `
+
+  const response = await session.run(query, {name: name, password: pass})
+  console.log('response in login route', response.records[0]._fields[0])
+  const user = response.records[0]._fields[0]
+  console.log('user in login route', user)
+  req.login(user, err => (err ? next(err) : res.json(user)))
+
+
+} catch (err) {
+  res.status(401).send('Wrong username or password')
+}
   // const user = await User.findOne({where: {email: req.body.email}})
   // if (!user) {
   //   console.log('No such user found:', req.body.email)

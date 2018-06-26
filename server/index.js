@@ -32,23 +32,17 @@ if (process.env.NODE_ENV === 'test') {
  */
 if (process.env.NODE_ENV !== 'production') require('../secrets')
 
-<<<<<<< HEAD
 // passport registration
-passport.serializeUser((user, done) => done(null, user.name))
-=======
-//passport registration
-passport.serializeUser((user, done) => done(null, user.id))
->>>>>>> fd0022c703cd2c21c3dad58118c9289180c9f459
+passport.serializeUser((user, done) => {done(null, user.name) })
 
-passport.deserializeUser(async (name2, done) => {
+passport.deserializeUser(async (name, done) => {
   try {
     const response = await neoSession.run(`
       MATCH (u:User)
-      WHERE u.name = {name}
+      WHERE u.name ={name}
       RETURN u
-    `, {name: 'test1'})
-    console.log('deserialize response', response)
-    const user = response.records[0]._fields[0].properties
+    `, {name: name})
+    const user = await response.records[0]._fields[0].properties
     done(null, user)
   } catch (err) {
     done(err)
