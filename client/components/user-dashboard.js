@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
 import { getSingleUserPathsThunk } from '../store'
-import { PathUserDirectory, PathSingle } from './paths'
+import { PathUserDirectory, PathSingle, PathBuilder } from './paths'
 import Grid from '@material-ui/core/Grid'
 
 const styles = {
@@ -70,7 +70,7 @@ class UserDashboard extends Component {
             }
 
             { view === 'add-new-path' &&
-              <p>Add new path view coming soon....</p>
+              <PathBuilder />
             }
 
             { view === 'my-stats' &&
