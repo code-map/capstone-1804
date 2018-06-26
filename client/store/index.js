@@ -5,12 +5,14 @@ import {composeWithDevTools} from 'redux-devtools-extension'
 import user from './user'
 import category from './category'
 import {pathReducer} from './pathReducer'
+import step from './step'
 import singleCategory from './single-category'
 
 const reducer = combineReducers({
   user,
   pathReducer,
   category,
+  step,
   singleCategory
 })
 const middleware = composeWithDevTools(
@@ -22,4 +24,5 @@ export default store
 export * from './user'
 export * from './category'
 export * from './pathReducer'
+export * from './step'
 export * from './single-category'
