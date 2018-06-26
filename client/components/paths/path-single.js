@@ -98,15 +98,8 @@ class SinglePath extends Component {
     return Math.round( (completed / total) * 100 )
   }
 
-
   render(){
     const path = this.props.path
-
-    console.log('completed steps', this.props.completedSteps)
-
-    if(!path.details) {
-      return (<h3>Please select a path</h3>)
-    }
 
     return (
       <div>
@@ -187,7 +180,7 @@ class SinglePath extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    completedSteps: state.pathReducer.completedSteps
+    completedSteps: state.step.completedSteps
   }
 }
 

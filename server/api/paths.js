@@ -75,6 +75,7 @@ router.get('/:name/user/:username/completed', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// PUT: api/paths/:name/user/:username/step
 
 
 // POST: api/paths/
