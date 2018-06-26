@@ -35,10 +35,6 @@ router.get(`/all/parent`, async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-<<<<<<< HEAD
-
-=======
->>>>>>> ab35f565c41d7cd3a0f36e6351f068e4942deb37
 router.get('/:categoryName/popular-paths', async (req,res,next) => {
   const category = req.params.categoryName
   const query = `match(u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
