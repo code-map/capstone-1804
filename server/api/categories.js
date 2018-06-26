@@ -10,7 +10,6 @@ router.get('/hello', (req, res, next) => {
   session.run(`match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
   where p.name='Sequelize Basics'
   return collect({step: properties(s), resource: properties(r)})`).then(result => result.records.forEach(rec => {
-    console.log(rec._fields)
   })).then(session.close())
 })
 
@@ -22,11 +21,11 @@ router.get('/:categoryName/popular-paths', async (req,res,next) => {
       with count(u) as Users,c,p
       optional match(rev:Review)-[:REVIEWS]->(p)
       return c.name as Category, p.name as Path, Users, avg(rev.score) as Rating
-      order by Users  desc
+      order by Users desc
       limit 3
      `
-  const top3PathsByCategory = await session.run(query, { category })
-  res.json(top3PathsByCategory)
+  const topPathsByCategory = await session.run(query, { category })
+  res.json(topPathsByCategory)
 })
 
 router.get('/:categoryName/all-paths', async (req,res,next) => {
@@ -39,10 +38,12 @@ router.get('/:categoryName/all-paths', async (req,res,next) => {
 router.get('/:categoryName/search', async(req,res,next) => {
   const category = req.params.categoryName
   const query = `match (p:Path)-[:CATEGORY]->(c) where c.name={category}
-  RETURN p AS combined
+  optional match(rev:Review)-[:REVIEWS]->(p)
+  RETURN p AS combined, avg(rev.score) as rating
   UNION
   match (r:Resource)-[:CATEGORY]->(c) where c.name={category}
-  RETURN r AS combined`
+  optional match(rev:Review)-[:REVIEWS]->(r)
+  RETURN r AS combined, avg(rev.score) as rating`
   const response = await session.run(query, {category})
   const allPathsAndResourcesByCategory = response.records
   res.json(allPathsAndResourcesByCategory)

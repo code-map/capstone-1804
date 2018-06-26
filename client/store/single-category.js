@@ -28,9 +28,10 @@ export const createGetSingleCategoryThunk = (category) => {
    return async (dispatch) => {
       const response = await axios.get(`/api/categories/${category}/search`)
       const content = response.data.map(item => {
+      const rating = item._fields[1]
       const {labels, properties} = item._fields[0]
       const {description, level, name, status} = properties
-      return {type: labels[0], description, level, name, status: status || null}
+      return {type: labels[0], description, level, name, rating, status: status || null}
      })
      dispatch(returnAllItemsInCategory({category, content}))
    }

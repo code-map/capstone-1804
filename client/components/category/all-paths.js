@@ -3,25 +3,35 @@ import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import  Grid from '@material-ui/core/Grid'
 import { getAllPathsInCategory } from '../../store'
-import { PathCardSmall } from '../paths'
+import {PathCardSmallCategory} from '../paths'
+import styled from "styled-components";
+
+const Display = styled.div`
+  display: flex;
+  width: 100vw;
+  flex-wrap: nowrap;
+`
+
+
+
+
+
 
 const CategoryAllPaths = (props) => {
-    console.log('props in all path', props)
     const {paths} = props
     return(
-        <Grid container spacing={40}>
+      <Display>
           {paths.map((path) =>
-            <Grid item xs={6} key={path.name}>
-              <PathCardSmall
-                img='/bricks.png'
+              <PathCardSmallCategory
+                key={path.name}
+                img='/squares-default.png'
                 name={path.name}
                 username={path.username || null }
                 rating={path.rating || 3}
                 description={path.description}
               />
-              </Grid>
           )}
-          </Grid>
+          </Display>
     )}
 
 
