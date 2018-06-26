@@ -3,6 +3,7 @@ export {default as PathSingle} from './path-single'
 export {default as PathProgress} from './path-progress'
 export {default as PathCardSmall} from './path-card-small'
 export {default as PathBuilder} from './path-builder'
+export {default as PopularPaths} from './popular-paths'
+export {default as PathCard} from './path-card'
 export {default as Stars} from './stars'
 export {default as PathCardSmallCategory} from './path-card-category'
-

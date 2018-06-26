@@ -2,6 +2,7 @@ let neo4j = require('neo4j-driver').v1;
 let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
 const router = require('express').Router()
+const dummyPaths = require('../../script/data/path.js')
 
 // GET: api/paths/all/user/:username/
 router.get('/all/user/:username/', async (req, res, next) => {
@@ -21,6 +22,18 @@ router.get('/all/user/:username/', async (req, res, next) => {
     session.close()
   } catch (err) { next(err) }
 })
+/*
+/api/paths/popular-paths
+*/
+
+router.get('/popular-paths', (req,res,next) => {
+  //dummy code
+  const sortedDummyData = dummyPaths.slice().sort()
+  res.send(sortedDummyData.slice(0,4))
+  //end of dummy code
+})
+
+
 
 // GET: api/paths/:name
 router.get('/:name', async (req, res, next) => {
