@@ -3,52 +3,39 @@ import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import  Grid from '@material-ui/core/Grid'
 import { getAllPathsInCategory } from '../../store'
-import { PathCardSmall } from '../paths'
+import {PathCardSmallCategory} from '../paths'
+import styled from "styled-components";
 
-class CategoryAllPaths extends React.Component {
-  constructor(){
-    super()
-  }
+const Display = styled.div`
+  display: flex;
+  width: 100vw;
+  flex-wrap: nowrap;
+`
 
-  async componentDidMount(){
-    const categoryId = this.props.categoryId
-    await this.props.getAllPathsInCategory(categoryId)
-  }
 
-  render() {
-    const paths = this.props.paths
+
+
+
+
+const CategoryAllPaths = (props) => {
+    const {paths} = props
     return(
-      <div>
-        <Grid container spacing={40}>
+      <Display>
           {paths.map((path) =>
-            <Grid item xs={6} key = {path.id}>
-              <PathCardSmall
-                id = {path.id}
-                imagePath={path.image}
+              <PathCardSmallCategory
+                key={path.name}
+                img='/squares-default.png'
                 name={path.name}
-                username={path.username}
-                rating={path.rating}
+                username={path.username || null }
+                rating={path.rating || 3}
+                description={path.description}
               />
-            </Grid>
           )}
-        </Grid>
-      </div>
-    )
-  }
-}
+          </Display>
+    )}
 
-const mapState = (state) => {
-  return({
-    paths: state.pathReducer.allPathsInCategory
-  })
-}
 
-const mapDispatch = (dispatch) => {
-  return({
-    getAllPathsInCategory : (categoryId) => {
-      return dispatch(getAllPathsInCategory(categoryId))
-    }
-  })
-}
 
-export default connect(mapState, mapDispatch)(CategoryAllPaths)
+
+
+export default CategoryAllPaths

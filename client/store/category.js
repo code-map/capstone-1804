@@ -5,6 +5,10 @@ import axios from 'axios'
  */
 const SEARCH_FOR_CATEGORY = 'SEARCH_FOR_CATEGORY'
 
+
+
+
+
 /**
  * INITIAL STATE
  */

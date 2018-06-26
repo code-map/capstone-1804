@@ -5,9 +5,7 @@ import PropTypes from 'prop-types'
 import {Login, Signup, UserHome, UserDashboard, CategorySinglePage} from './components'
 import {me} from './store'
 
-/**
- * COMPONENT
- */
+
 class Routes extends Component {
   componentDidMount() {
     this.props.loadInitialData()
@@ -21,7 +19,7 @@ class Routes extends Component {
         {/* Routes placed here are available to all visitors */}
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
-        <Route exact path="/category/:categoryId/" component={CategorySinglePage} />
+        <Route exact path="/category/:categoryName/" component={CategorySinglePage} />
         {isLoggedIn && (
           <Switch>
             {/* Routes placed here are only available after logging in */}

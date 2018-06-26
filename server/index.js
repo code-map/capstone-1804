@@ -32,8 +32,13 @@ if (process.env.NODE_ENV === 'test') {
  */
 if (process.env.NODE_ENV !== 'production') require('../secrets')
 
+<<<<<<< HEAD
 // passport registration
 passport.serializeUser((user, done) => done(null, user.name))
+=======
+//passport registration
+passport.serializeUser((user, done) => done(null, user.id))
+>>>>>>> fd0022c703cd2c21c3dad58118c9289180c9f459
 
 passport.deserializeUser(async (name2, done) => {
   try {
