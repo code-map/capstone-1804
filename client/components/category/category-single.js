@@ -137,7 +137,7 @@ class CategorySinglePage extends Component {
         </HeadlineCol>
         <Headline>
           <Grid container spacing={24}>
-              <Grid item item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
             <ListContainer>
             <SubHeader style={{marginTop:'15px'}}>Popular resources in Javascript</SubHeader>
               <ul>
@@ -151,7 +151,7 @@ class CategorySinglePage extends Component {
               </ul>
             </ListContainer>
             </Grid>
-          <Grid item item xs={12} sm={6}>
+          <Grid item xs={12} sm={6}>
           <ListContainer>
           <SubHeader style={{marginTop:'15px'}}>All paths in Javascript</SubHeader>
               <ul>
