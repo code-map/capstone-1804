@@ -46,7 +46,6 @@ export default function(state = initialState, action) {
     case FIND_ALL_ITEMS_IN_A_CATEGORY:
         const paths = action.content.filter(item => item.type === 'Path')
         const resources = action.content.filter(item => item.type === 'Resource')
-        console.log('name', action.name)
         return { paths, resources, name: action.name }
     default:
       return state
