@@ -2,22 +2,27 @@ const router = require('express').Router()
 const User = require('../db/models/user')
 module.exports = router
 
-router.post('/login', async (req, res, next) => {
-  const user = await User.findOne({where: {email: req.body.email}})
-  if (!user) {
-    console.log('No such user found:', req.body.email)
-    res.status(401).send('Wrong username and/or password')
-  } else if (!user.correctPassword(req.body.password)) {
-    console.log('Incorrect password for user:', req.body.email)
-    res.status(401).send('Wrong username and/or password')
-  } else {
-    req.login(user, err => (err ? next(err) : res.json(user)))
-  }
-})
+let neo4j = require('neo4j-driver').v1;
+let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
+let session = driver.session();
 
 router.post('/signup', async (req, res, next) => {
   try {
-    const user = await User.create(req.body)
+
+    const name = req.body.name
+    const email = req.body.email
+    const pass = req.body.password
+
+    console.log('in route: name', name, 'email', email, 'pass', pass)
+    const query = `
+    CREATE (newuser:User {name: {name}, email: {email}, password: {password}, googleId: '', createdDate: timestamp(), isAdmin: false, id: 1})
+    RETURN newuser
+  `
+
+    const response = await session.run(query, {name: name, email: email, password: pass})
+    console.log('user coming back from db', response.records[0]._fields[0].properties)
+
+    const user = response.records[0]._fields[0].properties
     req.login(user, err => (err ? next(err) : res.json(user)))
   } catch (err) {
     if (err.name === 'SequelizeUniqueConstraintError') {
@@ -27,6 +32,33 @@ router.post('/signup', async (req, res, next) => {
     }
   }
 })
+
+router.post('/login', async (req, res, next) => {
+  console.log('req body', req.body)
+  // const user = await User.findOne({where: {email: req.body.email}})
+  // if (!user) {
+  //   console.log('No such user found:', req.body.email)
+  //   res.status(401).send('Wrong username and/or password')
+  // } else if (!user.correctPassword(req.body.password)) {
+  //   console.log('Incorrect password for user:', req.body.email)
+  //   res.status(401).send('Wrong username and/or password')
+  // } else {
+  //   req.login(user, err => (err ? next(err) : res.json(user)))
+  // }
+})
+
+// router.post('/signup', async (req, res, next) => {
+//   try {
+//     const user = await User.create(req.body)
+//     req.login(user, err => (err ? next(err) : res.json(user)))
+//   } catch (err) {
+//     if (err.name === 'SequelizeUniqueConstraintError') {
+//       res.status(401).send('User already exists')
+//     } else {
+//       next(err)
+//     }
+//   }
+// })
 
 router.post('/logout', (req, res) => {
   req.logout()

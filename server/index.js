@@ -11,6 +11,9 @@ const sessionStore = new SequelizeStore({db})
 const PORT = process.env.PORT || 8080
 const app = express()
 const socketio = require('socket.io')
+const neo4j = require('neo4j-driver').v1;
+const driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
+const neoSession = driver.session();
 module.exports = app
 
 // This is a global Mocha hook, used for resource cleanup.
@@ -30,11 +33,17 @@ if (process.env.NODE_ENV === 'test') {
 if (process.env.NODE_ENV !== 'production') require('../secrets')
 
 // passport registration
-passport.serializeUser((user, done) => done(null, user.id))
+passport.serializeUser((user, done) => done(null, user.name))
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (name2, done) => {
   try {
-    const user = await db.models.user.findById(id)
+    const response = await neoSession.run(`
+      MATCH (u:User)
+      WHERE u.name = {name}
+      RETURN u
+    `, {name: 'test1'})
+    console.log('deserialize response', response)
+    const user = response.records[0]._fields[0].properties
     done(null, user)
   } catch (err) {
     done(err)
