@@ -7,6 +7,17 @@ const SEARCH_FOR_CATEGORY = 'SEARCH_FOR_CATEGORY'
 const GET_ALL_PARENT_CATEGORIES = 'GET_ALL_PARENT_CATEGORIES'
 const SET_POPULAR_CATEGORIES = 'SET_POPULAR_CATEGORIES'
 
+<<<<<<< HEAD
+=======
+/**
+ * INITIAL STATE
+ */
+const initialState = {
+  foundCategories: [],
+  popularCategories: [],
+}
+
+>>>>>>> ab35f565c41d7cd3a0f36e6351f068e4942deb37
 /**
  * ACTION CREATORS
  */
@@ -27,12 +38,19 @@ const setPopularCategoriesAC = (popularCategories) => {
 /**
  * THUNK CREATORS
  */
+<<<<<<< HEAD
+=======
+
+>>>>>>> ab35f565c41d7cd3a0f36e6351f068e4942deb37
 export const getAllParentCategoriesThunk = () => {
   return async (dispatch) => {
     const { data } = await axios.get('/api/categories/all/parent')
     dispatch(getAllParentCategories(data))
+<<<<<<< HEAD
   }
 }
+=======
+>>>>>>> ab35f565c41d7cd3a0f36e6351f068e4942deb37
 
 export const getPopularCategoriesThunk = () => {
   return async (dispatch) => {
