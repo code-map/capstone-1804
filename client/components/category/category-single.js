@@ -110,11 +110,16 @@ class CategorySinglePage extends Component {
     const stuff = await this.props.getAllItemsInCategory(categoryName)
   }
 
+  redirect = () => {
+    console.log('hist', this.props)
+
+  }
 
 
 
   render() {
-    const { paths, resources, name } = this.props.categoryItems
+    const { paths, resources, name, url } = this.props.categoryItems
+    console.log('ure', url)
     if(paths.length) {
       return(
         <Container>
@@ -143,9 +148,7 @@ class CategorySinglePage extends Component {
               <ul>
               {
                 resources.map((resource) => {
-                  return <Link to={resource.name} key={resource.name}>
-                  <li>{resource.name}</li>
-                    </Link>
+                  return <li key={resource.name}><a href={resource.url}>{resource.name}</a></li>
                 })
               }
               </ul>
@@ -157,9 +160,9 @@ class CategorySinglePage extends Component {
               <ul>
               {
                 paths.map((path) => {
-                  return <Link to={path.name} key={path.name}>
-                  <li>{path.name}</li>
-                    </Link>
+                  return
+                  <li><Link to={path.name} key={path.name}>{path.name}</Link></li>
+
                 })
               }
               </ul>

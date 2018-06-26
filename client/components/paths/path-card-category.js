@@ -31,11 +31,12 @@ const CardContent = styled.div`
 
 
 const PathCardSmallCategory = (props) => {
-   const {img, name, username, rating, description} = props
+   const {img, name, rating, description} = props
+   const url = props.url || 'home'
     return(
       <div>
       {
-        // <Link to={`/`}>
+        // <Link to={url}>
           <Card >
             <img src={img} style={{height:150}}/>
             <CardContent>
