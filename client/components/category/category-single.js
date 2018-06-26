@@ -43,9 +43,9 @@ const Container = styled.div`
   flex-direction: column;
   width: 95vw;
   margin-top: 50px
+  padding: 50px;
+  box-sizing: border-box;
 `
-
-
 
 const Headline = styled.div`
 margin: 10px;
