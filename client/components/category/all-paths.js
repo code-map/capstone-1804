@@ -5,50 +5,27 @@ import  Grid from '@material-ui/core/Grid'
 import { getAllPathsInCategory } from '../../store'
 import { PathCardSmall } from '../paths'
 
-class CategoryAllPaths extends React.Component {
-  constructor(){
-    super()
-  }
-
-  async componentDidMount(){
-    const categoryId = this.props.categoryId
-    await this.props.getAllPathsInCategory(categoryId)
-  }
-
-  render() {
-    const paths = this.props.paths
+const CategoryAllPaths = (props) => {
+    console.log('props in all path', props)
+    const {paths} = props
     return(
-      <div>
         <Grid container spacing={40}>
           {paths.map((path) =>
-            <Grid item xs={6} key = {path.id}>
+            <Grid item xs={6} key={path.name}>
               <PathCardSmall
-                id = {path.id}
-                imagePath={path.image}
+                img='/bricks.png'
                 name={path.name}
-                username={path.username}
-                rating={path.rating}
+                username={path.username || null }
+                rating={path.rating || 3}
+                description={path.description}
               />
-            </Grid>
+              </Grid>
           )}
-        </Grid>
-      </div>
-    )
-  }
-}
+          </Grid>
+    )}
 
-const mapState = (state) => {
-  return({
-    paths: state.pathReducer.allPathsInCategory
-  })
-}
 
-const mapDispatch = (dispatch) => {
-  return({
-    getAllPathsInCategory : (categoryId) => {
-      return dispatch(getAllPathsInCategory(categoryId))
-    }
-  })
-}
 
-export default connect(mapState, mapDispatch)(CategoryAllPaths)
+
+
+export default CategoryAllPaths

@@ -1,7 +1,10 @@
 body {
   font-family: sans-serif;
-  padding: 0;
-  margin: 0;
+  padding: 50px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-start;
+
 }
 
 a {

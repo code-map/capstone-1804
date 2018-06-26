@@ -15,25 +15,37 @@ router.get('/hello', (req, res, next) => {
 })
 
 
-router.get('/:categoryId/popular-paths', (req,res,next) => {
-  //dummy code
-  console.log('dummyData =', dummyData)
-  const sortedDummyData = dummyData.slice().sort()
-  res.send(sortedDummyData.slice(0,4))
-  //end of dummy code
+router.get('/:categoryName/popular-paths', async (req,res,next) => {
+  const category = req.params.categoryName
+  const query = `match(u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
+      where c.name={category}
+      with count(u) as Users,c,p
+      optional match(rev:Review)-[:REVIEWS]->(p)
+      return c.name as Category, p.name as Path, Users, avg(rev.score) as Rating
+      order by Users  desc
+      limit 3
+     `
+  const top3PathsByCategory = await session.run(query, { category })
+  res.json(top3PathsByCategory)
 })
 
-router.get('/:categoryId/all-paths', (req,res,next) => {
-  //dummy code
-  res.send(dummyData)
-  //end of dummy code
-})
+router.get('/:categoryName/all-paths', async (req,res,next) => {
+  const category = req.params.categoryName;
+  const query = `MATCH (p:Path)-[:CATEGORY]->(c) WHERE c.name = {category} return p`
+  const pathsInCategory = await session.run(query, { category })
+  res.send(pathsInCategory)})
 
-router.get('/:categoryId/search', (req,res,next) => {
-  //dummy code
-  const searchVal = req.body
-  res.send(dummyData.slice(0,2))
-  //end of dummy code
+//all the resources and paths that have this category
+router.get('/:categoryName/search', async(req,res,next) => {
+  const category = req.params.categoryName
+  const query = `match (p:Path)-[:CATEGORY]->(c) where c.name={category}
+  RETURN p AS combined
+  UNION
+  match (r:Resource)-[:CATEGORY]->(c) where c.name={category}
+  RETURN r AS combined`
+  const response = await session.run(query, {category})
+  const allPathsAndResourcesByCategory = response.records
+  res.json(allPathsAndResourcesByCategory)
 })
 
 module.exports = router
