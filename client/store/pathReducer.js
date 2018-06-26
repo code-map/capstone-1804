@@ -40,6 +40,8 @@ const setSearchedPathsInCategory = (paths) => {
   }
 }
 
+
+
 /**
  * THUNK CREATORS
  */
@@ -51,23 +53,30 @@ export const getSingleUserPathsThunk = (username) => {
   }
 }
 
-export const getPopularPathsInCategory = (categoryId) => {
+export const getPopularPathsInCategory = (categoryName) => {
   return async (dispatch) => {
-    const res = await axios.get(`/api/categories/${categoryId}/popular-paths`)
+    const res = await axios.get(`/api/categories/${categoryName}/popular-paths`)
     dispatch(setPopularPathsInCategory(res.data))
   }
 }
 
-export const getAllPathsInCategory = (categoryId) => {
+export const getAllPathsInCategory = (categoryName) => {
   return async (dispatch) => {
-    const res = await axios.get(`/api/categories/${categoryId}/all-paths`)
+    const res = await axios.get(`/api/categories/${categoryName}/all-paths`)
     dispatch(setAllPathsInCategory(res.data))
   }
 }
 
-export const searchPathsInCategory = (categoryId, searchVal) => {
+export const getAllItemsInCategory = (categoryName) => {
   return async (dispatch) => {
-    const res = await axios.get(`/api/categories/${categoryId}/search`, searchVal)
+    const res = await axios.get(`/api/categories/${categoryName}/search`)
+    dispatch(returnAllItemsInCategory(res.data))
+  }
+}
+
+export const searchPathsInCategory = (categoryName, searchVal) => {
+  return async (dispatch) => {
+    const res = await axios.get(`/api/categories/${categoryName}/search`, searchVal)
     dispatch(setSearchedPathsInCategory(res.data))
   }
 }
