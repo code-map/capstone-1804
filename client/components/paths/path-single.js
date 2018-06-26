@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PathProgress from './path-progress'
 
-import { deleteSinglePathThunk, getStepCompletionSingleUserThunk } from '../../store'
+import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -61,9 +61,12 @@ class SinglePath extends Component {
     })
   }
 
-  handleCompletedClick = value => () => {
-    console.log('toggle completed click!', value)
-    // To complete when DB is operational
+  handleCompletedClick = stepUrl => async () => {
+    const pathName = this.props.path.details.properties.name
+    const username = this.props.user
+    const bool = await this.checkForComplete(stepUrl)
+
+    this.props.toggleStepCompletion(pathName, username, stepUrl, bool)
   }
 
   handleDeletePath = (event) => {
@@ -191,6 +194,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getCompletedSteps: (pathName, username) => {
       dispatch(getStepCompletionSingleUserThunk(pathName, username))
+    },
+    toggleStepCompletion: (pathName, username, stepUrl, bool) => {
+      dispatch(toggleStepCompletionThunk(pathName, username, stepUrl, bool))
     }
   }
 }

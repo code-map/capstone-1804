@@ -75,8 +75,39 @@ router.get('/:name/user/:username/completed', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-// PUT: api/paths/:name/user/:username/step
+// PUT: api/paths/:pathName/user/:username/status/:bool/?step=:stepUrl
+router.put('/:pathName/user/:username/status/:completed/step/:stepUrl', async (req, res, next) => {
+  try {
 
+    const pathName = req.params.pathName
+    const username = req.params.username
+    const stepUrl = decodeURIComponent(req.params.stepUrl)
+    const completed = req.params.completed
+    let query = ''
+
+    if (completed === 'true') {
+      // Remove the relationship
+      query = `
+      MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+      WHERE u.name = {username} and p.name = {pathName} and r.url = {stepUrl}
+      OPTIONAL MATCH (u)-[c:COMPLETED]->(s)
+      DELETE c
+      `
+    } else if (completed === 'false'){
+      // Add the relationship
+      query = `
+      MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+      WHERE u.name = {username} and p.name = {pathName} and r.url = {stepUrl}
+      CREATE (u)-[:COMPLETED]->(s)
+      `
+    }
+
+    await session.run(query, {pathName, username, stepUrl})
+
+    res.send(stepUrl)
+    session.close()
+  } catch (err) { next(err) }
+})
 
 // POST: api/paths/
 router.post('/', async (req, res, next) => {
