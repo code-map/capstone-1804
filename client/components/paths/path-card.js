@@ -24,15 +24,21 @@ class PathCard extends React.Component {
       {
         <Link to={`/path/${this.props.id}`}>
          <Card>
-           <h3>
+           <h2>
              {this.props.name}
-           </h3>
+           </h2>
            <h3>
-             {this.props.username}
+             by: 
+             {this.props.owner}
            </h3>
-           <h3>
+           <h5>
+             rating: 
              {this.props.rating}
-           </h3>
+           </h5>
+           <h5>
+             subscribers: 
+             {this.props.userCount}
+           </h5>
          </Card>
         </Link>
       }
