@@ -18,15 +18,15 @@ const styles = theme => ({
   },
 });
 
-const BuilderSkills = ({classes, skill}) => {
+const BuilderLevel = ({classes, level}) => {
   return (
     <FormControl component="fieldset" required className={classes.formControl}>
       <FormLabel component="legend">What skill level is your path?</FormLabel>
       <RadioGroup
-        aria-label="skill"
-        name="skill"
+        aria-label="level"
+        name="level"
         className={classes.group}
-        value={skill}
+        value={level}
       >
         <FormControlLabel value="beginner" control={<Radio />} label="Beginner" />
         <FormControlLabel value="intermediate" control={<Radio />} label="Intermediate" />
@@ -36,4 +36,4 @@ const BuilderSkills = ({classes, skill}) => {
   )
 }
 
-export default withStyles(styles)(BuilderSkills);
+export default withStyles(styles)(BuilderLevel);

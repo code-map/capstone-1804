@@ -3,10 +3,14 @@ import axios from 'axios'
 /**
  * ACTION TYPES
  */
+const GET_SINGLE_PATH = 'GET_SINGLE_PATH'
 const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
+const ADD_NEW_PATH = 'ADD_NEW_PATH'
+const DELETE_SINGLE_PATH = 'DELETE_SINGLE_PATH'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
+const SET_POPULAR_PATHS_IN_ALL_CATEGORIES = 'SET_POPULAR_PATHS_IN_ALL_CATEGORIES'
 const SET_SEARCHED_PATHS_IN_CATEGORY = 'SET_SEARCHED_PATHS_IN_CATEGORY'
 
 /**
@@ -19,9 +23,44 @@ const getSingleUserPaths = (paths) => {
   }
 }
 
+const addNewPath = (path) => {
+  return {
+    type: ADD_NEW_PATH,
+    path
+  }
+}
+
+const getSinglePath = (path) => {
+  return {
+    type: GET_SINGLE_PATH,
+    path
+  }
+}
+
+const deleteSinglePath = (name) => {
+  return {
+    type: DELETE_SINGLE_PATH,
+    name
+  }
+}
+
+const toggleStepCompletion = (step) => {
+  return {
+    type: TOGGLE_STEP_COMPLETION,
+    step
+  }
+}
+
 const setPopularPathsInCategory = (paths) => {
   return {
     type: SET_POPULAR_PATHS_IN_CATEGORY,
+    paths
+  }
+}
+
+const setPopularPathsInAllCategories = (paths) => {
+  return {
+    type: SET_POPULAR_PATHS_IN_ALL_CATEGORIES,
     paths
   }
 }
@@ -45,11 +84,38 @@ const setSearchedPathsInCategory = (paths) => {
 /**
  * THUNK CREATORS
  */
+export const addNewPathThunk = (path) => {
+  return async (dispatch) => {
+    const { data } = await axios.post('/api/paths', path)
+    dispatch(addNewPath(data))
+  }
+}
 
 export const getSingleUserPathsThunk = (username) => {
   return async (dispatch) => {
     const { data } = await axios.get(`/api/paths/all/user/${username}`)
     dispatch(getSingleUserPaths(data))
+  }
+}
+
+export const getPopularPathsInAllCategories = () => {
+  return async (dispatch) => {
+    const res = await axios.get(`/api/paths/popular-paths`)
+    dispatch(setPopularPathsInAllCategories(res.data))
+  }
+}
+
+export const deleteSinglePathThunk = (name) => {
+  return async (dispatch) => {
+    await axios.delete(`/api/paths/${name}`)
+    dispatch(deleteSinglePath(name))
+  }
+}
+
+export const getSinglePathThunk = (name) => {
+  return async (dispatch) => {
+    const { data } = await axios.get(`/api/paths/${name}`)
+    dispatch(getSinglePath(data))
   }
 }
 
@@ -83,7 +149,9 @@ export const searchPathsInCategory = (categoryName, searchVal) => {
 
 const initialState = {
   allUserPaths: [],
+  singlePath: [],
   popularPathsInCategory: [],
+  popularPathsInAllCategories: [],
   allPathsInCategory: [],
   searchedPathsInCategory: []
 }
@@ -91,12 +159,22 @@ const initialState = {
 /**
  * REDUCER
  */
-export const pathReducer = ( state = initialState, action) => {
+export const pathReducer = ( state = initialState, action) => { // eslint-disable-line
   switch (action.type) {
+    case ADD_NEW_PATH:
+      return {...state, allUserPaths: [...state.allUserPaths, action.path]}
+    case DELETE_SINGLE_PATH: {
+      const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.name !== action.name)
+      return {...state, allUserPaths}
+    }
     case GET_PATHS_SINGLE_USER:
       return {...state, allUserPaths: action.paths}
+    case GET_SINGLE_PATH:
+      return {...state, singlePath: action.path}
     case SET_POPULAR_PATHS_IN_CATEGORY:
       return {...state, popularPathsInCategory: action.paths}
+    case SET_POPULAR_PATHS_IN_ALL_CATEGORIES:
+      return {...state, popularPathsInAllCategories: action.paths}
     case SET_ALL_PATHS_IN_CATEGORY:
       return {...state, allPathsInCategory: action.paths}
     case SET_SEARCHED_PATHS_IN_CATEGORY:
