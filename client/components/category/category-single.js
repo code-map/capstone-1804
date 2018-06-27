@@ -31,7 +31,7 @@ class CategorySinglePage extends Component {
         </SearchBox>
         </HeaderSearchContainer>
         <HeadlineCol>
-          <SubHeader>Popular paths in Javascript</SubHeader>
+          <SubHeader>{`Popular paths in ${name}`}</SubHeader>
         <ScrollBox>
           <CategoryAllPaths paths={paths}/>
         </ScrollBox>
@@ -40,7 +40,7 @@ class CategorySinglePage extends Component {
           <Grid container spacing={24}>
               <Grid item xs={12} sm={6}>
             <ListContainer>
-            <SubHeader style={{marginTop:'15px'}}>Popular resources in Javascript</SubHeader>
+            <SubHeader style={{marginTop:'15px'}}>{`Popular resources in ${name}`}</SubHeader>
               <div>
               {
                 resources.map((resource) => {
@@ -52,7 +52,7 @@ class CategorySinglePage extends Component {
             </Grid>
           <Grid item xs={12} sm={6}>
           <ListContainer>
-          <SubHeader style={{marginTop:'15px'}}>All paths in Javascript</SubHeader>
+          <SubHeader style={{marginTop:'15px'}}>{`All paths in ${name}`}</SubHeader>
               <div>
               {
                 paths.map((path) => {
