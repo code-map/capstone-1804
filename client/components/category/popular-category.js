@@ -21,10 +21,10 @@ class PopularCategories extends React.Component {
         {
           (popularCategories)
           ? popularCategories.map(cat => 
-            <Grid item xs={3} key={cat.id} >
+            <Grid item xs={3} key={cat.Category.identity.low} >
               <CategoryCard 
-                key={cat.id} 
-                category={cat}
+                categoryName={cat.Category.properties.name}
+                userCount={cat.Users.low}
               />
             </Grid>
           ) 

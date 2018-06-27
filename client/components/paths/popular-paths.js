@@ -21,12 +21,12 @@ class PopularPaths extends React.Component {
         {
           (popularPaths)
           ? popularPaths.map(path => 
-              <Grid item xs={3} key={path.id}>
+              <Grid item xs={3} key={path.name}>
                 <PathCard
-                  id={path.id}
-                  imagePath={path.image}
+                  reviewCount={path.reviewCount.low}
+                  userCount={path.userCount.low}
                   name={path.name}
-                  username={path.username}
+                  owner={path.owner}
                   rating={path.rating}
                 /> 
               </Grid>
