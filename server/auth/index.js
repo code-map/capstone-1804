@@ -50,11 +50,12 @@ router.post('/login', async (req, res, next) => {
     let query = `
     MATCH (u:User)
     WHERE u.name = {name}
-    RETURN properties(u)
+    RETURN u
   `
 
     let response = await session.run(query, {name: name})
-    let user = response.records[0]._fields[0]
+    let user = response.records[0]._fields[0].properties
+
 
     //if the pw is salted in the database
     if (user.salt) {
