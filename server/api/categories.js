@@ -2,16 +2,8 @@ let neo4j = require('neo4j-driver').v1;
 let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
 const router = require('express').Router()
-//dummy code
-const dummyCategories = require('../../script/data/category.js')
-//end of dummy code
 
-router.get('/hello', (req, res, next) => {
-  session.run(`match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-  where p.name='Sequelize Basics'
-  return collect({step: properties(s), resource: properties(r)})`).then(result => result.records.forEach(rec => {
-  })).then(session.close())
-})
+
 
 router.get('/:categoryName/popular-paths', async (req,res,next) => {
   const category = req.params.categoryName
@@ -48,13 +40,26 @@ router.get('/:categoryName/search', async(req,res,next) => {
   res.json(allPathsAndResourcesByCategory)
 })
 
-//route for getting the most popular categories
-router.get('/popular', (req,res,next) => {
-  //dummy code
-  const searchVal = req.body
-  res.send(dummyCategories.slice(0,4))
-  //end of dummy code
+//fuzzy match for any node related to a certain category
+router.post('/:categoryName/search', async (req, res, next) => {
+  const category = req.params.categoryName
+  const { searchString } = req.body
+  const query = `MATCH (n)-[:CATEGORY]->(c)
+  WHERE c.name = {category} AND toLower(n.name) CONTAINS toLower({searchString})
+  return n`
+  const response = await session.run(query, {category, searchString})
+  const fuzzyMatchByCategory = response.records
+  res.json(fuzzyMatchByCategory)
 })
 
 
+
+
+
+
 module.exports = router
+
+
+// `MATCH (n)-[:CATEGORY]->(c)
+//   WHERE c.name = {category} AND n.name CONTAINS =~ '(?i)searchString.*'
+//   return n`

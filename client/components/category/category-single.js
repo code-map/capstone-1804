@@ -5,100 +5,9 @@ import { createGetSingleCategoryThunk } from '../../store'
 import styled from "styled-components";
 import {Link} from 'react-router-dom'
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
+import { SearchAny } from '../'
 
 
-//color: #9E6FAD;
-
-const Header = styled.h1`
-  color: #55288B;
-  font-family: Helvetica;
-  font-weight: 400;
-  font-size: 4em;
-  line-height: .01;
-  display: inline-block;
-  margin-right: 20px
-
-
-`
-
-const HeaderSearchContainer = styled.div`
-  display: flex;
-  width: 60vw;
-  justify-content: space-between;
-  align-self: center;
-`
-
-const SubHeader = styled.p`
-  color: black;
-  font-family: Helvetica;
-  font-size: 1.2em;
-  font-weight: 200;
-  margin: 0
-`
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  width: 95vw;
-  margin-top: 50px
-  padding: 50px;
-  box-sizing: border-box;
-`
-
-const Headline = styled.div`
-margin: 10px;
-width: auto;
-height: auto;
-box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.13);
-padding-left: 20px;
-overflow:auto;
-background-color: rgb(232, 194, 239, .2)
-`
-
-const HeadlineCol = styled.div`
-margin: 20px;
-width: 90vw;
-height: 250px;
-box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.13);
-background-color: rgb(232, 194, 239, .2);
-align-self: center;
-display: flex;
-flex-direction: column;
-padding: 15px;
-overflow: scroll;
-
-`
-
-const ScrollBox = styled.div`
-width: 98vw;
-height: 200px;
-overflow: scroll;
-display: flex;
-flex-wrap: nowrap;
-justify-content: center;
-
-`
-
-const SearchBox = styled.div`
-margin: 10px;
-width: 35vw;
-align-self: center;
-height: auto;
-box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.13);
-padding-left: 20px;
-padding-top: 0;
-background-color: white;
-display: inline-block
-`
-
-const ListContainer = styled.div`
-  width: auto;
-  height: auto;
-`
-
-//rgba(148,96,164, .05);
 
 class CategorySinglePage extends Component {
   constructor(){
@@ -107,31 +16,19 @@ class CategorySinglePage extends Component {
 
   async componentDidMount(){
     const { categoryName } = this.props.match.params
-    const stuff = await this.props.getAllItemsInCategory(categoryName)
+    await this.props.getAllItemsInCategory(categoryName)
   }
-
-  redirect = () => {
-    console.log('hist', this.props)
-
-  }
-
 
 
   render() {
     const { paths, resources, name, url } = this.props.categoryItems
-    console.log('ure', url)
     if(paths.length) {
       return(
         <Container>
           <HeaderSearchContainer>
           <Header>{name.trim()}</Header>
           <SearchBox>
-            <TextField
-            id="search"
-            label={`Refine your search`}
-            type="search"
-            margin="normal"
-            />
+            <SearchAny category={name}/>
         </SearchBox>
         </HeaderSearchContainer>
         <HeadlineCol>
@@ -145,27 +42,25 @@ class CategorySinglePage extends Component {
               <Grid item xs={12} sm={6}>
             <ListContainer>
             <SubHeader style={{marginTop:'15px'}}>Popular resources in Javascript</SubHeader>
-              <ul>
+              <div>
               {
                 resources.map((resource) => {
-                  return <li key={resource.name}><a href={resource.url}>{resource.name}</a></li>
+                  return <p key={resource.name}><a  href={resource.url}>{resource.name}</a></p>
                 })
               }
-              </ul>
+              </div>
             </ListContainer>
             </Grid>
           <Grid item xs={12} sm={6}>
           <ListContainer>
           <SubHeader style={{marginTop:'15px'}}>All paths in Javascript</SubHeader>
-              <ul>
+              <div>
               {
                 paths.map((path) => {
-                  return
-                  <li><Link to={path.name} key={path.name}>{path.name}</Link></li>
-
+                  return(<p key={path.name}><Link to={`/${path.name}`} >{path.name}</Link></p>)
                 })
               }
-              </ul>
+              </div>
             </ListContainer>
             </Grid>
             </Grid>
@@ -193,6 +88,94 @@ const mapDispatch = (dispatch) => {
     }
   })
 }
+
+const Header = styled.h1`
+  color: #55288B;
+  font-family: Helvetica;
+  font-weight: 400;
+  font-size: 4em;
+  line-height: .01;
+  display: inline-block;
+  margin-right: 20px
+`
+
+const HeaderSearchContainer = styled.div`
+  display: flex;
+  width: 60vw;
+  justify-content: space-between;
+  align-self: center;
+  margin-top: -70px
+`
+
+const SubHeader = styled.p`
+  color: black;
+  font-family: Helvetica;
+  font-size: 1.2em;
+  font-weight: 200;
+  margin: 0
+`
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 95vw;
+  margin-top: 50px
+  padding: 50px;
+  box-sizing: border-box;
+`
+
+const Headline = styled.div`
+margin: 10px;
+width: auto;
+height: auto;
+box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.13);
+padding-left: 20px;
+overflow:auto;
+background-color: rgb(232, 6, 228, .2)
+`
+
+const HeadlineCol = styled.div`
+margin: 20px;
+width: 90vw;
+height: 250px;
+box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.13);
+background-color: rgb(232, 6, 228, .2);
+align-self: center;
+display: flex;
+flex-direction: column;
+padding: 15px;
+overflow: hidden
+
+`
+
+const ScrollBox = styled.div`
+width: 90vw;
+height: 200px;
+overflow: scroll;
+display: flex;
+flex-wrap: nowrap;
+justify-content: center;
+align-self: center
+
+`
+
+const SearchBox = styled.div`
+margin: 10px;
+width: 35vw;
+align-self: center;
+height: auto;
+box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.13);
+padding-left: 20px;
+padding-top: 0;
+background-color: white;
+display: inline-block
+`
+
+const ListContainer = styled.div`
+  width: auto;
+  height: auto;
+`
 
 export default connect(mapState, mapDispatch)(CategorySinglePage)
 

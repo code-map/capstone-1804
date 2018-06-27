@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { Redirect } from 'react-router-dom'
 import { searchPathsInCategory } from '../../store'
 
+//
 class CategorySearch extends React.Component {
   constructor(){
     super()
