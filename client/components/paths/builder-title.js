@@ -4,7 +4,6 @@ class BuilderTitle extends Component {
 
   handleChange = () => {
     // Throttle search
-    console.log('typing!')
   }
 
   render(){
