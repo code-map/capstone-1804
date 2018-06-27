@@ -13,6 +13,28 @@ router.get('/hello', (req, res, next) => {
   })).then(session.close())
 })
 
+// GET /categories/all/parent
+router.get(`/all/parent`, async (req, res, next) => {
+  try {
+    const query = `MATCH (c:Category)
+    WHERE c.isLanguage
+    return c`
+
+    const result = await session.run(query)
+
+    const categories = result.records.map((record) => {
+      return record._fields
+    })
+
+    const results = categories.map((category) => {
+      return category[0].properties.name
+    })
+
+    res.send(results)
+    session.close()
+  } catch (err) { next(err) }
+})
+
 router.get('/:categoryName/popular-paths', async (req,res,next) => {
   const category = req.params.categoryName
   const query = `match(u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
@@ -55,6 +77,5 @@ router.get('/popular', (req,res,next) => {
   res.send(dummyCategories.slice(0,4))
   //end of dummy code
 })
-
 
 module.exports = router
