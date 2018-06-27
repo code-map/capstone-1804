@@ -26,12 +26,12 @@ router.get('/all/user/:username/', async (req, res, next) => {
 // returns the most popular paths (regardless of category)
 // GET: api/paths/popular
 router.get('/popular', async (req,res,next) => {
-    const query = `MATCH (u: User)-[_p:PATHS]->(p: Path)<-[_r: REVIEWS]-(r:Review) 
-      RETURN p.name AS name, 
-             p.owner AS owner, 
-             count(r) AS reviewCount, 
-             count(distinct u) AS userCount, 
-             avg(r.score) AS rating 
+    const query = `MATCH (u: User)-[_p:PATHS]->(p: Path)<-[_r: REVIEWS]-(r:Review)
+      RETURN p.name AS name,
+             p.owner AS owner,
+             count(r) AS reviewCount,
+             count(distinct u) AS userCount,
+             avg(r.score) AS rating
       ORDER BY rating DESC LIMIT 20`
     const result = await session.run(query)
 

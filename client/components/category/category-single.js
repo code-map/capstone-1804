@@ -5,11 +5,88 @@ import { createGetSingleCategoryThunk } from '../../store'
 import styled from "styled-components";
 import {Link} from 'react-router-dom'
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import category from '../../store/category';
+import { SearchAny } from '../'
 
 
-//color: #9E6FAD;
+class CategorySinglePage extends Component {
+  constructor(){
+    super()
+  }
+
+  async componentDidMount(){
+    const { categoryName } = this.props.match.params
+    await this.props.getAllItemsInCategory(categoryName)
+  }
+
+
+  render() {
+    const { paths, resources, name, url } = this.props.categoryItems
+    if(paths.length) {
+      return(
+        <Container>
+          <HeaderSearchContainer>
+          <Header>{name.trim()}</Header>
+          <SearchBox>
+            <SearchAny category={name}/>
+        </SearchBox>
+        </HeaderSearchContainer>
+        <HeadlineCol>
+          <SubHeader>{`Popular paths in ${name}`}</SubHeader>
+        <ScrollBox>
+          <CategoryAllPaths paths={paths}/>
+        </ScrollBox>
+        </HeadlineCol>
+        <Headline>
+          <Grid container spacing={24}>
+              <Grid item xs={12} sm={6}>
+            <ListContainer>
+            <SubHeader style={{marginTop:'15px'}}>{`Popular resources in ${name}`}</SubHeader>
+              <div>
+              {
+                resources.map((resource) => {
+                  return <p key={resource.name}><a  href={resource.url}>{resource.name}</a></p>
+                })
+              }
+              </div>
+            </ListContainer>
+            </Grid>
+          <Grid item xs={12} sm={6}>
+          <ListContainer>
+          <SubHeader style={{marginTop:'15px'}}>{`All paths in ${name}`}</SubHeader>
+              <div>
+              {
+                paths.map((path) => {
+                  return(<p key={path.name}><Link to={`/${path.name}`} >{path.name}</Link></p>)
+                })
+              }
+              </div>
+            </ListContainer>
+            </Grid>
+            </Grid>
+            </Headline>
+        </Container>
+      )
+    }else{
+      return <p>loading</p>
+    }
+
+  }
+}
+
+
+const mapState = (state) => {
+  return({
+    categoryItems: state.singleCategory
+  })
+}
+
+const mapDispatch = (dispatch) => {
+  return({
+    getAllItemsInCategory : (categoryName) => {
+      return dispatch(createGetSingleCategoryThunk(categoryName))
+    }
+  })
+}
 
 const Header = styled.h1`
   color: #55288B;
@@ -19,8 +96,6 @@ const Header = styled.h1`
   line-height: .01;
   display: inline-block;
   margin-right: 20px
-
-
 `
 
 const HeaderSearchContainer = styled.div`
@@ -28,6 +103,7 @@ const HeaderSearchContainer = styled.div`
   width: 60vw;
   justify-content: space-between;
   align-self: center;
+  margin-top: -60px
 `
 
 const SubHeader = styled.p`
@@ -68,17 +144,18 @@ align-self: center;
 display: flex;
 flex-direction: column;
 padding: 15px;
-overflow: scroll;
+overflow: hidden
 
 `
 
 const ScrollBox = styled.div`
-width: 98vw;
+width: 90vw;
 height: 200px;
 overflow: scroll;
 display: flex;
 flex-wrap: nowrap;
 justify-content: center;
+align-self: center
 
 `
 
@@ -98,99 +175,6 @@ const ListContainer = styled.div`
   width: auto;
   height: auto;
 `
-
-class CategorySinglePage extends Component {
-
-  componentDidMount(){
-    const { categoryName } = this.props.match.params
-    this.props.getAllItemsInCategory(categoryName)
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if(nextProps.match.params !== this.props.match.params){
-      const { categoryName } = nextProps.match.params
-      this.props.getAllItemsInCategory(categoryName)
-    }
-  }
-
-  render() {
-    const { paths, resources, name } = this.props.categoryItems
-
-    if(paths.length) {
-      return(
-        <Container>
-          <HeaderSearchContainer>
-          <Header>{name.trim()}</Header>
-          <SearchBox>
-            <TextField
-            id="search"
-            label="Refine your search"
-            type="search"
-            margin="normal"
-            />
-        </SearchBox>
-        </HeaderSearchContainer>
-        <HeadlineCol>
-          <SubHeader>Popular paths in {name}</SubHeader>
-        <ScrollBox>
-          <CategoryAllPaths paths={paths}/>
-        </ScrollBox>
-        </HeadlineCol>
-        <Headline>
-          <Grid container spacing={24}>
-              <Grid item xs={12} sm={6}>
-            <ListContainer>
-            <SubHeader style={{marginTop:'15px'}}>Popular resources in {name}</SubHeader>
-              <ul>
-              {
-                resources.map((resource) => {
-                  return <li key={resource.name}><a href={resource.url}>{resource.name}</a></li>
-                })
-              }
-              </ul>
-            </ListContainer>
-            </Grid>
-          <Grid item xs={12} sm={6}>
-          <ListContainer>
-          <SubHeader style={{marginTop:'15px'}}>All paths in {name}</SubHeader>
-              <ul>
-              {
-                paths.map((path) => {
-                  return (
-                    <li key={path.name}>
-                      <Link to={path.name}>{path.name}</Link>
-                    </li>
-                  )
-                })
-              }
-              </ul>
-            </ListContainer>
-            </Grid>
-            </Grid>
-            </Headline>
-        </Container>
-      )
-    }else{
-      return <p>loading</p>
-    }
-
-  }
-}
-
-
-const mapState = (state) => {
-  return {
-    categoryItems: state.singleCategory
-  }
-}
-
-const mapDispatch = (dispatch) => {
-  return {
-    getAllItemsInCategory: (categoryName) => {
-      return dispatch(createGetSingleCategoryThunk(categoryName))
-    }
-  }
-}
 
 export default connect(mapState, mapDispatch)(CategorySinglePage)
 
@@ -218,5 +202,4 @@ export default connect(mapState, mapDispatch)(CategorySinglePage)
 // display: flex;
 // flex-wrap: nowrap;
 // justify-content: center;
-
 // `
