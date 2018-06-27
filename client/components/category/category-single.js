@@ -104,7 +104,7 @@ const HeaderSearchContainer = styled.div`
   width: 60vw;
   justify-content: space-between;
   align-self: center;
-  margin-top: -70px
+  margin-top: -60px
 `
 
 const SubHeader = styled.p`
@@ -132,7 +132,7 @@ height: auto;
 box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.13);
 padding-left: 20px;
 overflow:auto;
-background-color: rgb(232, 6, 228, .2)
+background-color: rgb(232, 194, 239, .2)
 `
 
 const HeadlineCol = styled.div`
@@ -140,7 +140,7 @@ margin: 20px;
 width: 90vw;
 height: 250px;
 box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.13);
-background-color: rgb(232, 6, 228, .2);
+background-color: rgb(232, 194, 239, .2);
 align-self: center;
 display: flex;
 flex-direction: column;
