@@ -100,7 +100,7 @@ export const getSingleUserPathsThunk = (username) => {
 
 export const getPopularPathsInAllCategories = () => {
   return async (dispatch) => {
-    const res = await axios.get(`/api/paths/popular-paths`)
+    const res = await axios.get(`/api/paths/popular`)
     dispatch(setPopularPathsInAllCategories(res.data))
   }
 }
