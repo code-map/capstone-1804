@@ -32,9 +32,11 @@ class SinglePath extends Component {
   }
 
   componentDidMount = () => {
-    const pathName = this.props.path.details.properties.name
-    const username = this.props.user
-    this.props.getCompletedSteps(pathName, username)
+    if(this.props.path.steps.length > 1) {
+      const pathName = this.props.path.details.properties.name
+      const username = this.props.user
+      this.props.getCompletedSteps(pathName, username)
+    }
   }
 
   componentWillReceiveProps(nextProps){
@@ -102,13 +104,15 @@ class SinglePath extends Component {
   }
 
   render(){
-    const path = this.props.path
+    const { path, user } = this.props
 
     return (
       <div>
         <h3>{path.details.properties.name}</h3>
 
-        <PathProgress progress={this.getCompletePercentage()} />
+        { this.props.path.steps.length > 1 &&
+          <PathProgress progress={this.getCompletePercentage()} />
+        }
 
         <div style={styles.container}>
           <List>
@@ -168,13 +172,15 @@ class SinglePath extends Component {
 
         </div>
 
+        { path.details.properties.owner === user &&
           <Button
             onClick={this.handleDeletePath}
             variant="outlined"
             color="secondary"
           >
-            Delete Path
+          Delete Path
           </Button>
+        }
 
       </div>
     )
