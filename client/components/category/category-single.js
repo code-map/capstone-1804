@@ -6,6 +6,7 @@ import styled from "styled-components";
 import {Link} from 'react-router-dom'
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+import category from '../../store/category';
 
 
 //color: #9E6FAD;
@@ -43,9 +44,9 @@ const Container = styled.div`
   flex-direction: column;
   width: 95vw;
   margin-top: 50px
+  padding: 50px;
+  box-sizing: border-box;
 `
-
-
 
 const Headline = styled.div`
 margin: 10px;
@@ -98,23 +99,23 @@ const ListContainer = styled.div`
   height: auto;
 `
 
-//rgba(148,96,164, .05);
-
 class CategorySinglePage extends Component {
-  constructor(){
-    super()
-  }
 
-  async componentDidMount(){
+  componentDidMount(){
     const { categoryName } = this.props.match.params
-    const stuff = await this.props.getAllItemsInCategory(categoryName)
+    this.props.getAllItemsInCategory(categoryName)
   }
 
-
-
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.match.params !== this.props.match.params){
+      const { categoryName } = nextProps.match.params
+      this.props.getAllItemsInCategory(categoryName)
+    }
+  }
 
   render() {
     const { paths, resources, name } = this.props.categoryItems
+
     if(paths.length) {
       return(
         <Container>
@@ -123,43 +124,43 @@ class CategorySinglePage extends Component {
           <SearchBox>
             <TextField
             id="search"
-            label={`Refine your search`}
+            label="Refine your search"
             type="search"
             margin="normal"
             />
         </SearchBox>
         </HeaderSearchContainer>
         <HeadlineCol>
-          <SubHeader>Popular paths in Javascript</SubHeader>
+          <SubHeader>Popular paths in {name}</SubHeader>
         <ScrollBox>
           <CategoryAllPaths paths={paths}/>
         </ScrollBox>
         </HeadlineCol>
         <Headline>
           <Grid container spacing={24}>
-              <Grid item item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
             <ListContainer>
-            <SubHeader style={{marginTop:'15px'}}>Popular resources in Javascript</SubHeader>
+            <SubHeader style={{marginTop:'15px'}}>Popular resources in {name}</SubHeader>
               <ul>
               {
                 resources.map((resource) => {
-                  return <Link to={resource.name} key={resource.name}>
-                  <li>{resource.name}</li>
-                    </Link>
+                  return <li key={resource.name}><a href={resource.url}>{resource.name}</a></li>
                 })
               }
               </ul>
             </ListContainer>
             </Grid>
-          <Grid item item xs={12} sm={6}>
+          <Grid item xs={12} sm={6}>
           <ListContainer>
-          <SubHeader style={{marginTop:'15px'}}>All paths in Javascript</SubHeader>
+          <SubHeader style={{marginTop:'15px'}}>All paths in {name}</SubHeader>
               <ul>
               {
                 paths.map((path) => {
-                  return <Link to={path.name} key={path.name}>
-                  <li>{path.name}</li>
-                    </Link>
+                  return (
+                    <li key={path.name}>
+                      <Link to={path.name}>{path.name}</Link>
+                    </li>
+                  )
                 })
               }
               </ul>
@@ -178,17 +179,17 @@ class CategorySinglePage extends Component {
 
 
 const mapState = (state) => {
-  return({
+  return {
     categoryItems: state.singleCategory
-  })
+  }
 }
 
 const mapDispatch = (dispatch) => {
-  return({
-    getAllItemsInCategory : (categoryName) => {
+  return {
+    getAllItemsInCategory: (categoryName) => {
       return dispatch(createGetSingleCategoryThunk(categoryName))
     }
-  })
+  }
 }
 
 export default connect(mapState, mapDispatch)(CategorySinglePage)

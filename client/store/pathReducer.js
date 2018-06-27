@@ -10,6 +10,7 @@ const DELETE_SINGLE_PATH = 'DELETE_SINGLE_PATH'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
+const SET_POPULAR_PATHS_IN_ALL_CATEGORIES = 'SET_POPULAR_PATHS_IN_ALL_CATEGORIES'
 const SET_SEARCHED_PATHS_IN_CATEGORY = 'SET_SEARCHED_PATHS_IN_CATEGORY'
 
 /**
@@ -57,6 +58,13 @@ const setPopularPathsInCategory = (paths) => {
   }
 }
 
+const setPopularPathsInAllCategories = (paths) => {
+  return {
+    type: SET_POPULAR_PATHS_IN_ALL_CATEGORIES,
+    paths
+  }
+}
+
 const setAllPathsInCategory = (paths) => {
   return {
     type: SET_ALL_PATHS_IN_CATEGORY,
@@ -90,10 +98,10 @@ export const getSingleUserPathsThunk = (username) => {
   }
 }
 
-export const getSinglePathThunk = (name) => {
+export const getPopularPathsInAllCategories = () => {
   return async (dispatch) => {
-    const { data } = await axios.get(`/api/paths/${name}`)
-    dispatch(getSinglePath(data))
+    const res = await axios.get(`/api/paths/popular-paths`)
+    dispatch(setPopularPathsInAllCategories(res.data))
   }
 }
 
@@ -101,6 +109,13 @@ export const deleteSinglePathThunk = (name) => {
   return async (dispatch) => {
     await axios.delete(`/api/paths/${name}`)
     dispatch(deleteSinglePath(name))
+  }
+}
+
+export const getSinglePathThunk = (name) => {
+  return async (dispatch) => {
+    const { data } = await axios.get(`/api/paths/${name}`)
+    dispatch(getSinglePath(data))
   }
 }
 
@@ -136,6 +151,7 @@ const initialState = {
   allUserPaths: [],
   singlePath: [],
   popularPathsInCategory: [],
+  popularPathsInAllCategories: [],
   allPathsInCategory: [],
   searchedPathsInCategory: []
 }
@@ -157,6 +173,8 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
       return {...state, singlePath: action.path}
     case SET_POPULAR_PATHS_IN_CATEGORY:
       return {...state, popularPathsInCategory: action.paths}
+    case SET_POPULAR_PATHS_IN_ALL_CATEGORIES:
+      return {...state, popularPathsInAllCategories: action.paths}
     case SET_ALL_PATHS_IN_CATEGORY:
       return {...state, allPathsInCategory: action.paths}
     case SET_SEARCHED_PATHS_IN_CATEGORY:
