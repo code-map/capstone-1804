@@ -58,7 +58,8 @@ class PathBuilder extends Component {
       description: '',
       language: '',
       tags: '',
-      level: ''
+      level: '',
+      category: ''
     })
   }
 

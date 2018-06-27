@@ -129,12 +129,16 @@ router.post('/', async (req, res, next) => {
   const createdDate = Date.now()
 
   try {
+
     const newPath = `
-    MATCH (u:User) WHERE u.name = {username}
+    MATCH (u:User), (c:Category)
+    WHERE u.name = {username} AND c.name = {category}
     CREATE (p:Path {name: {name}, description: {description}, level: {level}, status: {status}, owner: {username}, createdDate: {createdDate}}),
-    (u)-[:PATHS {notes: {notes}}]->(p)`
+    (u)-[:PATHS {notes: {notes}}]->(p),
+    (p)-[:CATEGORY]->(c)`
 
     const created = await session.run(newPath, {
+      category: req.body.language,
       username: req.body.user,
       name: req.body.name,
       description: req.body.description,
