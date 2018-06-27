@@ -2,15 +2,32 @@ let neo4j = require('neo4j-driver').v1;
 let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
 const router = require('express').Router()
-//dummy code
-const dummyCategories = require('../../script/data/category.js')
-//end of dummy code
+const recordsReducer = require('./records-reducer.js')
 
-router.get('/hello', (req, res, next) => {
-  session.run(`match(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-  where p.name='Sequelize Basics'
-  return collect({step: properties(s), resource: properties(r)})`).then(result => result.records.forEach(rec => {
-  })).then(session.close())
+////  ROUTE FOR: /api/categories  ////
+
+
+
+// GET /categories/all/parent
+router.get(`/all/parent`, async (req, res, next) => {
+  try {
+    const query = `MATCH (c:Category)
+    WHERE c.isLanguage
+    return c`
+
+    const result = await session.run(query)
+
+    const categories = result.records.map((record) => {
+      return record._fields
+    })
+
+    const results = categories.map((category) => {
+      return category[0].properties.name
+    })
+
+    res.send(results)
+    session.close()
+  } catch (err) { next(err) }
 })
 
 router.get('/:categoryName/popular-paths', async (req,res,next) => {
@@ -48,13 +65,33 @@ router.get('/:categoryName/search', async(req,res,next) => {
   res.json(allPathsAndResourcesByCategory)
 })
 
-//route for getting the most popular categories
-router.get('/popular', (req,res,next) => {
-  //dummy code
-  const searchVal = req.body
-  res.send(dummyCategories.slice(0,4))
-  //end of dummy code
+//fuzzy match for any node related to a certain category
+router.post('/:categoryName/search', async (req, res, next) => {
+  const category = req.params.categoryName
+  const { searchString } = req.body
+  const query = `MATCH (n)-[:CATEGORY]->(c)
+  WHERE c.name = {category} AND toLower(n.name) CONTAINS toLower({searchString})
+  return n`
+  const response = await session.run(query, {category, searchString})
+  const fuzzyMatchByCategory = response.records
+  res.json(fuzzyMatchByCategory)
 })
 
+//route for getting the most popular categories
+router.get('/popular', async (req,res,next) => {
+  const query =
+  `
+    match(u:User)-[r:PATHS]-(p:Path)-[:CATEGORY]-(c:Category)
+    where c.isLanguage=true
+    return c as Category, count(u) as Users
+    order by count(u) desc
+    limit 10
+  `
+  const result = await session.run(query)
+
+  const reducedResponse = recordsReducer(result.records)
+  res.send(reducedResponse)
+})
 
 module.exports = router
+

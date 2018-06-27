@@ -10,6 +10,8 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 
+import CategoryDropdown from './category/category-dropdown'
+
 const styles = {
   root: {
     flexGrow: 1,
@@ -27,6 +29,14 @@ const MainNav = ({handleClick, isLoggedIn, classes}) => (
         <Typography variant="title" color="inherit" className={classes.flex}>
           <Link to="/">Code Map</Link>
         </Typography>
+
+        <div>
+          <CategoryDropdown />
+        </div>
+
+        <Link to="/about">
+          <Button color="inherit">About</Button>
+        </Link>
 
         {isLoggedIn ? (
           <div>
