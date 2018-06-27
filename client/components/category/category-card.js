@@ -15,14 +15,15 @@ const styles = {
 const CategoryCard = (props) => {
   return(
     <div>
-      <Link to={`/category/${props.category.name}`}>
+      <Link to={`/category/${props.categoryName}`}>
         <Card>
-          <h4>
-            {props.category.name}
-          </h4>
-          <h4>
-            {props.category.popularity}
-          </h4>
+          <h2>
+            {props.categoryName}
+          </h2>
+          <h5>
+            subscribers: 
+            {props.userCount}
+          </h5>
         </Card>
       </Link>
     </div>

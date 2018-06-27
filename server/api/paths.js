@@ -2,7 +2,7 @@ let neo4j = require('neo4j-driver').v1;
 let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
 const router = require('express').Router()
-const dummyPaths = require('../../script/data/path.js')
+const recordsReducer = require('./records-reducer.js')
 
 // GET: api/paths/all/user/:username/
 router.get('/all/user/:username/', async (req, res, next) => {
@@ -23,15 +23,21 @@ router.get('/all/user/:username/', async (req, res, next) => {
     session.close()
   } catch (err) { next(err) }
 })
-/*
-/api/paths/popular-paths
-*/
 
-router.get('/popular-paths', (req,res,next) => {
-  //dummy code
-  const sortedDummyData = dummyPaths.slice().sort()
-  res.send(sortedDummyData.slice(0,4))
-  //end of dummy code
+// returns the most popular paths (regardless of category)
+// GET: api/paths/popular
+router.get('/popular', async (req,res,next) => {
+    const query = `MATCH (u: User)-[_p:PATHS]->(p: Path)<-[_r: REVIEWS]-(r:Review) 
+      RETURN p.name AS name, 
+             p.owner AS owner, 
+             count(r) AS reviewCount, 
+             count(distinct u) AS userCount, 
+             avg(r.score) AS rating 
+      ORDER BY rating DESC LIMIT 20`
+    const result = await session.run(query)
+
+    const reducedResponse = recordsReducer(result.records)
+    res.send(reducedResponse)
 })
 
 
