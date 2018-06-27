@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
+import { ValidatorForm } from 'react-material-ui-form-validator'
 
 import { addNewPathThunk } from '../../store'
 
@@ -35,9 +36,9 @@ class PathBuilder extends Component {
     this.state = {
       name: '',
       description: '',
-      language: '',
+      language: 'Javascript',
       tags: '',
-      level: ''
+      level: 'beginner',
     }
   }
 
@@ -65,10 +66,11 @@ class PathBuilder extends Component {
 
   render(){
     const { classes } = this.props
+    console.log(this.state)
     return (
       <div style={{maxWidth: 700}}>
         <h3>Add A New Path: {this.state.name}</h3>
-          <form
+          <ValidatorForm
             className={classes.container}
             onChange={this.handleChange}
             onSubmit={this.handleSubmit}
@@ -93,7 +95,7 @@ class PathBuilder extends Component {
               Build Your Path
             </Button>
 
-          </form>
+          </ ValidatorForm>
       </div>
     )
   }
