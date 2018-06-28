@@ -66,6 +66,7 @@ router.get('/:categoryName/search', async(req,res,next) => {
   res.json(allPathsAndResourcesByCategory)
 })
 
+
 //fuzzy match for any node related to a certain category
 router.post('/:categoryName/search', async (req, res, next) => {
   const category = req.params.categoryName
