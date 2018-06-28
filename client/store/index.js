@@ -7,13 +7,15 @@ import category from './category'
 import {pathReducer} from './pathReducer'
 import step from './step'
 import singleCategory from './single-category'
+import resource from './resource'
 
 const reducer = combineReducers({
   user,
   pathReducer,
   category,
   step,
-  singleCategory
+  singleCategory,
+  resource,
 })
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
@@ -26,3 +28,4 @@ export * from './category'
 export * from './pathReducer'
 export * from './step'
 export * from './single-category'
+export * from './resource'

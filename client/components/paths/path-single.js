@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PathProgress from './path-progress'
+import {ResourceCard} from '../resources'
 
 import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
 
@@ -88,7 +89,6 @@ class SinglePath extends Component {
         break
       }
     }
-
     return found
   }
 
@@ -107,65 +107,23 @@ class SinglePath extends Component {
     return (
       <div>
         <h3>{path.details.properties.name}</h3>
-
         <PathProgress progress={this.getCompletePercentage()} />
-
         <div style={styles.container}>
           <List>
             { path.steps.length > 1 &&
               path.steps.map(step => {
                 const stepUrl = step.resource.properties.url
                 return (
-                <div key={stepUrl}>
-                  <ListItem
-                    key={stepUrl}
-                    role={undefined}
-                    dense
-                    button
-                    disableRipple
-                  >
-                    <Checkbox
-                      onChange={this.handleCompletedClick(stepUrl)}
-                      checked={this.checkForComplete(stepUrl)}
-                      disableRipple
-                    />
-
-                    {
-                      step.resource.properties.imageUrl ? (
-                        <img src={step.resource.properties.imageUrl} width={75} />
-                      ) : (
-                        <img src="../../default.png" width={75} />
-                      )
-                    }
-
-                    <ListItemText primary={step.resource.properties.name} />
-
-                    {this.state.selectedItems.indexOf(stepUrl) !== -1 ?
-                      <ExpandLess
-                        onClick={() => this.handleDropdownClick(stepUrl)}
-                      /> :
-                      <ExpandMore
-                        onClick={() => this.handleCollapseClick(stepUrl)}
-                      />
-                    }
-
-                  </ListItem>
-
-                  <Collapse
-                    in={this.state.selectedItems.indexOf(stepUrl) !== -1}
-                    timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      <ListItem button>
-                        <p>In the dropdown for "{step.resource.properties.name}"</p>
-                      </ListItem>
-                    </List>
-                  </Collapse>
-
-                  </div>
+                  <ResourceCard 
+                    key={step.resource.identity.low} 
+                    resourceProperties={step.resource.properties} 
+                    handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
+                    checkForComplete={() => this.checkForComplete(stepUrl)}
+                  />
                 )
-            } ) }
+              }
+             )}
           </List>
-
         </div>
 
           <Button
