@@ -16,7 +16,6 @@ class BuilderTitle extends Component {
         fullWidth
         margin="normal"
         required={true}
-        error={true}
         validators={['required']}
         errorMessages={['A unique path title is required']}
       />

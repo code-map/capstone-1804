@@ -66,7 +66,6 @@ class PathBuilder extends Component {
 
   render(){
     const { classes } = this.props
-    console.log(this.state)
     return (
       <div style={{maxWidth: 700}}>
         <h3>Add A New Path: {this.state.name}</h3>

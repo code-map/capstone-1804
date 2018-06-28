@@ -3,7 +3,6 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import Typography from '@material-ui/core/Typography'
 
 const PathProgress = ({progress}) => {
-  console.log(progress)
   return (
     <div>
       <Typography
