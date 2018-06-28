@@ -51,8 +51,7 @@ class PublicSinglePath extends Component {
                   return (
                   <div key={stepUrl}>
                     <ListItem
-                      key={stepUrl}
-                      role={undefined}
+                      key={stepUrl}                      
                       dense
                       button
                       disableRipple
