@@ -57,7 +57,9 @@ router.get('/popular', async (req,res,next) => {
              p.owner AS owner,
              count(r) AS reviewCount,
              count(distinct u) AS userCount,
-             avg(r.score) AS rating
+             avg(r.score) AS rating,
+             p.uid AS uid,
+             p.slug AS slug
       ORDER BY rating DESC LIMIT 20`
     const result = await session.run(query)
 
@@ -65,6 +67,27 @@ router.get('/popular', async (req,res,next) => {
     res.send(reducedResponse)
 })
 
+
+// GET: api/paths/:uid
+router.get('/:pathUid', async (req, res, next) => {
+  try {
+    const param = req.params.pathUid
+
+    const query = `
+    MATCH (p:Path) WHERE p.uid = {uid}
+    OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+    RETURN { details: p, steps: collect( { step: s, resource: r } ) }`
+
+    const result = await session.run(query, {uid: param})
+
+    const singlePath = result.records.map((record) => {
+      return record._fields
+    })
+
+    res.send(singlePath)
+    session.close()
+  } catch (err) { next(err) }
+})
 
 
 // GET: api/paths/:name

@@ -30,7 +30,27 @@ router.get(`/:resourceName/reviews`, async (req,res,next) => {
   }
 })
 
+router.get('/:resourceUid', async (req, res, next) => {
+  try {
+    const param = req.params.pathUid
+
+    const query = `
+    MATCH (r:Resource) WHERE r.uid = {uid}
+    RETURN r`
+
+    const result = await session.run(query, {uid: param})
+
+    const singleRecord = result.records.map((record) => {
+      return record._fields
+    })
+
+    res.send(singleRecord)
+    session.close()
+
+  }catch(err){
+    console.error(err)
+    next(err)
+  }
+})
+
 module.exports = router
-
-
-             //r.properties.createdDate.low AS date

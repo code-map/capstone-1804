@@ -2,8 +2,10 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Route, Switch, Redirect} from 'react-router-dom'
 import PropTypes from 'prop-types'
-import {Login, Signup, UserHome, UserDashboard, CategorySinglePage, HomePage, About, PublicSinglePath} from './components'
+import {Login, Signup, UserHome, UserDashboard, CategorySinglePage, HomePage, About, Resource} from './components'
+import {PublicSinglePath} from './components/paths'
 import {me} from './store'
+
 
 
 class Routes extends Component {
@@ -20,8 +22,9 @@ class Routes extends Component {
         <Route exact path="/" component={HomePage} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
+        {/* <Route path="/resource/:resourceUid" component={Resource} /> */}
         <Route exact path="/category/:categoryName" component={CategorySinglePage} />
-        <Route exact path="/paths/BasicJavaScript" component={PublicSinglePath} />
+        <Route path="/paths/:pathUid/:pathSlug" component={PublicSinglePath} />
         <Route exact path="/about" component={About} />
         {isLoggedIn && (
           <Switch>
