@@ -34,9 +34,9 @@ const getStepResource = (resource) => {
 /**
  * THUNK CREATORS
  */
-export const getStepCompletionSingleUserThunk = (pathName, username) => {
+export const getStepCompletionSingleUserThunk = (uid, username) => {
   return async (dispatch) => {
-    const { data } = await axios.get(`/api/paths/${pathName}/user/${username}/completed`)
+    const { data } = await axios.get(`/api/paths/${uid}/user/${username}/completed`)
     dispatch(getStepCompletionSingleUser(data))
   }
 }
