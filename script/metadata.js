@@ -13,7 +13,7 @@ const getMetadata = url => {
       if (!data) {
         throw new Error('No metadata found')
       } else {
-        metaObj.title = data.title ? data.title : ''
+        metaObj.name = data.name ? data.name : ''
         metaObj.type = data.type ? data.type : ''
         metaObj.description = data.description ? data.description : ''
         metaObj.imageUrl = data.image ? data.image.url : ''
@@ -42,7 +42,7 @@ const updateSeed = async () => {
         if (!data) {
           throw new Error('No metadata found')
         } else {
-          metaObj.title = data.title ? data.title : ''
+          metaObj.name = data.name ? data.name : ''
           metaObj.type = data.type ? data.type : ''
           metaObj.description = data.description ? data.description : ''
           metaObj.imageUrl = data.image ? data.image.url : ''
@@ -56,7 +56,7 @@ const updateSeed = async () => {
             {
               url: url,
               type: metaObj.type,
-              name: metaObj.title,
+              name: metaObj.name,
               description: metaObj.description,
               imageUrl: metaObj.imageUrl
             }
