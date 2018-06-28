@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PathProgress from './path-progress'
 import {ResourceCard} from '../resources'
+import AddResource from './add-resource'
+import PathToggleStatus from './path-toggle-status'
 
 import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
 
@@ -13,6 +15,7 @@ import Collapse from '@material-ui/core/Collapse'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import Button from '@material-ui/core/Button'
+import Chip from '@material-ui/core/Chip'
 
 const styles = {
   container: {
@@ -20,6 +23,14 @@ const styles = {
     borderWidth: '1px',
     borderColor: '#efefef',
     borderStyle: 'solid'
+  },
+  deleteButton: {
+    marginTop: 20,
+    float: 'right'
+  },
+  chip: {
+    fontWeight: 100,
+    marginRight: 20
   }
 }
 
@@ -33,9 +44,11 @@ class SinglePath extends Component {
   }
 
   componentDidMount = () => {
-    const pathName = this.props.path.details.properties.name
-    const username = this.props.user
-    this.props.getCompletedSteps(pathName, username)
+    if(this.props.path.steps.length > 1) {
+      const pathName = this.props.path.details.properties.name
+      const username = this.props.user
+      this.props.getCompletedSteps(pathName, username)
+    }
   }
 
   componentWillReceiveProps(nextProps){
@@ -101,16 +114,26 @@ class SinglePath extends Component {
     return Math.round( (completed / total) * 100 )
   }
 
-  render(){
-    const path = this.props.path
+  toggleStatus = () => {
 
+  }
+
+  render(){
+    const { path, user } = this.props
     return (
       <div>
-        <h3>{path.details.properties.name}</h3>
-        <PathProgress progress={this.getCompletePercentage()} />
+        <h3>
+          <Chip label={path.details.properties.status} style={styles.chip}/>
+          {path.details.properties.name}
+        </h3>
+        <p>{path.details.properties.description}</p>
+
+        { this.props.path.steps[0].step !== null &&
+          <PathProgress progress={this.getCompletePercentage()} />
+        }
         <div style={styles.container}>
           <List>
-            { path.steps.length > 1 &&
+            { this.props.path.steps[0].step !== null &&
               path.steps.map(step => {
                 const stepUrl = step.resource.properties.url
                 return (
@@ -123,16 +146,29 @@ class SinglePath extends Component {
                 )
               }
              )}
+          { path.details.properties.owner === user &&
+            <AddResource user={user} path={path} />
+          }
           </List>
         </div>
 
-          <Button
-            onClick={this.handleDeletePath}
-            variant="outlined"
-            color="secondary"
-          >
+        { path.details.properties.owner === user &&
+          <div>
+            <Button
+              style={styles.deleteButton}
+              onClick={this.handleDeletePath}
+              variant="outlined"
+              color="secondary"
+            >
             Delete Path
-          </Button>
+            </Button>
+
+            <PathToggleStatus
+              toggleStatus={this.state.toggleStatus}
+              style={styles.status} />
+
+          </div>
+        }
 
       </div>
     )

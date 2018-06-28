@@ -1,21 +1,21 @@
 import React from 'react'
-import TextField from '@material-ui/core/TextField'
+
+import { TextValidator } from 'react-material-ui-form-validator'
 
 const BuilderDescription = ({description}) => {
   return (
-    <TextField
+    <TextValidator
       multiline={true}
       id="path-description"
       label="Give your path a short description"
       name="description"
       value={description}
-      // InputLabelProps={{
-      //   shrink: true,
-      // }}
       placeholder="ie. A learning path to get started using the d3.js data visualization library"
       fullWidth
       margin="normal"
       required={true}
+      validators={['required']}
+      errorMessages={['Your path deserves an amazing description']}
     />
   )
 }

@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Route, Switch, Redirect} from 'react-router-dom'
 import PropTypes from 'prop-types'
-import {Login, Signup, UserHome, UserDashboard, CategorySinglePage, HomePage, About} from './components'
+import {Login, Signup, UserHome, UserDashboard, CategorySinglePage, HomePage, About, PublicSinglePath} from './components'
 import {me} from './store'
 
 
@@ -20,7 +20,8 @@ class Routes extends Component {
         <Route exact path="/" component={HomePage} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
-        <Route exact path="/category/:categoryName/" component={CategorySinglePage} />
+        <Route exact path="/category/:categoryName" component={CategorySinglePage} />
+        <Route exact path="/paths/BasicJavaScript" component={PublicSinglePath} />
         <Route exact path="/about" component={About} />
         {isLoggedIn && (
           <Switch>
@@ -42,9 +43,7 @@ class Routes extends Component {
  */
 const mapState = state => {
   return {
-    // Being 'logged in' for our purposes will be defined has having a state.user that has a truthy id.
-    // Otherwise, state.user will be an empty object, and state.user.id will be falsey
-    isLoggedIn: !!state.user.id
+    isLoggedIn: !!state.user.name
   }
 }
 

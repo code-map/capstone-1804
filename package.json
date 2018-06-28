@@ -37,6 +37,7 @@
   "dependencies": {
     "@material-ui/core": "^1.2.3",
     "@material-ui/icons": "^1.1.0",
+    "apoc": "^2.1.6",
     "async": "^2.6.1",
     "axios": "^0.15.3",
     "body-parser": "^1.16.1",
@@ -45,6 +46,7 @@
     "express": "^4.14.1",
     "express-session": "^1.15.1",
     "history": "^4.6.3",
+    "html-metadata": "git://github.com/wikimedia/html-metadata.git",
     "morgan": "^1.8.1",
     "neo4j-driver": "^1.5.0",
     "passport": "^0.3.2",
@@ -53,7 +55,9 @@
     "pg-hstore": "^2.3.2",
     "prop-types": "^15.5.8",
     "react": "^16.3.1",
+    "react-autosuggest": "^9.3.4",
     "react-dom": "^16.4.1",
+    "react-material-ui-form-validator": "^2.0.0-beta.10",
     "react-redux": "^5.0.2",
     "react-router-dom": "^4.1.1",
     "react-star-rating-component": "^1.4.1",
@@ -61,6 +65,7 @@
     "redux-logger": "^2.8.1",
     "redux-thunk": "^2.2.0",
     "sequelize": "^4.3.1",
+    "shortid": "^2.2.8",
     "socket.io": "^2.0.3",
     "styled-components": "^3.3.3"
   },

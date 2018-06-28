@@ -6,6 +6,7 @@ import axios from 'axios'
 const GET_SINGLE_PATH = 'GET_SINGLE_PATH'
 const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
 const ADD_NEW_PATH = 'ADD_NEW_PATH'
+const ADD_STEP_TO_PATH = 'ADD_STEP_TO_PATH'
 const DELETE_SINGLE_PATH = 'DELETE_SINGLE_PATH'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
@@ -27,6 +28,13 @@ const addNewPath = (path) => {
   return {
     type: ADD_NEW_PATH,
     path
+  }
+}
+
+const addStepToPath = (step) => {
+  return {
+    type: ADD_STEP_TO_PATH,
+    step
   }
 }
 
@@ -86,6 +94,17 @@ export const addNewPathThunk = (path) => {
   return async (dispatch) => {
     const { data } = await axios.post('/api/paths', path)
     dispatch(addNewPath(data))
+  }
+}
+
+export const addStepToPathThunk = (username, pathName, url, form, type) => {
+  return async (dispatch) => {
+    const urlEncoded = encodeURIComponent(url)
+    const { data } = await axios.post(`/api/paths/${pathName}/user/${username}/step/${urlEncoded}`, {...form, type})
+
+    // Need to update singlePath in the store with the new step
+    // So that steps update on screen without refresh
+    dispatch(addStepToPath(data))
   }
 }
 
