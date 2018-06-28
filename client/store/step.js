@@ -41,11 +41,11 @@ export const getStepCompletionSingleUserThunk = (pathName, username) => {
   }
 }
 
-export const toggleStepCompletionThunk = (pathName, username, stepUrl, bool) => {
+export const toggleStepCompletionThunk = (pathUid, username, stepUrl, bool) => {
   return async (dispatch) => {
     const urlEncoded = encodeURIComponent(stepUrl)
 
-    await axios.put(`/api/paths/${pathName}/user/${username}/status/${bool}/step/${urlEncoded}`)
+    await axios.put(`/api/paths/${pathUid}/user/${username}/status/${bool}/step/${urlEncoded}`)
 
     dispatch(toggleStepCompletion(stepUrl))
   }

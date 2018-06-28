@@ -43,16 +43,17 @@ class SinglePath extends Component {
   }
 
   componentDidMount = () => {
-    if(this.props.path.steps.length > 1) {
-      const pathName = this.props.path.details.properties.name
+    const path = this.props.path[0]
+    if(path.steps.length > 0) {
+      const pathName = path.details.properties.name
       const username = this.props.user
       this.props.getCompletedSteps(pathName, username)
     }
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.path !== this.props.path){
-      const pathName = nextProps.path.details.properties.name
+    if(nextProps.path[0] !== this.props.path[0]){
+      const pathName = nextProps.path[0].details.properties.name
       const username = this.props.user
       this.props.getCompletedSteps(pathName, username)
     }
@@ -75,11 +76,11 @@ class SinglePath extends Component {
   }
 
   handleCompletedClick = stepUrl => async () => {
-    const pathName = this.props.path.details.properties.name
+    const pathUid = this.props.path[0].details.properties.uid
     const username = this.props.user
     const bool = await this.checkForComplete(stepUrl)
 
-    this.props.toggleStepCompletion(pathName, username, stepUrl, bool)
+    this.props.toggleStepCompletion(pathUid, username, stepUrl, bool)
   }
 
   handleDeletePath = (event) => {
@@ -110,6 +111,9 @@ class SinglePath extends Component {
     const total = this.props.completedSteps.length
     let completed = 0
 
+    console.log('steps', steps)
+    console.log('total steps', total)
+
     steps.forEach(step => step.completed ? completed++ : '')
     return Math.round( (completed / total) * 100 )
   }
@@ -119,23 +123,25 @@ class SinglePath extends Component {
   }
 
   render(){
-    const { path, user } = this.props
+    const { user, path } = this.props
+    const pathDetails = path[0].details.properties
+    const pathSteps = path[0].steps
     return (
       <div>
         <h3>
-          <Chip label={path.details.properties.status} style={styles.chip}/>
-          {path.details.properties.name}
+          <Chip label={pathDetails.status} style={styles.chip}/>
+          {pathDetails.name}
         </h3>
-        <p>{path.details.properties.description}</p>
+        <p>{pathDetails.description}</p>
 
-        { this.props.path.steps[0].step !== null &&
+        { pathSteps &&
           <PathProgress progress={this.getCompletePercentage()} />
         }
 
         <div style={styles.container}>
           <List>
-            { this.props.path.steps[0].step !== null &&
-              path.steps.map(step => {
+            { pathSteps &&
+              pathSteps.map(step => {
                 const stepUrl = step.resource.properties.url
                 return (
                 <div key={stepUrl}>
@@ -187,7 +193,7 @@ class SinglePath extends Component {
                 )
             } ) }
 
-          { path.details.properties.owner === user &&
+          { path[0].details.properties.owner === user &&
             <AddResource user={user} path={path} />
           }
 
@@ -195,7 +201,7 @@ class SinglePath extends Component {
 
         </div>
 
-        { path.details.properties.owner === user &&
+        { path[0].details.properties.owner === user &&
           <div>
             <Button
               style={styles.deleteButton}
@@ -232,8 +238,8 @@ const mapDispatchToProps = (dispatch) => {
     getCompletedSteps: (pathName, username) => {
       dispatch(getStepCompletionSingleUserThunk(pathName, username))
     },
-    toggleStepCompletion: (pathName, username, stepUrl, bool) => {
-      dispatch(toggleStepCompletionThunk(pathName, username, stepUrl, bool))
+    toggleStepCompletion: (pathUid, username, stepUrl, bool) => {
+      dispatch(toggleStepCompletionThunk(pathUid, username, stepUrl, bool))
     }
   }
 }

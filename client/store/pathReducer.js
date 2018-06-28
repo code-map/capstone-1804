@@ -131,9 +131,9 @@ export const deleteSinglePathThunk = (name) => {
   }
 }
 
-export const getSinglePathThunk = (name) => {
+export const getSinglePathByNameThunk = (name) => {
   return async (dispatch) => {
-    const { data } = await axios.get(`/api/paths/${name}`)
+    const { data } = await axios.get(`/api/paths/byName/${name}`)
     dispatch(getSinglePath(data))
   }
 }

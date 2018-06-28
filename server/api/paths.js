@@ -90,8 +90,8 @@ router.get('/:pathUid', async (req, res, next) => {
 })
 
 
-// GET: api/paths/:name
-router.get('/:name', async (req, res, next) => {
+// GET: api/paths/byName/:name
+router.get('/byName/:name', async (req, res, next) => {
   try {
     const param = req.params.name
 
@@ -143,21 +143,24 @@ router.get('/:name/user/:username/completed', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-// PUT: api/paths/:pathName/user/:username/status/:bool/step/:stepUrl
-router.put('/:pathName/user/:username/status/:completed/step/:stepUrl', async (req, res, next) => {
+// PUT: api/paths/:pathUid/user/:username/status/:bool/step/:stepUrl
+router.put('/:pathUid/user/:username/status/:completed/step/:stepUrl', async (req, res, next) => {
   try {
 
-    const pathName = req.params.pathName
+    const uid = req.params.pathUid
     const username = req.params.username
     const stepUrl = decodeURIComponent(req.params.stepUrl)
     const completed = req.params.completed
     let query = ''
 
+    console.log('** path uid **', uid)
+    console.log('** stepUrl **', stepUrl)
+
     if (completed === 'true') {
       // Remove the relationship
       query = `
       MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-      WHERE u.name = {username} and p.name = {pathName} and r.url = {stepUrl}
+      WHERE u.name = {username} and p.uid = {uid} and r.url = {stepUrl}
       OPTIONAL MATCH (u)-[c:COMPLETED]->(s)
       DELETE c
       `
@@ -165,12 +168,12 @@ router.put('/:pathName/user/:username/status/:completed/step/:stepUrl', async (r
       // Add the relationship
       query = `
       MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-      WHERE u.name = {username} and p.name = {pathName} and r.url = {stepUrl}
+      WHERE u.name = {username} and p.uid = {uid} and r.url = {stepUrl}
       CREATE (u)-[:COMPLETED]->(s)
       `
     }
 
-    await session.run(query, {pathName, username, stepUrl})
+    await session.run(query, {uid, username, stepUrl})
 
     res.send(stepUrl)
     session.close()

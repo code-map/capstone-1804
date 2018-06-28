@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
-import { getSingleUserPathsThunk, getSinglePathThunk } from '../store'
+import { getSingleUserPathsThunk, getSinglePathByUidThunk } from '../store'
 import { PathUserDirectory, PathSingle, PathBuilder } from './paths'
 import Grid from '@material-ui/core/Grid'
 import history from '../history'
@@ -33,16 +33,16 @@ class UserDashboard extends Component {
     this.props.getSingleUserPaths(username)
   }
 
-  handleSelect = (name) => {
+  handleSelect = (uid) => {
     const selectedPath = this.props.allUserPaths.find((path) => {
-      return path[0].details.properties.name === name
+      return path[0].details.properties.uid === uid
     })
 
     this.setState({
       selectedPath: selectedPath[0]
     })
 
-    this.props.getSinglePath(name)
+    this.props.getSinglePathByUid(uid)
     history.push('/user/dashboard/my-paths')
   }
 
@@ -76,6 +76,10 @@ class UserDashboard extends Component {
               />
             }
 
+            { view === 'my-paths' && !singlePath[0] &&
+              <p>Select a path</p>
+            }
+
             { view === 'add-new-path' &&
               <PathBuilder
                 user={user.name}
@@ -107,8 +111,8 @@ const mapDispatchToProps = (dispatch) => {
     getSingleUserPaths: (username) => {
       dispatch(getSingleUserPathsThunk(username))
     },
-    getSinglePath: (name) => {
-      dispatch(getSinglePathThunk(name))
+    getSinglePathByUid: (uid) => {
+      dispatch(getSinglePathByUidThunk(uid))
     }
   }
 }
