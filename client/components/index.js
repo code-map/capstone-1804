@@ -14,4 +14,5 @@ export { default as HomePage } from './home-page'
 export {default as Stars } from './paths'
 export {default as SearchAny} from './search-bar-any'
 export {default as About } from './about'
+export {default as PublicSinglePath} from './paths'
 

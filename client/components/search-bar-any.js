@@ -3,7 +3,29 @@ import React, {Component} from 'react'
 import { withRouter } from 'react-router-dom'
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux'
+import styled from "styled-components"
 
+const DropDown = styled.div`
+  position: absolute;
+  z-index: 0;
+  background-color: white;
+  padding-left: 40px;
+  padding-right: 40px;
+  max-height:200px;
+  overflow: scroll;
+`
+
+const MatchRow = styled.div`
+  height: auto;
+  width: autl;
+  padding-left: 4px;
+  padding-right: 4px;
+  border-radius: 6px;
+  margin: 0;
+  &:hover {
+    background-color: #efe6f2;
+  }
+`
 
 class SearchAny extends Component {
   constructor(props) {
@@ -36,11 +58,11 @@ class SearchAny extends Component {
   mapOptions = () => {
     const matches = this.props.matches
     if(matches.length && this.state.input !== ''){
-      return(<div style={{zIndex:0}}>
+      return(<div>
         {
           matches.map((match) => {
             const {name} = match
-            return <p key={name}>{name}</p>
+            return <MatchRow key={name}><p>{name}</p></MatchRow>
           })
         }
         </div>
@@ -51,7 +73,7 @@ class SearchAny extends Component {
 
   render () {
     return (
-      <div>
+      <div style={{height:80}}>
       <TextField
         id="search"
         onChange={this.handleChange}
@@ -64,11 +86,11 @@ class SearchAny extends Component {
         type="search"
         margin="normal"
       />
-      <div>
+      <DropDown>
         {
           this.mapOptions()
         }
-      </div>
+      </DropDown>
       </div>
     )
 
