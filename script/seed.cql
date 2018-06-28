@@ -2,7 +2,12 @@ let neo4j = require('neo4j-driver').v1;
 let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
 const shortid = require('shortid');
-let updateSeed = require('./metadata.js').updateSeed
+let {updateSeed} = require('./metadata.js')
+let addIdPaths = require('./addIdsAndSlugs.js').addIdPaths
+let addSlugPaths = require('./addIdsAndSlugs.js').addSlugPaths
+let addSlugResource = require('./addIdsAndSlugs.js').addSlugResource
+let addIdResource = require('./addIdsAndSlugs.js').addIdResource
+
 
 
 session.run('MATCH (n) detach delete n')
@@ -613,9 +618,23 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (violeteyes)-[:COMPLETED]->(jsadv_2s2),
 (violeteyes)-[:COMPLETED]->(jsadv_2s3),
 (violeteyes)-[:COMPLETED]->(jsadv_2s4)`)
-.then(results => console.log(results)).then(updateSeed())
+.then(results => console.log(results.summary.counters))
+.then(() => {console.log('updating seed')
+            return updateSeed()}).then(console.log('seed updated'))
+// .then(() => {console.log('adding ID to paths')
+//             return addIdPaths()})
+// .then(() => {console.log('adding ID to resources')
+//             return addIdResource()})
+// .then(() => {console.log('adding slug to paths')
+//             return addSlugPaths()})
+// .then(() => {console.log('adding slug to resources')
+//             return addSlugResource()})
+// .then(() => console.log('db successfully seeded'))
 //.then(session.close())
+// updateSeed().then(() => console.log('updated'))
 
 
-
-
+// addIdPaths()
+// addIdResource()
+// addSlugPaths()
+// addSlugResource()

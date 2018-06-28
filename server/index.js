@@ -131,3 +131,5 @@ if (require.main === module) {
 } else {
   createApp()
 }
+
+module.exports = app
