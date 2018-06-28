@@ -118,7 +118,6 @@ class PublicSinglePath extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log('path state', state)
   return {
     completedSteps: state.pathReducer.singlePath
   }
