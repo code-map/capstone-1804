@@ -37,6 +37,7 @@
   "dependencies": {
     "@material-ui/core": "^1.2.3",
     "@material-ui/icons": "^1.1.0",
+    "apoc": "^2.1.6",
     "async": "^2.6.1",
     "axios": "^0.15.3",
     "body-parser": "^1.16.1",
@@ -62,6 +63,7 @@
     "redux-logger": "^2.8.1",
     "redux-thunk": "^2.2.0",
     "sequelize": "^4.3.1",
+    "shortid": "^2.2.8",
     "socket.io": "^2.0.3",
     "styled-components": "^3.3.3"
   },

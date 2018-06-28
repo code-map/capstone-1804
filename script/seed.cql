@@ -1,6 +1,9 @@
 let neo4j = require('neo4j-driver').v1;
 let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
+const shortid = require('shortid');
+
+
 
 
 session.run('MATCH (n) detach delete n')
@@ -612,9 +615,8 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (violeteyes)-[:COMPLETED]->(jsadv_2s3),
 (violeteyes)-[:COMPLETED]->(jsadv_2s4)
 `).then(results => console.log(results))
+
 //.then(session.close())
-
-
 
 
 
