@@ -3,40 +3,70 @@ import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import {auth, newUserThunk} from '../store'
 import history from '../history'
+import {withStyles} from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
 
 /**
  * COMPONENT
  */
+
+const styles = theme => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    backgroundColor: 'white',
+    borderWidth: '1px',
+    borderColor: '#efefef',
+    borderStyle: 'solid',
+    padding: '40px',
+    paddingTop: '20px'
+  },
+  button: {
+    marginTop: 10
+  }
+})
+
 const AuthForm = props => {
-  const {name, displayName, handleSubmit, error, handleNewuser} = props
+  const {name, displayName, handleSubmit, error, handleNewuser, classes} = props
 
   return (
     <div>
-      <form onSubmit={(displayName === 'Sign Up') ? handleNewuser : handleSubmit} name={name}>
+      <form
+        onSubmit={displayName === 'Sign Up' ? handleNewuser : handleSubmit}
+        name={name}
+        className={classes.container}
+      >
+        <TextField
+          id="username"
+          name="username"
+          label="Username"
+          required={true}
+        />
+        {displayName === 'Sign Up' && (
+          <div>
+            <TextField id="email" name="email" label="Email" required={true} />
+          </div>
+        )}
+        <TextField
+          id="password"
+          name="password"
+          label="Password"
+          required={true}
+        />
         <div>
-          <label htmlFor="username">
-            <small>Username</small>
-          </label>
-          <input name="username" type="text" />
-        </div>
-        {(displayName === 'Sign Up') && <div>
-          <label htmlFor="email">
-            <small>Email</small>
-          </label>
-          <input name="email" type="text" />
-        </div>}
-        <div>
-          <label htmlFor="password">
-            <small>Password</small>
-          </label>
-          <input name="password" type="password" />
-        </div>
-        <div>
-          <button type="submit">{displayName}</button>
+          <Button
+            type="submit"
+            size="large"
+            className={classes.button}
+            variant="outlined"
+          >
+            {displayName}
+          </Button>
         </div>
         {error && error.response && <div> {error.response.data} </div>}
       </form>
-      <a href="/auth/google">{displayName} with Google</a>
+      <a href="/auth/google">{displayName} with Google (COMING SOON!)</a>
     </div>
   )
 }
@@ -73,7 +103,7 @@ const mapDispatch = dispatch => {
       const password = evt.target.password.value
       dispatch(auth(name, password, formName))
     },
-    handleNewuser (evt) {
+    handleNewuser(evt) {
       evt.preventDefault()
       const name = evt.target.username.value
       const email = evt.target.email.value
@@ -84,9 +114,12 @@ const mapDispatch = dispatch => {
   }
 }
 
-export const Login = connect(mapLogin, mapDispatch)(AuthForm)
-export const Signup = connect(mapSignup, mapDispatch)(AuthForm)
-
+export const Login = connect(mapLogin, mapDispatch)(
+  withStyles(styles)(AuthForm)
+)
+export const Signup = connect(mapSignup, mapDispatch)(
+  withStyles(styles)(AuthForm)
+)
 /**
  * PROP TYPES
  */
