@@ -36,7 +36,7 @@ router.get('/:categoryName/popular-paths', async (req,res,next) => {
       where c.name={category}
       with count(u) as Users,c,p
       optional match(rev:Review)-[:REVIEWS]->(p)
-      return c.name as Category, p.name as Path, Users, avg(rev.score) as Rating,
+      return c.name as Category, p.name as Path, Users, avg(rev.score) as Rating
       order by Users desc
       limit 3
      `
