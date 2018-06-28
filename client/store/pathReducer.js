@@ -45,10 +45,10 @@ const getSinglePath = (path) => {
   }
 }
 
-const deleteSinglePath = (name) => {
+const deleteSinglePath = (uid) => {
   return {
     type: DELETE_SINGLE_PATH,
-    name
+    uid
   }
 }
 
@@ -124,10 +124,10 @@ export const getPopularPathsInAllCategories = () => {
   }
 }
 
-export const deleteSinglePathThunk = (name) => {
+export const deleteSinglePathThunk = (uid) => {
   return async (dispatch) => {
-    await axios.delete(`/api/paths/${name}`)
-    dispatch(deleteSinglePath(name))
+    const { data } = await axios.delete(`/api/paths/${uid}`)
+    dispatch(deleteSinglePath(data))
   }
 }
 
@@ -190,7 +190,8 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
     case ADD_NEW_PATH:
       return {...state, allUserPaths: [...state.allUserPaths, action.path]}
     case DELETE_SINGLE_PATH: {
-      const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.name !== action.name)
+      console.log('pathReducer', action.uid)
+      const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.uid !== action.uid)
       return {...state, allUserPaths}
     }
     case GET_PATHS_SINGLE_USER:

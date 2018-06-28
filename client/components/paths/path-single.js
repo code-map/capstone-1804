@@ -85,9 +85,10 @@ class SinglePath extends Component {
 
   handleDeletePath = (event) => {
     event.preventDefault()
-    const pathName = this.props.path.details.properties.name
+    const pathName = this.props.path[0].details.properties.name
+    const uid = this.props.path[0].details.properties.uid
     if (window.confirm(`Are you sure you want to delete ${pathName}?`)){
-      this.props.deleteSinglePath(pathName)
+      this.props.deleteSinglePath(uid)
     }
   }
 
@@ -111,15 +112,8 @@ class SinglePath extends Component {
     const total = this.props.completedSteps.length
     let completed = 0
 
-    console.log('steps', steps)
-    console.log('total steps', total)
-
     steps.forEach(step => step.completed ? completed++ : '')
     return Math.round( (completed / total) * 100 )
-  }
-
-  toggleStatus = () => {
-
   }
 
   render(){
@@ -134,15 +128,16 @@ class SinglePath extends Component {
         </h3>
         <p>{pathDetails.description}</p>
 
-        { pathSteps &&
+        { pathSteps[0].step !== null &&
           <PathProgress progress={this.getCompletePercentage()} />
         }
 
         <div style={styles.container}>
           <List>
-            { pathSteps &&
+            { pathSteps[0].step !== null &&
               pathSteps.map(step => {
                 const stepUrl = step.resource.properties.url
+                const resourceImg = step.resource.properties.imageUrl
                 return (
                 <div key={stepUrl}>
                   <ListItem
@@ -159,11 +154,7 @@ class SinglePath extends Component {
                     />
 
                     {
-                      step.resource.properties.imageUrl ? (
-                        <img src={step.resource.properties.imageUrl} width={75} />
-                      ) : (
-                        <img src="../../default.png" width={75} />
-                      )
+                      <img src={resourceImg ? resourceImg : "../../default.png"} width={75} />
                     }
 
                     <ListItemText primary={step.resource.properties.name} />
@@ -184,7 +175,10 @@ class SinglePath extends Component {
                     timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItem button>
-                        <p>In the dropdown for <a href={step.resource.properties.url} target="_blank">{step.resource.properties.name}</a></p>
+                        <ul>
+                          <li>Description: {step.resource.properties.description}</li>
+                          <li>Visit resource: <a href={step.resource.properties.url} target="_blank">{step.resource.properties.name}</a></li>
+                        </ul>
                       </ListItem>
                     </List>
                   </Collapse>
@@ -232,8 +226,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    deleteSinglePath: (name) => {
-      dispatch(deleteSinglePathThunk(name))
+    deleteSinglePath: (uid) => {
+      dispatch(deleteSinglePathThunk(uid))
     },
     getCompletedSteps: (pathName, username) => {
       dispatch(getStepCompletionSingleUserThunk(pathName, username))

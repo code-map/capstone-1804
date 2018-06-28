@@ -3,6 +3,11 @@ let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
+const shortid = require('shortid')
+
+const makeSlug = (string) => {
+  return string.replace(/[^a-z0-9]/gi,'')
+}
 
 // GET: api/paths/all/user/:username/
 router.get('/all/user/:username/', async (req, res, next) => {
@@ -153,9 +158,6 @@ router.put('/:pathUid/user/:username/status/:completed/step/:stepUrl', async (re
     const completed = req.params.completed
     let query = ''
 
-    console.log('** path uid **', uid)
-    console.log('** stepUrl **', stepUrl)
-
     if (completed === 'true') {
       // Remove the relationship
       query = `
@@ -248,13 +250,15 @@ router.post('/:pathName/user/:username/step/:stepUrl', async (req, res, next) =>
 router.post('/', async (req, res, next) => {
 
   const createdDate = Date.now()
+  const uid = shortid.generate()
+  const slug = makeSlug(req.body.name)
 
   try {
 
     const newPath = `
     MATCH (u:User), (c:Category)
     WHERE u.name = {username} AND c.name = {category}
-    CREATE (p:Path {name: {name}, description: {description}, level: {level}, status: {status}, owner: {username}, createdDate: {createdDate}}),
+    CREATE (p:Path {name: {name}, description: {description}, level: {level}, status: {status}, owner: {username}, createdDate: {createdDate}, uid: {uid}, slug: {slug}}),
     (u)-[:PATHS {notes: {notes}}]->(p),
     (p)-[:CATEGORY]->(c)`
 
@@ -266,6 +270,8 @@ router.post('/', async (req, res, next) => {
       level: req.body.level,
       status: 'draft',
       notes: '',
+      uid,
+      slug,
       createdDate
     })
 
@@ -279,17 +285,17 @@ router.post('/', async (req, res, next) => {
 })
 
 // DELETE: api/paths/:name
-router.delete('/:name', async (req, res, next) => {
+router.delete('/:uid', async (req, res, next) => {
   try {
-    const name = req.params.name
+    const uid = req.params.uid
 
     const query = `
-    MATCH (p:Path) WHERE p.name = {name}
+    MATCH (p:Path) WHERE p.uid = {uid}
     DETACH DELETE p`
 
-    await session.run(query, {name})
+    await session.run(query, {uid})
 
-    res.send(name)
+    res.send(uid)
     session.close()
   } catch (err) { next(err) }
 })
