@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PathProgress from './path-progress'
+import AddResource from './add-resource'
 
 import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
 
@@ -19,6 +20,10 @@ const styles = {
     borderWidth: '1px',
     borderColor: '#efefef',
     borderStyle: 'solid'
+  },
+  deleteButton: {
+    marginTop: 20,
+    float: 'right'
   }
 }
 
@@ -32,9 +37,11 @@ class SinglePath extends Component {
   }
 
   componentDidMount = () => {
-    const pathName = this.props.path.details.properties.name
-    const username = this.props.user
-    this.props.getCompletedSteps(pathName, username)
+    if(this.props.path.steps.length > 1) {
+      const pathName = this.props.path.details.properties.name
+      const username = this.props.user
+      this.props.getCompletedSteps(pathName, username)
+    }
   }
 
   componentWillReceiveProps(nextProps){
@@ -102,17 +109,19 @@ class SinglePath extends Component {
   }
 
   render(){
-    const path = this.props.path
-
+    const { path, user } = this.props
     return (
       <div>
         <h3>{path.details.properties.name}</h3>
+        <p>{path.details.properties.description}</p>
 
-        <PathProgress progress={this.getCompletePercentage()} />
+        { this.props.path.steps[0].step !== null &&
+          <PathProgress progress={this.getCompletePercentage()} />
+        }
 
         <div style={styles.container}>
           <List>
-            { path.steps.length > 1 &&
+            { this.props.path.steps[0].step !== null &&
               path.steps.map(step => {
                 const stepUrl = step.resource.properties.url
                 return (
@@ -156,7 +165,7 @@ class SinglePath extends Component {
                     timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItem button>
-                        <p>In the dropdown for "{step.resource.properties.name}"</p>
+                        <p>In the dropdown for <a href={step.resource.properties.url} target="_blank">{step.resource.properties.name}</a></p>
                       </ListItem>
                     </List>
                   </Collapse>
@@ -164,17 +173,25 @@ class SinglePath extends Component {
                   </div>
                 )
             } ) }
+
+          { path.details.properties.owner === user &&
+            <AddResource user={user} path={path} />
+          }
+
           </List>
 
         </div>
 
+        { path.details.properties.owner === user &&
           <Button
+            style={styles.deleteButton}
             onClick={this.handleDeletePath}
             variant="outlined"
             color="secondary"
           >
-            Delete Path
+          Delete Path
           </Button>
+        }
 
       </div>
     )

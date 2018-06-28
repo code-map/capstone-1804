@@ -5,6 +5,7 @@ import axios from 'axios'
  */
 const GET_STEP_COMPLETIONS_FOR_USER = 'GET_STEP_COMPLETIONS_FOR_USER'
 const TOGGLE_STEP_COMPLETION = 'TOGGLE_STEP_COMPLETION'
+const GET_STEP_RESOURCE = 'GET_STEP_RESOURCE'
 
 /**
  * ACTION CREATORS
@@ -23,6 +24,13 @@ const toggleStepCompletion = (stepUrl) => {
   }
 }
 
+const getStepResource = (resource) => {
+  return {
+    type: GET_STEP_RESOURCE,
+    resource
+  }
+}
+
 /**
  * THUNK CREATORS
  */
@@ -35,7 +43,7 @@ export const getStepCompletionSingleUserThunk = (pathName, username) => {
 
 export const toggleStepCompletionThunk = (pathName, username, stepUrl, bool) => {
   return async (dispatch) => {
-    const urlEncoded = encodeURIComponent(stepUrl);
+    const urlEncoded = encodeURIComponent(stepUrl)
 
     await axios.put(`/api/paths/${pathName}/user/${username}/status/${bool}/step/${urlEncoded}`)
 
@@ -43,11 +51,21 @@ export const toggleStepCompletionThunk = (pathName, username, stepUrl, bool) => 
   }
 }
 
+export const getStepResourceThunk = (url) => {
+  return async (dispatch) => {
+    const urlEncoded = encodeURIComponent(url)
+    const { data } = await axios.get(`/api/paths/step/${urlEncoded}`)
+    dispatch(getStepResource(data))
+  }
+}
+
+
 /**
  * REDUCER
  */
 const initialState = {
-  completedSteps: []
+  completedSteps: [],
+  resource: []
 }
 
 export default function( state = initialState, action) {
@@ -62,6 +80,9 @@ export default function( state = initialState, action) {
         return step
       })
       return {...state, completedSteps}
+    }
+    case GET_STEP_RESOURCE: {
+      return {...state, resource: [action.resource]}
     }
     default:
       return state

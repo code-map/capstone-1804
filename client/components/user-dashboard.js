@@ -8,7 +8,7 @@ import history from '../history'
 
 // This is temporary until we have a user login solution
 // integrated with Neo4j
-const userName = 'shark-week365'
+// const userName = 'shark-week365'
 
 const styles = {
   header: {
@@ -29,7 +29,8 @@ class UserDashboard extends Component {
   }
 
   componentDidMount (){
-    this.props.getSingleUserPaths(userName)
+    const username = this.props.user.name
+    this.props.getSingleUserPaths(username)
   }
 
   handleSelect = (name) => {
@@ -46,9 +47,8 @@ class UserDashboard extends Component {
   }
 
   render () {
-    const { allUserPaths, singlePath } = this.props
+    const { allUserPaths, singlePath, user } = this.props
     const view = this.props.match.params.view
-
     return (
       <div style={styles.container}>
 
@@ -71,14 +71,14 @@ class UserDashboard extends Component {
           <Grid item xs={8}>
             { view === 'my-paths' && singlePath[0] &&
               <PathSingle
-                user={userName}
+                user={user.name}
                 path={singlePath[0]}
               />
             }
 
             { view === 'add-new-path' &&
               <PathBuilder
-                user={userName}
+                user={user.name}
               />
             }
 
