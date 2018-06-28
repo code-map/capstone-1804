@@ -1,15 +1,12 @@
 import React, {Component} from 'react'
-import TextField from '@material-ui/core/TextField'
+
+import { TextValidator } from 'react-material-ui-form-validator'
+
 class BuilderTitle extends Component {
-
-  handleChange = () => {
-    // Throttle search
-  }
-
   render(){
     const { name } = this.props
     return (
-      <TextField
+      <TextValidator
         onChange={this.handleChange}
         id="path-title"
         label="What is the title of your path?"
@@ -19,7 +16,8 @@ class BuilderTitle extends Component {
         fullWidth
         margin="normal"
         required={true}
-        error={true}
+        validators={['required']}
+        errorMessages={['A unique path title is required']}
       />
     )
   }
