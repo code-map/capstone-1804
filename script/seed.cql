@@ -1,6 +1,7 @@
 let neo4j = require('neo4j-driver').v1;
 let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
+let updateSeed = require('./metadata.js').updateSeed
 
 
 session.run('MATCH (n) detach delete n')
@@ -28,45 +29,45 @@ CREATE (Justin:User {name:'Justin',email:'justin@justin.com',password:'1234',goo
 (violeteyes:User {name:'violet-eyes',email:'vaubert@gmail.com',password:'1234',googleId:null, createdDate: timestamp(),isAdmin:false}),
 (JS:Category {name:'Javascript', isLanguage:True}),
 (React:Category {name:'React', isLanguage:False}),
-(Data:Category {name:'Data', isLanguage:True}),
+(Data:Category {name:'Data', isLanguage:False}),
 (Python:Category {name:'Python', isLanguage:True}),
 (R:Category {name:'R', isLanguage:True}),
 (CSS:Category {name:'CSS', isLanguage:True}),
 (Styled:Category {name:'Styled Components', isLanguage:False}),
 (es6:Category {name:'es6', isLanguage:False}),
 (neo4j:Category {name:'neo4j', isLanguage:True}),
-(sequelize:Category {name:'Sequelize', isLanguage:True}),
-(express:Category {name:'Express', isLanguage:True}),
+(sequelize:Category {name:'Sequelize', isLanguage:False}),
+(express:Category {name:'Express', isLanguage:False}),
 (html:Category {name:'html', isLanguage:True}),
 
 
 
-(PythonChallenge:Resource {name:'Python Challenge', description:'hello', url:'pythonchallenge.com',type:'Other',level:'Beginner'}),
+(PythonChallenge:Resource {name:'Python Challenge', description:'hello', url:'http://www.pythonchallenge.com',type:'Other',level:'Beginner'}),
 (pcr1:Review {score:3,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (Jami)-[:REVIEWS]->(pcr1)-[:REVIEWS]->(PythonChallenge),
 (pcr2:Review {score:4,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (Mary)-[:REVIEWS]->(pcr2)-[:REVIEWS]->(PythonChallenge),
-(PydevManual:Resource {name:'Pydev Manual', description:'hello', url:'pydev.org/manual_101_tips.html',type:'Tutorial',level:'Intermediate'}),
+(PydevManual:Resource {name:'Pydev Manual', description:'hello', url:'http://www.pydev.org/manual_101_tips.html',type:'Tutorial',level:'Intermediate'}),
 (pmr1:Review {score:4,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (Jami)-[:REVIEWS]->(pmr1)-[:REVIEWS]->(PydevManual),
 (pmr2:Review {score:2,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (Mary)-[:REVIEWS]->(pmr2)-[:REVIEWS]->(PydevManual),
 
-(r101:Resource {name:'React 101', description:'hello', url:'react101.com', type:'tutorial', level:'Beginner', createdDate:timestamp()}),
+(r101:Resource {name:'React 101', description:'hello', url:'http://www.react101.com', type:'tutorial', level:'Beginner', createdDate:timestamp()}),
 (r101r1:Review {score:5,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (chrisBP)-[:REVIEWS]->(r101r1)-[:REVIEWS]->(r101),
 (r101r2:Review {score:3,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (silverfox)-[:REVIEWS]->(r101r2)-[:REVIEWS]->(r101),
 (r101r3:Review {score:4,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (dragonslayer)-[:REVIEWS]->(r101r3)-[:REVIEWS]->(r101),
-(r201:Resource {name:'React 201', description:'hello', url:'react201.com', type:'tutorial', createdDate:timestamp()}),
+(r201:Resource {name:'React 201', description:'hello', url:'http://www.react201.com', type:'tutorial', createdDate:timestamp()}),
 (r201r1:Review {score:3,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (silverfox)-[:REVIEWS]->(r201r1)-[:REVIEWS]->(r201),
 (r201r2:Review {score:3,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (chrisBP)-[:REVIEWS]->(r201r2)-[:REVIEWS]->(r201),
 (r201r3:Review {score:4,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (dragonslayer)-[:REVIEWS]->(r201r3)-[:REVIEWS]->(r201),
-(r301:Resource {name:'React 301', description:'hello', url:'react301.com', type:'tutorial', createdDate:timestamp()}),
+(r301:Resource {name:'React 301', description:'hello', url:'http://www.react301.com', type:'tutorial', createdDate:timestamp()}),
 (r301r1:Review {score:5,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (silverfox)-[:REVIEWS]->(r301r1)-[:REVIEWS]->(r301),
 (r301r2:Review {score:2,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
@@ -243,7 +244,7 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (mporter)-[:REVIEWS]->(html4r1)-[:REVIEWS]->(html4),
 (html4r2:Review {score:3,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (avaK)-[:REVIEWS]->(html4r2)-[:REVIEWS]->(html4),
-(DSTK:Resource {name:'Data Science Toolkit',url:'datasciencetoolkit.org', description:'hello', type:'Utility',level:'Advanced', createdDate:timestamp()}),
+(DSTK:Resource {name:'Data Science Toolkit',url:'http://www.datasciencetoolkit.org', description:'hello', type:'Utility',level:'Advanced', createdDate:timestamp()}),
 (DSTKr1:Review {score:3,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
 (Mary)-[:REVIEWS]->(DSTKr1)-[:REVIEWS]->(DSTK),
 (DSTKr2:Review {score:4,comments:'hendrerit in, lobortis et risus.', createdDate: timestamp()}),
@@ -465,7 +466,7 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (nullpath:Path {name:'Placeholder title', description:'nothing here yet.  I will add materials when I have time.', level:'advanced',status:'public', createdDate:timestamp(), owner:Justin.name}),
 (Python101)-[:CATEGORY]->(Python),
 (DataScience)-[:CATEGORY]->(Data),
-(rpath)-[:CATEGORY]->(R),
+(rpath)-[:CATEGORY]->(React),
 (styled)-[:CATEGORY]->(Styled),
 (jsbasic)-[:CATEGORY]->(JS),
 (jsadvpath)-[:CATEGORY]->(JS),
@@ -611,9 +612,8 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (violeteyes)-[:COMPLETED]->(jsadv_2s2),
 (violeteyes)-[:COMPLETED]->(jsadv_2s3),
 (violeteyes)-[:COMPLETED]->(jsadv_2s4)
-`).then(results => console.log(results))
+`).then(results => console.log(results)).then(updateSeed())
 //.then(session.close())
-
 
 
 
