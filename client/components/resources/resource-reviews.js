@@ -16,10 +16,8 @@ class ResourceReviews extends React.Component{
   render(){
     return(
       <div>
-        {console.log('props,reviews is', this.props.reviews)}
         reviews:
         {this.props.reviews.map(rev => {
-            console.log('rev is ', rev)
             return(
               <div >
                 <ReviewCard 
