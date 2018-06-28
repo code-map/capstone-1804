@@ -24,7 +24,6 @@ router.get(`/all/parent`, async (req, res, next) => {
     const results = categories.map((category) => {
       return category[0].properties.name
     })
-
     res.send(results)
     session.close()
   } catch (err) { next(err) }
