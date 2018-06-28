@@ -20,13 +20,13 @@ router.post('/search', async (req, res, next) => {
   }
 })
 
-router.put('/', async (req, res, next) => {
-    var randomId = shortid.generate()
-    const query = `MATCH p = (n)-[*]->(END)
-    FOREACH (n IN nodes(p) | SET n.test={randomId})`
-    const response = await session.run(query, {randomId()})
-    res.json(response.records)
-})
+// router.put('/', async (req, res, next) => {
+//     var randomId = shortid.generate()
+//     const query = `MATCH p = (n)-[*]->(END)
+//     FOREACH (n IN nodes(p) | SET n.test={randomId})`
+//     const response = await session.run(query, {randomId()})
+//     res.json(response.records)
+// })
 
 
 module.exports = router
