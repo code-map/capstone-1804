@@ -37,6 +37,7 @@
   "dependencies": {
     "@material-ui/core": "^1.2.3",
     "@material-ui/icons": "^1.1.0",
+    "apoc": "^2.1.6",
     "async": "^2.6.1",
     "axios": "^0.15.3",
     "body-parser": "^1.16.1",

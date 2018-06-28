@@ -8,6 +8,7 @@ const makeSlug = (string) => {
   return string.replace(/[^a-z0-9]/gi,'');
 }
 
+
 const addSlugPaths = async () => {
   const data = await session.run(`MATCH (n:Path) RETURN n`)
   const nodes = data.records
@@ -67,4 +68,3 @@ addIdResource()
 addSlugPaths()
 addSlugResource()
 console.log('id/slug ran')
-

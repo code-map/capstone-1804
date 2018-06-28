@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PathProgress from './path-progress'
 import AddResource from './add-resource'
+import PathToggleStatus from './path-toggle-status'
 
 import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
 
@@ -13,6 +14,7 @@ import Collapse from '@material-ui/core/Collapse'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import Button from '@material-ui/core/Button'
+import Chip from '@material-ui/core/Chip'
 
 const styles = {
   container: {
@@ -24,6 +26,10 @@ const styles = {
   deleteButton: {
     marginTop: 20,
     float: 'right'
+  },
+  chip: {
+    fontWeight: 100,
+    marginRight: 20
   }
 }
 
@@ -108,11 +114,18 @@ class SinglePath extends Component {
     return Math.round( (completed / total) * 100 )
   }
 
+  toggleStatus = () => {
+
+  }
+
   render(){
     const { path, user } = this.props
     return (
       <div>
-        <h3>{path.details.properties.name}</h3>
+        <h3>
+          <Chip label={path.details.properties.status} style={styles.chip}/>
+          {path.details.properties.name}
+        </h3>
         <p>{path.details.properties.description}</p>
 
         { this.props.path.steps[0].step !== null &&
@@ -183,14 +196,21 @@ class SinglePath extends Component {
         </div>
 
         { path.details.properties.owner === user &&
-          <Button
-            style={styles.deleteButton}
-            onClick={this.handleDeletePath}
-            variant="outlined"
-            color="secondary"
-          >
-          Delete Path
-          </Button>
+          <div>
+            <Button
+              style={styles.deleteButton}
+              onClick={this.handleDeletePath}
+              variant="outlined"
+              color="secondary"
+            >
+            Delete Path
+            </Button>
+
+            <PathToggleStatus
+              toggleStatus={this.state.toggleStatus}
+              style={styles.status} />
+
+          </div>
         }
 
       </div>

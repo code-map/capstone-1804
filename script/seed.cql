@@ -1,6 +1,7 @@
 let neo4j = require('neo4j-driver').v1;
 let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
+const shortid = require('shortid');
 let updateSeed = require('./metadata.js').updateSeed
 
 
@@ -611,10 +612,9 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (violeteyes)-[:COMPLETED]->(jsadv_2s1),
 (violeteyes)-[:COMPLETED]->(jsadv_2s2),
 (violeteyes)-[:COMPLETED]->(jsadv_2s3),
-(violeteyes)-[:COMPLETED]->(jsadv_2s4)
-`).then(results => console.log(results)).then(updateSeed())
+(violeteyes)-[:COMPLETED]->(jsadv_2s4)`)
+.then(results => console.log(results)).then(updateSeed())
 //.then(session.close())
-
 
 
 
