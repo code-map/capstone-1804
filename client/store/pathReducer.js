@@ -99,10 +99,10 @@ export const addNewPathThunk = (path) => {
   }
 }
 
-export const addStepToPathThunk = (username, pathName, url, form, type) => {
+export const addStepToPathThunk = (username, pathUid, url, form, type) => {
   return async (dispatch) => {
     const urlEncoded = encodeURIComponent(url)
-    const { data } = await axios.post(`/api/paths/${pathName}/user/${username}/step/${urlEncoded}`, {...form, type})
+    const { data } = await axios.post(`/api/paths/${pathUid}/user/${username}/step/${urlEncoded}`, {...form, type})
 
     // Need to update singlePath in the store with the new step
     // So that steps update on screen without refresh

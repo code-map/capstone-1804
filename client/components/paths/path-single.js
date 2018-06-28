@@ -44,7 +44,7 @@ class SinglePath extends Component {
 
   componentDidMount = () => {
     const path = this.props.path[0]
-    if(path.steps.length > 0) {
+    if(path.steps.length > 1) {
       const pathName = path.details.properties.name
       const username = this.props.user
       this.props.getCompletedSteps(pathName, username)
@@ -55,7 +55,11 @@ class SinglePath extends Component {
     if(nextProps.path[0] !== this.props.path[0]){
       const pathName = nextProps.path[0].details.properties.name
       const username = this.props.user
-      this.props.getCompletedSteps(pathName, username)
+
+      if(nextProps.path[0].steps.length > 1) {
+        this.props.getCompletedSteps(pathName, username)
+      }
+
     }
   }
 
@@ -123,7 +127,9 @@ class SinglePath extends Component {
     return (
       <div>
         <h3>
-          <Chip label={pathDetails.status} style={styles.chip}/>
+          { pathDetails.status === 'draft' &&
+            <Chip label='owner' style={styles.chip}/>
+          }
           {pathDetails.name}
         </h3>
         <p>{pathDetails.description}</p>

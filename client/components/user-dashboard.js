@@ -6,10 +6,6 @@ import { PathUserDirectory, PathSingle, PathBuilder } from './paths'
 import Grid from '@material-ui/core/Grid'
 import history from '../history'
 
-// This is temporary until we have a user login solution
-// integrated with Neo4j
-// const userName = 'shark-week365'
-
 const styles = {
   header: {
     textAlign: 'center',

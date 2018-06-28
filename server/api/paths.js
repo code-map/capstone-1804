@@ -182,24 +182,26 @@ router.put('/:pathUid/user/:username/status/:completed/step/:stepUrl', async (re
   } catch (err) { next(err) }
 })
 
-// PUT `/api/paths/${pathName}/user/${username}/step/${urlEncoded}`
-router.post('/:pathName/user/:username/step/:stepUrl', async (req, res, next) => {
+// PUT `/api/paths/${pathUid}/user/${username}/step/${urlEncoded}`
+router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => {
   try {
 
-    const pathName = req.params.pathName
+    const uid = req.params.pathUid
     const username = req.params.username
     const stepUrl = decodeURIComponent(req.params.stepUrl)
     const createdDate = Date.now()
+    const newUid = shortid.generate()
 
     // create the resource if it doesn't exist yet
     if (req.body.type === 'new'){
       const resourceQuery = `
-      CREATE (r:Resource { name: {name}, description: {description}, createdDate: {createdDate}, url: {url} })
+      CREATE (r:Resource { name: {name}, description: {description}, createdDate: {createdDate}, url: {url}, uid: {uid} })
       `
       await session.run(resourceQuery, {
         name: req.body.title,
         description: req.body.description,
         url: stepUrl,
+        uid: newUid,
         createdDate
       })
     }
@@ -207,23 +209,23 @@ router.post('/:pathName/user/:username/step/:stepUrl', async (req, res, next) =>
     // Get last step name in path
     const query = `
     MATCH (u:User)-[:PATHS]->(p:Path)
-    WHERE p.name = {pathName} AND u.name = {username}
+    WHERE p.uid = {uid} AND u.name = {username}
     OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)
     RETURN s.name
     ORDER BY s.name DESC
     LIMIT 1
     `
-    const result = await session.run(query, {pathName, username, stepUrl})
+    const result = await session.run(query, {uid, username, stepUrl})
 
     // If there aren't any steps yet, add resource as 'Step 1'
     if(!result.records[0]._fields[0]){
       const addStep1Query = `
       MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
-      WHERE p.name = {pathName} AND u.name = {username} AND r.url = {stepUrl}
+      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
       CREATE (s:Step { name: "Step 1"}),
       (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
       `
-      const addedAsStep1 = await session.run(addStep1Query, {pathName, username, stepUrl})
+      const addedAsStep1 = await session.run(addStep1Query, {uid, username, stepUrl})
 
       res.send(addedAsStep1)
     } else {
@@ -234,11 +236,11 @@ router.post('/:pathName/user/:username/step/:stepUrl', async (req, res, next) =>
 
       const addStepQuery = `
       MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
-      WHERE p.name = {pathName} AND u.name = {username} AND r.url = {stepUrl}
+      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
       CREATE (s:Step { name: {newStepName} }),
       (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
       `
-      const addedNewStep = await session.run(addStepQuery, {pathName, username, stepUrl, newStepName})
+      const addedNewStep = await session.run(addStepQuery, {uid, username, stepUrl, newStepName})
 
       res.send(addedNewStep)
     }
