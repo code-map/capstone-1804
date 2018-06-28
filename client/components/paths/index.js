@@ -8,3 +8,5 @@ export {default as PathCard} from './path-card'
 export {default as Stars} from './stars'
 export {default as PathCardSmallCategory} from './path-card-category'
 export {default as PublicSinglePath} from './public-single-path'
+
+

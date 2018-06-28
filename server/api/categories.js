@@ -62,8 +62,10 @@ router.get('/:categoryName/search', async(req,res,next) => {
   RETURN r AS combined, avg(rev.score) as rating`
   const response = await session.run(query, {category})
   const allPathsAndResourcesByCategory = response.records
+  //console.log('RECORD', allPathsAndResourcesByCategory[0]._fields[0].properties.uid)
   res.json(allPathsAndResourcesByCategory)
 })
+
 
 //fuzzy match for any node related to a certain category
 router.post('/:categoryName/search', async (req, res, next) => {

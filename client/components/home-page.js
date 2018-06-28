@@ -1,14 +1,29 @@
 import React from 'react'
-import { PopularCategories, CategorySearch } from './category'
+import { PopularCategories } from './category'
+import { SearchAny } from './'
 import { PopularPaths } from './paths'
+import styled from "styled-components"
 
+const HomeContainer = styled.div`
+  width: 100vw
+  display: flex
+  justify-content: center
+  margin: 0
+  box-sizing: border-box
+`
+
+const ContetContainer = styled.div`
+  width: 90vw
+  align-self: center
+`
 const HomePage = () => {
   return(
-    <div>
+    <HomeContainer>
+    <ContetContainer>
       <h1>
         What do you want to learn today?
       </h1>
-      <CategorySearch />
+      <SearchAny />
       <h3>
         Popular Topics:
       </h3>
@@ -17,7 +32,8 @@ const HomePage = () => {
         Popular Paths:
       </h3>
       <PopularPaths />
-    </div>
+    </ContetContainer>
+    </HomeContainer>
   )
 }
 

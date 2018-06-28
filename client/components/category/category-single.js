@@ -1,11 +1,12 @@
-import React, {Component} from 'react'
-import {CategoryAllPaths, CategorySearch, CategoryPopularPaths} from './'
-import {connect} from 'react-redux'
-import {createGetSingleCategoryThunk} from '../../store'
-import styled from 'styled-components'
-import {Link} from 'react-router-dom'
-import Grid from '@material-ui/core/Grid'
-import {SearchAny} from '../'
+import React, { Component } from 'react'
+import { CategoryAllPaths, CategorySearch, CategoryPopularPaths } from './'
+import { connect } from 'react-redux'
+import { createGetSingleCategoryThunk } from '../../store'
+import styled from "styled-components";
+import {Link, NavLink} from 'react-router-dom'
+import Grid from '@material-ui/core/Grid';
+import { SearchAny } from '../'
+
 
 class CategorySinglePage extends Component {
   constructor() {
@@ -44,37 +45,29 @@ class CategorySinglePage extends Component {
           <Headline>
             <Grid container spacing={24}>
               <Grid item xs={12} sm={6}>
-                <ListContainer>
-                  <SubHeader
-                    style={{marginTop: '15px'}}
-                  >{`Popular resources in ${name}`}</SubHeader>
-                  <div>
-                    {resources.map(resource => {
-                      return (
-                        <p key={resource.name}>
-                          <a href={resource.url}>{resource.name}</a>
-                        </p>
-                      )
-                    })}
-                  </div>
-                </ListContainer>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <ListContainer>
-                  <SubHeader
-                    style={{marginTop: '15px'}}
-                  >{`All paths in ${name}`}</SubHeader>
-                  <div>
-                    {paths.map(path => {
-                      return (
-                        <p key={path.name}>
-                          <Link to={`/${path.name}`}>{path.name}</Link>
-                        </p>
-                      )
-                    })}
-                  </div>
-                </ListContainer>
-              </Grid>
+            <ListContainer>
+            <SubHeader style={{marginTop:'15px'}}>{`Popular resources in ${name}`}</SubHeader>
+              <div>
+              {
+                resources.map((resource) => {
+                  return <p key={resource.name}><a  href={resource.url}>{resource.name}</a></p>
+                })
+              }
+              </div>
+            </ListContainer>
+            </Grid>
+          <Grid item xs={12} sm={6}>
+          <ListContainer>
+          <SubHeader style={{marginTop:'15px'}}>{`All paths in ${name}`}</SubHeader>
+              <div>
+              {
+                paths.map((path) => {
+                  return(<p key={path.uid}><NavLink to={`/paths/${path.uid}/${path.slug}`} >{path.name}</NavLink></p>)
+                })
+              }
+              </div>
+            </ListContainer>
+            </Grid>
             </Grid>
           </Headline>
         </Container>

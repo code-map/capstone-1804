@@ -138,6 +138,13 @@ export const getSinglePathThunk = (name) => {
   }
 }
 
+export const getSinglePathByUidThunk = (uid) => {
+  return async (dispatch) => {
+    const { data } = await axios.get(`/api/paths/${uid}`)
+    dispatch(getSinglePath(data))
+  }
+}
+
 export const getPopularPathsInCategory = (categoryName) => {
   return async (dispatch) => {
     const res = await axios.get(`/api/categories/${categoryName}/popular-paths`)

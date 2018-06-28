@@ -15,12 +15,12 @@ class PopularPaths extends React.Component {
 
   render() {
     const popularPaths = this.props.popularPaths
-    return( 
+    return(
       <div>
         <Grid container spacing={40}>
         {
           (popularPaths)
-          ? popularPaths.map(path => 
+          ? popularPaths.map(path =>
               <Grid item xs={3} key={path.name}>
                 <PathCard
                   reviewCount={path.reviewCount.low}
@@ -28,7 +28,9 @@ class PopularPaths extends React.Component {
                   name={path.name}
                   owner={path.owner}
                   rating={path.rating}
-                /> 
+                  uid={path.uid}
+                  slug={path.slug}
+                />
               </Grid>
             )
           : <p> no paths found </p>
