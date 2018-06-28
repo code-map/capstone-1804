@@ -4,14 +4,21 @@ let session = driver.session();
 const router = require('express').Router()
 
 
-router.post('/search', async (req, res, next) => {
+
+
+router.post('/', async (req, res, next) => {
   try{
     const {searchString} = req.body
-    const query = `MATCH (n)
-    WHERE toLower(n.name) CONTAINS toLower({searchString})
-    return n`
+    const query = `MATCH (p:Path)
+    WHERE toLower(p.name) CONTAINS toLower({searchString})
+    RETURN p AS matches
+    UNION
+    MATCH (r:Resource)
+    WHERE toLower(r.name) CONTAINS toLower({searchString})
+    RETURN r AS matches`
     const response = await session.run(query, {searchString})
     const fuzzyMatch = response.records
+    //console.log('FUZZY', fuzzyMatch)
     res.json(fuzzyMatch)
   }catch(err){
     next(err)
@@ -20,3 +27,8 @@ router.post('/search', async (req, res, next) => {
 
 
 module.exports = router
+
+
+// `MATCH (n)
+//     WHERE toLower(n.slug) CONTAINS toLower({searchString})
+//     return n`

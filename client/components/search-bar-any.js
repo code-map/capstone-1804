@@ -1,6 +1,6 @@
 import { createFuzzyMatchThunk, createMatchAllInCategoryThunk } from '../store'
 import React, {Component} from 'react'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux'
 import styled from "styled-components"
@@ -41,7 +41,7 @@ class SearchAny extends Component {
       })
       //if you have your routes set up correctly, this clause should make it so
       //that you don't have to pass in any additional props
-        if(this.props.match.params){
+        if(this.props.match.params.categoryName){
           this.props.fuzzyMatchByCategory(this.state.input, this.props.category)
         }else{
           this.props.fuzzyMatch(this.state.input)
@@ -61,8 +61,15 @@ class SearchAny extends Component {
       return(<div>
         {
           matches.map((match) => {
-            const {name} = match
-            return <MatchRow key={name}><p>{name}</p></MatchRow>
+            const {name, uid, slug, url} = match
+            console.log('MATCH YIY', match)
+            if(match.type === 'Path'){
+              return <Link to={`/paths/${uid}/${slug}`} key={uid}><MatchRow><p>{name}</p></MatchRow></Link>
+            }else{
+              //coming soon!
+              // return <Link to={`/resources/${uid}/${slug}`} key={uid}><MatchRow><p>{name}</p></MatchRow></Link>
+              return <a href={url} key={uid}><MatchRow><p>{name}</p></MatchRow></a>
+            }
           })
         }
         </div>

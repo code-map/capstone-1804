@@ -19,25 +19,26 @@ class PathCard extends React.Component {
     super(props)
   }
   render() {
+    const { name, uid, slug, owner, rating, userCount} = this.props
     return(
       <div style={styles.card} >
       {
-        <Link to={`/path/${this.props.id}`}>
+        <Link to={`/paths/${uid}/${slug}`}>
          <Card>
            <h2>
-             {this.props.name}
+             {name}
            </h2>
            <h3>
-             by: 
-             {this.props.owner}
+             by:
+             {owner}
            </h3>
            <h5>
-             rating: 
-             {this.props.rating}
+             rating:
+             {rating}
            </h5>
            <h5>
-             subscribers: 
-             {this.props.userCount}
+             subscribers:
+             {userCount}
            </h5>
          </Card>
         </Link>

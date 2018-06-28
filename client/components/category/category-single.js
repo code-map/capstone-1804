@@ -3,7 +3,7 @@ import { CategoryAllPaths, CategorySearch, CategoryPopularPaths } from './'
 import { connect } from 'react-redux'
 import { createGetSingleCategoryThunk } from '../../store'
 import styled from "styled-components";
-import {Link} from 'react-router-dom'
+import {Link, NavLink} from 'react-router-dom'
 import Grid from '@material-ui/core/Grid';
 import { SearchAny } from '../'
 
@@ -56,7 +56,7 @@ class CategorySinglePage extends Component {
               <div>
               {
                 paths.map((path) => {
-                  return(<p key={path.name}><Link to={`/${path.name}`} >{path.name}</Link></p>)
+                  return(<p key={path.uid}><NavLink to={`/paths/${path.uid}/${path.slug}`} >{path.name}</NavLink></p>)
                 })
               }
               </div>
