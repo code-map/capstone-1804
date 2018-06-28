@@ -20,7 +20,10 @@ router.get(`/:resourceName/reviews`, async (req,res,next) => {
     const result = await session.run(query, {resourceName})
   
     const reducedResponse = recordsReducer(result.records)
-    res.send(reducedResponse)
+    const groupedResponse = {}
+    groupedResponse[resourceName] = reducedResponse
+    console.log('grouped response=',groupedResponse)
+    res.send(groupedResponse)
     session.close()
   }catch(e){
     next(e)
