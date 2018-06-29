@@ -124,7 +124,6 @@ class SinglePath extends Component {
             { pathSteps[0].step !== null &&
               pathSteps.map(step => {
                 const stepUrl = step.resource.properties.url
-                const resourceImg = step.resource.properties.imageUrl
                 return (
                   <ResourceCard
                     key={step.resource.identity.low}
