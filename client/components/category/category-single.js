@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { CategoryAllPaths, CategorySearch, CategoryPopularPaths } from './'
 import { connect } from 'react-redux'
-import { createGetSingleCategoryThunk } from '../../store'
+import { createGetSingleCategoryThunk, getPopularPathsInCategory } from '../../store'
 import styled from "styled-components";
 import {Link, NavLink} from 'react-router-dom'
 import Grid from '@material-ui/core/Grid';
-import { SearchAny } from '../'
+import { SearchAny, PathCardSmall } from '../'
 
 
 class CategorySinglePage extends Component {
@@ -16,6 +16,7 @@ class CategorySinglePage extends Component {
   async componentDidMount() {
     const {categoryName} = this.props.match.params
     await this.props.getAllItemsInCategory(categoryName)
+    await this.props.getPopularPaths(categoryName)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -26,7 +27,7 @@ class CategorySinglePage extends Component {
   }
 
   render() {
-    const {paths, resources, name, url} = this.props.categoryItems
+    const {paths, name} = this.props.categoryItems
     if (paths.length) {
       return (
         <Container>
@@ -36,42 +37,11 @@ class CategorySinglePage extends Component {
               <SearchAny category={name} />
             </SearchBox>
           </HeaderSearchContainer>
-          <HeadlineCol>
-            <SubHeader>{`Popular paths in ${name}`}</SubHeader>
-            <ScrollBox>
+          <SubHeader>{`Popular paths in ${name}`}</SubHeader>
+              <CategoryAllPaths paths={this.props.popular} />
+          <SubHeader>{`All paths in ${name}`}</SubHeader>
               <CategoryAllPaths paths={paths} />
-            </ScrollBox>
-          </HeadlineCol>
-          <Headline>
-            <Grid container spacing={24}>
-              <Grid item xs={12} sm={6}>
-            <ListContainer>
-            <SubHeader style={{marginTop:'15px'}}>{`Popular resources in ${name}`}</SubHeader>
-              <div>
-              {
-                resources.map((resource) => {
-                  return <p key={resource.name}><a  href={resource.url}>{resource.name}</a></p>
-                })
-              }
-              </div>
-            </ListContainer>
-            </Grid>
-          <Grid item xs={12} sm={6}>
-          <ListContainer>
-          <SubHeader style={{marginTop:'15px'}}>{`All paths in ${name}`}</SubHeader>
-              <div>
-              {
-                paths.map((path) => {
-                  return(<p key={path.uid}><NavLink to={`/paths/${path.uid}/${path.slug}`} >{path.name}</NavLink></p>)
-                })
-              }
-              </div>
-            </ListContainer>
-            </Grid>
-            </Grid>
-          </Headline>
-        </Container>
-      )
+          </Container>)
     } else {
       return <p>loading</p>
     }
@@ -80,17 +50,20 @@ class CategorySinglePage extends Component {
 
 const mapState = state => {
   return {
-    categoryItems: state.singleCategory
+    categoryItems: state.singleCategory,
+    popular: state.pathReducer.popularPathsInCategory
   }
 }
 
 const mapDispatch = dispatch => {
   return {
     getAllItemsInCategory: categoryName => {
-      return dispatch(createGetSingleCategoryThunk(categoryName))
+      return dispatch(createGetSingleCategoryThunk(categoryName))},
+    getPopularPaths: categoryName => {
+      dispatch(getPopularPathsInCategory(categoryName)) }
     }
   }
-}
+
 
 const Header = styled.h1`
   color: #55288b;

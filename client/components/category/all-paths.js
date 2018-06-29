@@ -14,7 +14,6 @@ const Display = styled.div`
 
 const CategoryAllPaths = (props) => {
   const {paths} = props
-  console.log('paths is=', paths)
   return(
     <Display>
       {paths.map((path) =>
