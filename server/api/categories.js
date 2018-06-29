@@ -32,7 +32,7 @@ router.get(`/all/parent`, async (req, res, next) => {
 
 router.get('/:categoryName/popular-paths', async (req,res,next) => {
   const category = req.params.categoryName
-  const query = `match(u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
+  const query = `match(u:User)-[r:PATHS]->(p:Path {status: 'public'})-[:CATEGORY]->(c:Category)
       where c.name={category} AND p.status = "public"
       with count(u) as Users,c,p
       optional match(rev:Review)-[:REVIEWS]->(p)
@@ -46,7 +46,7 @@ router.get('/:categoryName/popular-paths', async (req,res,next) => {
 
 router.get('/:categoryName/all-paths', async (req,res,next) => {
   const category = req.params.categoryName;
-  const query = `MATCH (p:Path)-[:CATEGORY]->(c) WHERE c.name = {category} return p`
+  const query = `MATCH (p:Path {status: 'public'})-[:CATEGORY]->(c) WHERE c.name = {category} return p`
   const pathsInCategory = await session.run(query, { category })
   res.send(pathsInCategory)})
 
