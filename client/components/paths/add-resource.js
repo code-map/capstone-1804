@@ -78,7 +78,7 @@ class AddResource extends Component {
     return (
       <div>
 
-        <ListItem onClick={this.handleClickOpen}>
+        <ListItem button={true} onClick={this.handleClickOpen}>
           <AddCircleOutline style={styles.icon}/>
           <p style={styles.text}>Add a new resource to this path</p>
         </ListItem>

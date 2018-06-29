@@ -130,12 +130,12 @@ class SinglePath extends Component {
     const pathSteps = path[0].steps
     return (
       <div>
-        <h3>
+        <h2>
           { pathDetails.status === 'draft' &&
-            <Chip label='owner' style={styles.chip}/>
+            <Chip label='Private Path' style={styles.chip}/>
           }
           {pathDetails.name}
-        </h3>
+        </h2>
         <p>{pathDetails.description}</p>
 
         { pathSteps[0].step !== null &&
@@ -184,7 +184,7 @@ class SinglePath extends Component {
                     in={this.state.selectedItems.indexOf(stepUrl) !== -1}
                     timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                      <ListItem button>
+                      <ListItem button divider>
                         <ul>
                           <li>Description: {step.resource.properties.description}</li>
                           <li>Visit resource: <a href={step.resource.properties.url} target="_blank">{step.resource.properties.name}</a></li>
