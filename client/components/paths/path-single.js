@@ -11,7 +11,6 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Checkbox from '@material-ui/core/Checkbox'
-import Collapse from '@material-ui/core/Collapse'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import Button from '@material-ui/core/Button'
@@ -59,22 +58,6 @@ class SinglePath extends Component {
 
       this.props.getCompletedSteps(pathUid, username)
     }
-  }
-
-  handleDropdownClick = (step) => {
-    this.setState((prevState) => {
-      return {
-        selectedItems: prevState.selectedItems.filter((el) => el !== step)
-      }
-    })
-  }
-
-  handleCollapseClick = (step) => {
-    this.setState((prevState) => {
-      return {
-        selectedItems: prevState.selectedItems.concat([step])
-      }
-    })
   }
 
   handleCompletedClick = stepUrl => async () => {
