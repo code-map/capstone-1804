@@ -7,6 +7,7 @@ import category from './category'
 import {pathReducer} from './pathReducer'
 import step from './step'
 import singleCategory from './single-category'
+import resource from './resource'
 import searchMatches from './search'
 
 const reducer = combineReducers({
@@ -15,6 +16,7 @@ const reducer = combineReducers({
   category,
   step,
   singleCategory,
+  resource,
   searchMatches
 })
 const middleware = composeWithDevTools(
@@ -28,4 +30,5 @@ export * from './category'
 export * from './pathReducer'
 export * from './step'
 export * from './single-category'
+export * from './resource'
 export * from './search'

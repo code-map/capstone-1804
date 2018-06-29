@@ -1,10 +1,8 @@
 import React from 'react'
-//import Card from '@material-ui/core/Card'
 import { Redirect } from 'react-router'
 import {Link} from 'react-router-dom'
-import styled from "styled-components";
-import Stars from '../paths/stars'
-
+import styled from "styled-components"
+import {Stars} from '../reviews'
 
 const Card = styled.div`
 margin: 20px;
@@ -17,6 +15,7 @@ overflow:auto;
 background-color: white;
 justify-content: flex-start
 `
+
 const CardContent = styled.div`
   padding: 10px;
   box-sizing: border-box;
@@ -28,15 +27,12 @@ const CardContent = styled.div`
   margin-top: 10px;
 `
 
-
-
 const PathCardSmallCategory = (props) => {
-   const {img, name, rating, description} = props
+   const {img, name, rating, description, uid, slug} = props
    const url = props.url || 'home'
     return(
       <div>
-      {
-        // <Link to={url}>
+        <Link to={`/paths/${uid}/${slug}`}>
           <Card >
             <img src={img} style={{height:150}}/>
             <CardContent>
@@ -45,8 +41,7 @@ const PathCardSmallCategory = (props) => {
               <Stars value={rating} />
             </CardContent>
           </Card>
-        // </Link>
-      }
+        </Link>
       </div>
     )}
 
