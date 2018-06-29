@@ -9,8 +9,8 @@ const StarBox = styled.div`
 
 const Stars = (props) => {
   const {value} = props
-  const emptyColor = value ? "#afafaf" : "#d6d6d6"
-  const filledColor = "#f9ba45"
+  const emptyColor = value ? "#a5a5a5" : "#c8c8c8"
+  const filledColor = "#e5aa3d"
   return(
     <StarBox>
     <StarRatingComponent
