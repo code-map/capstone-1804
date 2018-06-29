@@ -63,10 +63,10 @@ const addIdResource = async () => {
    })
 }
 
-// addIdPaths()
-// addIdResource()
-// addSlugPaths()
-// addSlugResource()
+addIdPaths()
+addIdResource()
+addSlugPaths()
+addSlugResource()
 console.log('id/slug ran')
 
 module.exports = {addIdPaths, addIdResource, addSlugPaths, addSlugResource}
