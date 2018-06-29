@@ -39,7 +39,6 @@ class PublicSinglePath extends Component {
 
 
   renderPath = () => {
-    console.log('paththingamajig==', this.state, '\n', this.props)
     const steps = this.props.path[0][0].steps
     const { description, level, name, owner, slug, status, uid } = this.props.path[0][0].details.properties
     return (

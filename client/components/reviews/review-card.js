@@ -22,7 +22,7 @@ const ReviewCard = (props) => {
       <ListItemText>
         {props.author}
       </ListItemText>
-      <Stars rating={props.score} />
+      <Stars value={props.rating} />
       </ListItem>
       <ListItem>
       <ListItemText>

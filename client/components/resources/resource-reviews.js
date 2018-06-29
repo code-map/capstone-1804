@@ -15,16 +15,13 @@ const ResourceReviews = (props) => {
                 <div >
                   <ReviewCard 
                     author={rev.author}
-                    score={rev.score.low}
+                    rating={rev.score.low}
                     comments={rev.comments}
                   />
                 </div>
               )
             })
       }
-      <p>
-        add review functionality to be written
-      </p>
     </div>
   )
 }

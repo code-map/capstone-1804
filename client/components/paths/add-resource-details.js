@@ -29,9 +29,9 @@ class AddResourceDetails extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault()
-    const { username, pathName, url } = this.props
+    const { username, pathUid, url } = this.props
 
-    this.props.addStepToPath(username, pathName, url, {...this.state}, 'new')
+    this.props.addStepToPath(username, pathUid, url, {...this.state}, 'new')
 
     this.setState({
       title: '',
@@ -41,12 +41,12 @@ class AddResourceDetails extends Component {
     this.props.handleClose()
   }
 
-  addResourceToPath = (username, pathName, url, body) => {
-    this.props.addStepToPath(username, pathName, url, body, 'existing')
+  addResourceToPath = (username, pathUid, url, body) => {
+    this.props.addStepToPath(username, pathUid, url, body, 'existing')
   }
 
   render(){
-    const { username, pathName, resource, url } = this.props
+    const { username, pathUid, resource, url } = this.props
     return (
       <div>
         { resource[0] === 'Not found' ? (
@@ -97,7 +97,7 @@ class AddResourceDetails extends Component {
           ) : (
             <div>
             <p>Resource exists! We'll add it right into your path.</p>
-            {this.addResourceToPath(username, pathName, resource[0].url)}
+            {this.addResourceToPath(username, pathUid, resource[0].url)}
             </div>
           )
         }
@@ -108,8 +108,8 @@ class AddResourceDetails extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addStepToPath: (username, pathName, url, body, type) => {
-      dispatch(addStepToPathThunk(username, pathName, url, body, type))
+    addStepToPath: (username, pathUid, url, body, type) => {
+      dispatch(addStepToPathThunk(username, pathUid, url, body, type))
     }
   }
 }

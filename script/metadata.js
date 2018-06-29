@@ -32,41 +32,82 @@ const updateSeed = async () => {
     MATCH (r:Resource)
     RETURN collect(r.url)
   `)
-  let urls = data.records[0]._fields[0]
-  urls.forEach(url => {
-    scrape(url)
-      .then(metadata => {
-        let metaObj = {}
-        data = metadata.openGraph
+  let urls = data.records[0]._fields[0].reverse()
+  let metaObj = {},
+    md = {},
+    metadata = {},
+    res = {}
+  // console.log(urls)
 
-        if (!data) {
-          throw new Error('No metadata found')
-        } else {
-          metaObj.name = data.name ? data.name : ''
-          metaObj.type = data.type ? data.type : ''
-          metaObj.description = data.description ? data.description : ''
-          metaObj.imageUrl = data.image ? data.image.url : ''
+  for (let i = 0; i < urls.length; i++) {
+    try {
+      metadata = await scrape(urls[i])
+      md = metadata.openGraph
+      metaObj = {}
 
-          session.run(
-            `
-        MATCH (r:Resource)
-        WHERE r.url = {url}
-        SET r.name = {name}, r.type = {type}, r.description = {description}, r.imageUrl = {imageUrl}
-      `,
-            {
-              url: url,
-              type: metaObj.type,
-              name: metaObj.name,
-              description: metaObj.description,
-              imageUrl: metaObj.imageUrl
-            }
-          )
-        }
-      })
-      .catch(err => {
-        console.error(url, ' -------', err.message)
-      })
-  })
+      if (!md) {
+        throw new Error('No metadata found or empty string returned')
+      } else {
+        metaObj.name = md.title ? md.title : ''
+        metaObj.type = md.type ? md.type : ''
+        metaObj.description = md.description ? md.description : ''
+        metaObj.imageUrl = md.image ? md.image.url : ''
+
+        console.log(urls[i], metaObj)
+        res = await session.run(
+          `
+          MATCH (r:Resource)
+          WHERE r.url = {url}
+          SET r.name = {name}, r.type = {type}, r.description = {description}, r.imageUrl = {imageUrl}
+        `,
+          {
+            url: urls[i],
+            type: metaObj.type,
+            name: metaObj.name,
+            description: metaObj.description,
+            imageUrl: metaObj.imageUrl
+          }
+        )
+      }
+    } catch (err) {
+      console.error('error with ', urls[i], ' -- ', err.message)
+    }
+    // urls.forEach(async url => {
+    //   await scrape(url)
+    //     .then(async metadata => {
+    //       let metaObj = {}
+    //       data = metadata.openGraph
+
+    //       if (!data || !data.name) {
+    //         throw new Error('No metadata found or empty string returned')
+    //       } else {
+    //         metaObj.name = data.name ? data.name : ''
+    //         metaObj.type = data.type ? data.type : ''
+    //         metaObj.description = data.description ? data.description : ''
+    //         metaObj.imageUrl = data.image ? data.image.url : ''
+
+    //         await session.run(
+    //           `
+    //       MATCH (r:Resource)
+    //       WHERE r.url = {url}
+    //       SET r.name = {name}, r.type = {type}, r.description = {description}, r.imageUrl = {imageUrl}
+    //     `,
+    //           {
+    //             url: url,
+    //             type: metaObj.type,
+    //             name: metaObj.name,
+    //             description: metaObj.description,
+    //             imageUrl: metaObj.imageUrl
+    //           }
+    //         )
+    //       }
+    //     }).then(results => {return results})
+    //     .catch(err => {
+    //       console.error(url, ' -------', err.message)
+    //     })
+    // })
+  }
 }
 
+// updateSeed()
 module.exports = {getMetadata, updateSeed}

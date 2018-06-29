@@ -5,9 +5,6 @@ const router = require('express').Router()
 const apoc = require('apoc')
 const shortid = require('shortid');
 
-
-
-
 router.post('/', async (req, res, next) => {
   try{
     const {searchString} = req.body
@@ -27,17 +24,13 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.put('/', async (req, res, next) => {
-  try{
-    var randomId = shortid.generate()
-    const query = `MATCH p = (n)-[*]->(END)
-    FOREACH (n IN nodes(p) | SET n.test={randomId})`
-    const response = await session.run(query, {randomId})
-    res.json(response.records)
-  }catch(e){
-    next(err)
-  }
-})
+// router.put('/', async (req, res, next) => {
+//     var randomId = shortid.generate()
+//     const query = `MATCH p = (n)-[*]->(END)
+//     FOREACH (n IN nodes(p) | SET n.test={randomId})`
+//     const response = await session.run(query, {randomId()})
+//     res.json(response.records)
+// })
 
 
 module.exports = router

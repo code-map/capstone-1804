@@ -47,6 +47,7 @@ const styles = {
   card: {
     display: 'flex',
     justifyContent: 'space-between',
+
   },
   details: {
     display: 'flex',
@@ -78,6 +79,9 @@ const styles = {
   row: {
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'flexStart',
+    alignItems: 'flexStart',
+    flexGrow: 10
   }
 
 }
@@ -109,6 +113,7 @@ class ResourceCard extends React.Component{
     return(
       <div style={styles.container}>
           <Card className={classes.card}>
+              <div className={classes.details}>
               {isLoggedIn &&
                 <Checkbox
                   onChange={this.props.handleCompletedClick()}
@@ -116,8 +121,9 @@ class ResourceCard extends React.Component{
                   disableRipple
                 />
               }
-            <a href={this.props.resourceProperties.url} target="_blank">
+              </div>
               <div className={classes.row}>
+                <a href={this.props.resourceProperties.url} target="_blank">
                 <div className={classes.imageSide}>
                     {
                       this.props.resourceProperties.imageUrl ?
@@ -125,19 +131,21 @@ class ResourceCard extends React.Component{
                         <CardMedia className={classes.cover} image="../../default.png" />
                     }
                 </div>
+                </a>
+                <a href={this.props.resourceProperties.url} target="_blank">
                 <div className={classes.textContent}>
                     <Typography variant="title"> {this.props.resourceProperties.name} </Typography>
                     <Typography variant="subheading"> {this.props.resourceProperties.level} </Typography>
                     <Stars value={this.props.resourceProperties.rating} />
                 </div>
+                </a>
               </div>
-            </a>
-            <div className={classes.details}>
-              { this.state.expanded ?
-                <ExpandLess onClick={() => this.handleDropdownCollapse()} /> :
-                <ExpandMore onClick={() => this.handleDropdownExpand()} />
-              }
-            </div>
+              <div className={classes.details}>
+                { this.state.expanded ?
+                  <ExpandLess onClick={() => this.handleDropdownCollapse()} /> :
+                  <ExpandMore onClick={() => this.handleDropdownExpand()} />
+                }
+              </div>
         </Card>
         <Collapse
           in      = {this.state.expanded}

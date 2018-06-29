@@ -45,10 +45,10 @@ const getSinglePath = (path) => {
   }
 }
 
-const deleteSinglePath = (name) => {
+const deleteSinglePath = (uid) => {
   return {
     type: DELETE_SINGLE_PATH,
-    name
+    uid
   }
 }
 
@@ -97,10 +97,10 @@ export const addNewPathThunk = (path) => {
   }
 }
 
-export const addStepToPathThunk = (username, pathName, url, form, type) => {
+export const addStepToPathThunk = (username, pathUid, url, form, type) => {
   return async (dispatch) => {
     const urlEncoded = encodeURIComponent(url)
-    const { data } = await axios.post(`/api/paths/${pathName}/user/${username}/step/${urlEncoded}`, {...form, type})
+    const { data } = await axios.post(`/api/paths/${pathUid}/user/${username}/step/${urlEncoded}`, {...form, type})
 
     // Need to update singlePath in the store with the new step
     // So that steps update on screen without refresh
@@ -122,16 +122,16 @@ export const getPopularPathsInAllCategories = () => {
   }
 }
 
-export const deleteSinglePathThunk = (name) => {
+export const deleteSinglePathThunk = (uid) => {
   return async (dispatch) => {
-    await axios.delete(`/api/paths/${name}`)
-    dispatch(deleteSinglePath(name))
+    const { data } = await axios.delete(`/api/paths/${uid}`)
+    dispatch(deleteSinglePath(data))
   }
 }
 
-export const getSinglePathThunk = (name) => {
+export const getSinglePathByNameThunk = (name) => {
   return async (dispatch) => {
-    const { data } = await axios.get(`/api/paths/${name}`)
+    const { data } = await axios.get(`/api/paths/byName/${name}`)
     dispatch(getSinglePath(data))
   }
 }
@@ -188,7 +188,7 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
     case ADD_NEW_PATH:
       return {...state, allUserPaths: [...state.allUserPaths, action.path]}
     case DELETE_SINGLE_PATH: {
-      const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.name !== action.name)
+      const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.uid !== action.uid)
       return {...state, allUserPaths}
     }
     case GET_PATHS_SINGLE_USER:
