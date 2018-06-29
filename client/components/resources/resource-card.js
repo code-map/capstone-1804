@@ -20,23 +20,6 @@ import Typography from '@material-ui/core/Typography';
 import CardMedia from '@material-ui/core/CardMedia';
 import PropTypes from 'prop-types';
 
-//type of media
-//name
-//description
-//link
-//ratings
-//dropdown
-//reviews and feedback
-
-//component properties are:
-//name
-//url
-//type
-//imageUrl
-//description
-//ratings
-//isAuth = true/false (
-
 const styles = {
   container: {
     backgroundColor: 'white',
