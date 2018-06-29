@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { addStepToPathThunk } from '../../store'
+import { addStepToPathThunk, getSinglePathByUidThunk } from '../../store'
 
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
 import Button from '@material-ui/core/Button'
@@ -37,6 +37,8 @@ class AddResourceDetails extends Component {
       title: '',
       description: ''
     })
+
+    this.props.getSinglePath(pathUid)
 
     this.props.handleClose()
   }
@@ -110,6 +112,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     addStepToPath: (username, pathUid, url, body, type) => {
       dispatch(addStepToPathThunk(username, pathUid, url, body, type))
+    },
+    getSinglePath: (uid) => {
+      dispatch(getSinglePathByUidThunk(uid))
     }
   }
 }

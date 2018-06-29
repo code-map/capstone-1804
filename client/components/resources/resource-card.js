@@ -1,24 +1,24 @@
 import React from 'react'
+import {Stars} from '../reviews'
+import {connect} from 'react-redux'
+
+import {getAllReviewsOfResource} from '../../store'
+
+import Grid from '@material-ui/core/Grid'
 import Checkbox from '@material-ui/core/Checkbox'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Collapse from '@material-ui/core/Collapse'
-import { Link } from 'react-router-dom'
-import {ResourceReviews} from './'
-import {Stars} from '../reviews'
-import {connect} from 'react-redux'
-import {getAllReviewsOfResource} from '../../store'
-
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
+import { withStyles } from '@material-ui/core/styles'
+import Card from '@material-ui/core/Card'
+import Typography from '@material-ui/core/Typography'
+import CardMedia from '@material-ui/core/CardMedia'
+import Chip from '@material-ui/core/Chip'
+import PropTypes from 'prop-types'
 
-import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import CardMedia from '@material-ui/core/CardMedia';
-import PropTypes from 'prop-types';
 
 const styles = {
   container: {
@@ -30,7 +30,7 @@ const styles = {
   card: {
     display: 'flex',
     justifyContent: 'space-between',
-
+    padding: 15
   },
   details: {
     display: 'flex',
@@ -38,26 +38,31 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
   },
-
+  description: {
+    width: '100%'
+  },
   textContent: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flexStart',
     alignItems: 'flexStart',
+    width: '100%',
+    paddingLeft: 20
   },
-  content: {
-    flex: '1 0 auto',
+  title: {
+    fontSize: 16,
+    position: 'relative',
+    top: 25
+  },
+  resourceType: {
+    float: 'right',
+    position: 'relative',
+    right: 20
   },
   cover: {
-    width: 120,
-    height: 120,
-  },
-  type: {
-    width: 120,
-  },
-  imageSide: {
-    justifyContent: 'flexStart',
-    alignItems: 'flexStart',
+    width: 75,
+    height: 75,
+    objectFit: 'cover'
   },
   row: {
     display: 'flex',
@@ -93,6 +98,7 @@ class ResourceCard extends React.Component{
   render() {
     const {isLoggedIn} = this.props
     const {classes, theme} = this.props
+    const resourceImg = this.props.resourceProperties.imageUrl
     return(
       <div style={styles.container}>
           <Card className={classes.card}>
@@ -108,18 +114,23 @@ class ResourceCard extends React.Component{
               <div className={classes.row}>
                 <a href={this.props.resourceProperties.url} target="_blank">
                 <div className={classes.imageSide}>
-                    {
-                      this.props.resourceProperties.imageUrl ?
-                        <CardMedia className={classes.cover} image={this.props.resourceProperties.imageUrl} /> :
-                        <CardMedia className={classes.cover} image="../../default.png" />
-                    }
+                  <img style={styles.cover} src={resourceImg ? resourceImg : "../../default.png" } />
                 </div>
                 </a>
-                <a href={this.props.resourceProperties.url} target="_blank">
-                <div className={classes.textContent}>
-                    <Typography variant="title"> {this.props.resourceProperties.name} </Typography>
-                    <Typography variant="subheading"> {this.props.resourceProperties.level} </Typography>
-                    <Stars value={this.props.resourceProperties.rating} />
+                <a className={classes.textContent} href={this.props.resourceProperties.url} target="_blank">
+                <div>
+                  <Grid container>
+                    <Grid item xs={9}>
+                      <Typography style={styles.title} variant="title"> {this.props.resourceProperties.name} </Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <div style={styles.resourceType}>
+                        { this.props.resourceProperties.type &&
+                          <Chip label={this.props.resourceProperties.type} />
+                        }
+                      </div>
+                    </Grid>
+                  </Grid>
                 </div>
                 </a>
               </div>
@@ -134,19 +145,26 @@ class ResourceCard extends React.Component{
           in      = {this.state.expanded}
           timeout = "auto" unmountOnExit
         >
-          <List component="div" disablePadding>
-            <ListItem button>
-              <ListItemText className={classes.cover}>
-                type: {this.props.resourceProperties.type}
-              </ListItemText>
-              <ListItemText >
-                {this.props.resourceProperties.description}
-              </ListItemText>
+          <List component="div">
+            <ListItem>
+              <Stars value={this.props.resourceProperties.rating} />
+            </ListItem>
+            <ListItem>
+              <Typography style={styles.description}><b>Description</b>: {this.props.resourceProperties.description}</Typography>
+            </ListItem>
+            { this.props.resourceProperties.level &&
+              <ListItem>
+                <Typography><b>Level</b>: {this.props.resourceProperties.level}</Typography>
+              </ListItem>
+            }
+            <ListItem>
+              <Typography>Link to <a href={this.props.resourceProperties.url} target="_blank">
+                {this.props.resourceProperties.name}</a>
+              </Typography>
             </ListItem>
           </List>
-          <ResourceReviews resourceName={this.props.resourceProperties.name} reviews={this.props.reviews}/>
         </Collapse>
-        
+
       </div>
     )
   }
