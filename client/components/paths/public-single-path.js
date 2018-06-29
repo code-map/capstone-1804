@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from "styled-components"
+import {ResourceCard} from '../resources'
 
-import { getSinglePathByUidThunk } from '../../store'
+import { getSinglePathByUidThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk  } from '../../store'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -11,6 +12,7 @@ import Collapse from '@material-ui/core/Collapse'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import Button from '@material-ui/core/Button'
+
 
 const styles = {
   container: {
@@ -37,6 +39,7 @@ class PublicSinglePath extends Component {
 
 
   renderPath = () => {
+    console.log('paththingamajig==', this.state, '\n', this.props)
     const steps = this.props.path[0][0].steps
     const { description, level, name, owner, slug, status, uid } = this.props.path[0][0].details.properties
     return (
@@ -49,44 +52,13 @@ class PublicSinglePath extends Component {
                 steps.map(step => {
                   const stepUrl = step.resource.properties.url
                   return (
-                  <div key={stepUrl}>
-                    <ListItem
-                      key={stepUrl}                      
-                      dense
-                      button
-                      disableRipple
-                    >
-                      {
-                        step.resource.properties.imageUrl ? (
-                          <img src={step.resource.properties.imageUrl} width={75} />
-                        ) : (
-                          <img src="../../default.png" width={75} />
-                        )
-                      }
-
-                      <ListItemText primary={step.resource.properties.name} />
-
-                      {this.state.selectedItems.indexOf(stepUrl) !== -1 ?
-                        <ExpandLess
-                          onClick={() => this.handleDropdownClick(stepUrl)}
-                        /> :
-                        <ExpandMore
-                          onClick={() => this.handleCollapseClick(stepUrl)}
-                        />
-                      }
-
-                    </ListItem>
-
-                    <Collapse
-                      in={this.state.selectedItems.indexOf(stepUrl) !== -1}
-                      timeout="auto" unmountOnExit>
-                      <List component="div" disablePadding>
-                        <ListItem button>
-                          <p>In the dropdown for "{step.resource.properties.name}"</p>
-                        </ListItem>
-                      </List>
-                    </Collapse>
-                    </div>
+                  <ResourceCard 
+                    key={step.resource.identity.low} 
+                    isLoggedIn={false}
+                    resourceProperties={step.resource.properties} 
+                    handleCompletedClick={() => true}
+                    checkForComplete={() => true}
+                  />
                   )
               } ) }
             </List>
@@ -95,9 +67,8 @@ class PublicSinglePath extends Component {
         </PageContainer>
       )}
 
-
-
   render(){
+
     if(this.props.path.length){
       return(
         this.renderPath()
@@ -106,15 +77,15 @@ class PublicSinglePath extends Component {
     return (
       <span />
     )
-
-
     }
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    path: state.pathReducer.singlePath
+    path: state.pathReducer.singlePath,
+    completedSteps: state.step.completedSteps,
+    userName: state.user.name
   }
 }
 
@@ -141,3 +112,46 @@ const PageContainer = styled.div`
 `
 
 export default connect(mapStateToProps, mapDispatchToProps)(PublicSinglePath)
+
+
+/*
+ <div key={stepUrl}>
+   <ListItem
+     key={stepUrl}                      
+     dense
+     button
+     disableRipple
+   >
+     {
+       step.resource.properties.imageUrl ? (
+         <img src={step.resource.properties.imageUrl} width={75} />
+       ) : (
+         <img src="../../default.png" width={75} />
+       )
+     }
+
+     <ListItemText primary={step.resource.properties.name} />
+
+     {this.state.selectedItems.indexOf(stepUrl) !== -1 ?
+       <ExpandLess
+         onClick={() => this.handleDropdownClick(stepUrl)}
+       /> :
+       <ExpandMore
+         onClick={() => this.handleCollapseClick(stepUrl)}
+       />
+     }
+
+   </ListItem>
+
+   <Collapse
+     in={this.state.selectedItems.indexOf(stepUrl) !== -1}
+     timeout="auto" unmountOnExit>
+     <List component="div" disablePadding>
+       <ListItem button>
+         <p>In the dropdown for "{step.resource.properties.name}"</p>
+       </ListItem>
+     </List>
+   </Collapse>
+   </div>
+
+ */

@@ -12,30 +12,26 @@ const Display = styled.div`
   flex-wrap: nowrap;
 `
 
-
-
-
-
-
 const CategoryAllPaths = (props) => {
-    const {paths} = props
-    return(
-      <Display>
-          {paths.map((path) =>
-              <PathCardSmallCategory
-                key={path.name}
-                img='/squares-default.png'
-                name={path.name}
-                username={path.username || null }
-                rating={path.rating || 3}
-                description={path.description}
-              />
-          )}
-          </Display>
-    )}
-
-
-
-
+  const {paths} = props
+  console.log('paths is=', paths)
+  return(
+    <Display>
+      {paths.map((path) =>
+        <PathCardSmallCategory
+          key={path.uid}
+          url={path.url}
+          uid={path.uid}
+          slug={path.slug}
+          img='/squares-default.png'
+          name={path.name}
+          username={path.username || null }
+          rating={path.rating || 3}
+          description={path.description}
+        />
+      )}
+    </Display>
+  )
+}
 
 export default CategoryAllPaths

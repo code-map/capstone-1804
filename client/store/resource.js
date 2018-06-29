@@ -3,7 +3,6 @@ import axios from 'axios'
 const SET_ALL_REVIEWS_OF_RESOURCE = 'SET_ALL_REVIEWS_OF_RESOURCE'
 
 const setAllReviewsOfResource = (reviews) => {
-  console.log('reviews are=',reviews)
   return {
     type: SET_ALL_REVIEWS_OF_RESOURCE,
     reviews,
@@ -13,7 +12,6 @@ const setAllReviewsOfResource = (reviews) => {
 export const getAllReviewsOfResource = (resourceName) => {
   return async (dispatch) => {
     const res = await axios.get(`/api/resources/${resourceName}/reviews`)
-    console.log('res.data =', res.data)
     dispatch(setAllReviewsOfResource(res.data))
   }
 }

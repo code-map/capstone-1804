@@ -2,6 +2,7 @@ import React from 'react'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import {Stars} from '../reviews'
 
 const styles = {
   container: {
@@ -21,9 +22,7 @@ const ReviewCard = (props) => {
       <ListItemText>
         {props.author}
       </ListItemText>
-      <ListItemText>
-        {props.score}
-      </ListItemText>
+      <Stars rating={props.score} />
       </ListItem>
       <ListItem>
       <ListItemText>
