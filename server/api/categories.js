@@ -33,7 +33,7 @@ router.get(`/all/parent`, async (req, res, next) => {
 router.get('/:categoryName/popular-paths', async (req,res,next) => {
   const category = req.params.categoryName
   const query = `match(u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
-      where c.name={category}
+      where c.name={category} AND p.status = "public"
       with count(u) as Users,c,p
       optional match(rev:Review)-[:REVIEWS]->(p)
       return c.name as Category, p.name as Path, Users, avg(rev.score) as Rating
@@ -53,7 +53,7 @@ router.get('/:categoryName/all-paths', async (req,res,next) => {
 //all the resources and paths that have this category
 router.get('/:categoryName/search', async(req,res,next) => {
   const category = req.params.categoryName
-  const query = `match (p:Path)-[:CATEGORY]->(c) where c.name={category}
+  const query = `match (p:Path)-[:CATEGORY]->(c) WHERE c.name={category} AND p.status = "public"
   optional match(rev:Review)-[:REVIEWS]->(p)
   RETURN p AS combined, avg(rev.score) as rating
   UNION
