@@ -49,10 +49,12 @@ class AddResource extends Component {
 
   handleResourceSubmit = () => {
     const duplicateCheck = this.props.path[0].steps.find((step) => {
-      return step.resource.properties.url === this.state.url
+      if(step.resource !== null){
+        return step.resource.properties.url === this.state.url
+      }
     })
 
-    if(duplicateCheck === undefined){
+    if(!duplicateCheck){
       this.props.checkResource(this.state.url)
     } else {
       this.setState({
@@ -100,9 +102,12 @@ class AddResource extends Component {
                 fullWidth
               />
 
-              <Button onClick={this.handleResourceSubmit} color="primary">
-                Submit Resource
-              </Button>
+              { !this.state.errorMessage &&
+                <Button onClick={this.handleResourceSubmit} color="primary">
+                  Submit Resource
+                </Button>
+              }
+
             </form>
             ) : (
               <AddResourceDetails
