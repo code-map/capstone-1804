@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getStepResourceThunk } from '../../store'
+import { getStepResourceThunk, getSinglePathByUidThunk, removeResourceFromStore } from '../../store'
 import AddResourceDetails from './add-resource-details'
 
 import ListItem from '@material-ui/core/ListItem'
@@ -44,7 +44,16 @@ class AddResource extends Component {
   }
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({
+      open: false,
+      url: '',
+      errorMessage: ''
+    })
+
+    const uid = this.props.path[0].details.properties.uid
+    this.props.getSinglePath(uid)
+
+    this.props.removeResourceFromStore()
   }
 
   handleResourceSubmit = () => {
@@ -138,6 +147,12 @@ const mapDispatchToProps = (dispatch) => {
   return {
     checkResource: (url) => {
       dispatch(getStepResourceThunk(url))
+    },
+    getSinglePath: (uid) => {
+      dispatch(getSinglePathByUidThunk(uid))
+    },
+    removeResourceFromStore: () => {
+      dispatch(removeResourceFromStore())
     }
   }
 }

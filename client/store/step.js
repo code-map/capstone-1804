@@ -6,6 +6,7 @@ import axios from 'axios'
 const GET_STEP_COMPLETIONS_FOR_USER = 'GET_STEP_COMPLETIONS_FOR_USER'
 const TOGGLE_STEP_COMPLETION = 'TOGGLE_STEP_COMPLETION'
 const GET_STEP_RESOURCE = 'GET_STEP_RESOURCE'
+const REMOVE_RESOURCE_FROM_STORE = 'REMOVE_RESOURCE_FROM_STORE'
 
 /**
  * ACTION CREATORS
@@ -28,6 +29,12 @@ const getStepResource = (resource) => {
   return {
     type: GET_STEP_RESOURCE,
     resource
+  }
+}
+
+export const removeResourceFromStore = () => {
+  return {
+    type: REMOVE_RESOURCE_FROM_STORE
   }
 }
 
@@ -84,6 +91,8 @@ export default function( state = initialState, action) {
     case GET_STEP_RESOURCE: {
       return {...state, resource: [action.resource]}
     }
+    case REMOVE_RESOURCE_FROM_STORE:
+      return {...state, resource: []}
     default:
       return state
   }
