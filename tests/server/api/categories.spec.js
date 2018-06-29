@@ -23,6 +23,7 @@ describe('Categories API Routes', () => {
 
       fs.writeFile('./response.txt', response)
       console.log(response)
+      console.log(JSON.parse(response.text))
     })
   })
 
