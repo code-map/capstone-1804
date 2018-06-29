@@ -87,8 +87,6 @@ const setSearchedPathsInCategory = (paths) => {
   }
 }
 
-
-
 /**
  * THUNK CREATORS
  */
