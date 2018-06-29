@@ -68,7 +68,7 @@ class PathBuilder extends Component {
     const { classes } = this.props
     return (
       <div style={{maxWidth: 700}}>
-        <h3>Add A New Path: {this.state.name}</h3>
+        <h3>Add New Learning Path: {this.state.name}</h3>
           <ValidatorForm
             className={classes.container}
             onChange={this.handleChange}

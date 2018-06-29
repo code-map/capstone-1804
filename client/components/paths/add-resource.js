@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getStepResourceThunk } from '../../store'
+import { getStepResourceThunk, getSinglePathByUidThunk, removeResourceFromStore } from '../../store'
 import AddResourceDetails from './add-resource-details'
 
 import ListItem from '@material-ui/core/ListItem'
@@ -28,7 +28,8 @@ class AddResource extends Component {
     super()
     this.state = {
       open: false,
-      url: ''
+      url: '',
+      errorMessage: ''
     }
   }
 
@@ -43,19 +44,41 @@ class AddResource extends Component {
   }
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({
+      open: false,
+      url: '',
+      errorMessage: ''
+    })
+
+    const uid = this.props.path[0].details.properties.uid
+    this.props.getSinglePath(uid)
+
+    this.props.removeResourceFromStore()
   }
 
   handleResourceSubmit = () => {
-    this.props.checkResource(this.state.url)
+    const duplicateCheck = this.props.path[0].steps.find((step) => {
+      if(step.resource !== null){
+        return step.resource.properties.url === this.state.url
+      }
+    })
+
+    if(!duplicateCheck){
+      this.props.checkResource(this.state.url)
+    } else {
+      this.setState({
+        errorMessage: 'That resource is already added to your path.'
+      })
+    }
   }
 
   render() {
     const { user, path, resource} = this.props
+
     return (
       <div>
 
-        <ListItem onClick={this.handleClickOpen}>
+        <ListItem button={true} onClick={this.handleClickOpen}>
           <AddCircleOutline style={styles.icon}/>
           <p style={styles.text}>Add a new resource to this path</p>
         </ListItem>
@@ -71,6 +94,10 @@ class AddResource extends Component {
               Paste a resource link below. If it's already in our catalog, we'll  automatically add it to your path. If it's new to us (great find!), you'll have a chance to edit the description before adding.
             </DialogContentText>
 
+            { this.state.errorMessage &&
+              <p>{this.state.errorMessage}</p>
+            }
+
           { this.props.resource.length < 1 ? (
             <form onSubmit={this.handleResourceSubmit} onChange={this.handleResourceChange}>
               <TextField
@@ -84,9 +111,12 @@ class AddResource extends Component {
                 fullWidth
               />
 
-              <Button onClick={this.handleResourceSubmit} color="primary">
-                Submit Resource
-              </Button>
+              { !this.state.errorMessage &&
+                <Button onClick={this.handleResourceSubmit} color="primary">
+                  Submit Resource
+                </Button>
+              }
+
             </form>
             ) : (
               <AddResourceDetails
@@ -117,6 +147,12 @@ const mapDispatchToProps = (dispatch) => {
   return {
     checkResource: (url) => {
       dispatch(getStepResourceThunk(url))
+    },
+    getSinglePath: (uid) => {
+      dispatch(getSinglePathByUidThunk(uid))
+    },
+    removeResourceFromStore: () => {
+      dispatch(removeResourceFromStore())
     }
   }
 }

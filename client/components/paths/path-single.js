@@ -4,15 +4,11 @@ import PathProgress from './path-progress'
 import {ResourceCard} from '../resources'
 import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
+import history from '../../history'
 
 import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
 
 import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
-import Checkbox from '@material-ui/core/Checkbox'
-import ExpandLess from '@material-ui/icons/ExpandLess'
-import ExpandMore from '@material-ui/icons/ExpandMore'
 import Button from '@material-ui/core/Button'
 import Chip from '@material-ui/core/Chip'
 
@@ -38,7 +34,8 @@ class SinglePath extends Component {
     super()
 
     this.state = {
-      selectedItems: []
+      selectedItems: [],
+      cleared: false
     }
   }
 
@@ -74,6 +71,7 @@ class SinglePath extends Component {
     const uid = this.props.path[0].details.properties.uid
     if (window.confirm(`Are you sure you want to delete ${pathName}?`)){
       this.props.deleteSinglePath(uid)
+      history.push('/user/dashboard/add-new-path')
     }
   }
 
@@ -110,12 +108,12 @@ class SinglePath extends Component {
     const pathSteps = path[0].steps
     return (
       <div>
-        <h3>
+        <h2>
           { pathDetails.status === 'draft' &&
-            <Chip label='owner' style={styles.chip}/>
+            <Chip label='Private Path' style={styles.chip}/>
           }
           {pathDetails.name}
-        </h3>
+        </h2>
         <p>{pathDetails.description}</p>
 
         { pathSteps[0].step !== null &&
@@ -126,12 +124,11 @@ class SinglePath extends Component {
             { pathSteps[0].step !== null &&
               pathSteps.map(step => {
                 const stepUrl = step.resource.properties.url
-                const resourceImg = step.resource.properties.imageUrl
                 return (
-                  <ResourceCard 
-                    key={step.resource.identity.low} 
+                  <ResourceCard
+                    key={step.resource.identity.low}
                     isLoggedIn={!!user}
-                    resourceProperties={step.resource.properties} 
+                    resourceProperties={step.resource.properties}
                     handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
                     checkForComplete={() => this.checkForComplete(stepUrl)}
                   />
