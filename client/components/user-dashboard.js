@@ -42,6 +42,16 @@ class UserDashboard extends Component {
     history.push('/user/dashboard/my-paths')
   }
 
+  componentWillReceiveProps(nextProps){
+    if(nextProps.path !== this.props.path){
+      const pathUid = nextProps.path[0].details.properties.uid
+      const username = this.props.user
+
+      this.props.getSinglePathByUid(pathUid)
+      this.props.getCompletedSteps(pathUid, username)
+    }
+  }
+
   render () {
     const { allUserPaths, singlePath, user } = this.props
     const view = this.props.match.params.view

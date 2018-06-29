@@ -63,7 +63,7 @@ class SinglePath extends Component {
   }
 
   handleDropdownClick = (step) => {
-    this.setState((prevState) => {
+     this.setState((prevState) => {
       return {
         selectedItems: prevState.selectedItems.filter((el) => el !== step)
       }
