@@ -31,6 +31,7 @@ router.get(`/all/parent`, async (req, res, next) => {
 })
 
 router.get('/:categoryName/popular-paths', async (req,res,next) => {
+  console.log('in  api')
   const category = req.params.categoryName
   const query = `match(u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
       where c.name={category}

@@ -146,7 +146,14 @@ export const getSinglePathByUidThunk = (uid) => {
 export const getPopularPathsInCategory = (categoryName) => {
   return async (dispatch) => {
     const res = await axios.get(`/api/categories/${categoryName}/popular-paths`)
-    dispatch(setPopularPathsInCategory(res.data))
+    const content = res.data.records.map(item => {
+      const category = item._fields[0]
+      const name = item._fields[1]
+      const numUsers = item._fields[2].low
+      const rating = item._fields[3]
+      return { category, name, rating, numUsers }
+   })
+    dispatch(setPopularPathsInCategory(content))
   }
 }
 
