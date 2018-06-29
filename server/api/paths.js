@@ -3,6 +3,11 @@ let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 let session = driver.session();
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
+const shortid = require('shortid')
+
+const makeSlug = (string) => {
+  return string.replace(/[^a-z0-9]/gi,'')
+}
 
 // GET: api/paths/all/user/:username/
 router.get('/all/user/:username/', async (req, res, next) => {
@@ -90,8 +95,8 @@ router.get('/:pathUid', async (req, res, next) => {
 })
 
 
-// GET: api/paths/:name
-router.get('/:name', async (req, res, next) => {
+// GET: api/paths/byName/:name
+router.get('/byName/:name', async (req, res, next) => {
   try {
     const param = req.params.name
 
@@ -111,19 +116,19 @@ router.get('/:name', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-// GET: api/paths/:name/user/:username/completed
-router.get('/:name/user/:username/completed', async (req, res, next) => {
+// GET: api/paths/:uid/user/:username/completed
+router.get('/:uid/user/:username/completed', async (req, res, next) => {
   try {
-    const pathName = req.params.name
+    const uid = req.params.uid
     const username = req.params.username
 
     const query = `MATCH (u)-[:PATHS]->(p:Path)
-    WHERE p.name = {pathName} and u.name = {username}
+    WHERE p.uid = {uid} and u.name = {username}
     OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
     OPTIONAL MATCH (u)-[c:COMPLETED]->(s)
     RETURN { steps: collect({ step: s, resource: r, completed: c })}`
 
-    const data = await session.run(query, {pathName, username})
+    const data = await session.run(query, {uid, username})
 
     const steps = data.records.map((record) => {
       return record._fields[0].steps
@@ -143,11 +148,11 @@ router.get('/:name/user/:username/completed', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-// PUT: api/paths/:pathName/user/:username/status/:bool/step/:stepUrl
-router.put('/:pathName/user/:username/status/:completed/step/:stepUrl', async (req, res, next) => {
+// PUT: api/paths/:pathUid/user/:username/status/:bool/step/:stepUrl
+router.put('/:pathUid/user/:username/status/:completed/step/:stepUrl', async (req, res, next) => {
   try {
 
-    const pathName = req.params.pathName
+    const uid = req.params.pathUid
     const username = req.params.username
     const stepUrl = decodeURIComponent(req.params.stepUrl)
     const completed = req.params.completed
@@ -157,7 +162,7 @@ router.put('/:pathName/user/:username/status/:completed/step/:stepUrl', async (r
       // Remove the relationship
       query = `
       MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-      WHERE u.name = {username} and p.name = {pathName} and r.url = {stepUrl}
+      WHERE u.name = {username} and p.uid = {uid} and r.url = {stepUrl}
       OPTIONAL MATCH (u)-[c:COMPLETED]->(s)
       DELETE c
       `
@@ -165,36 +170,38 @@ router.put('/:pathName/user/:username/status/:completed/step/:stepUrl', async (r
       // Add the relationship
       query = `
       MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-      WHERE u.name = {username} and p.name = {pathName} and r.url = {stepUrl}
+      WHERE u.name = {username} and p.uid = {uid} and r.url = {stepUrl}
       CREATE (u)-[:COMPLETED]->(s)
       `
     }
 
-    await session.run(query, {pathName, username, stepUrl})
+    await session.run(query, {uid, username, stepUrl})
 
     res.send(stepUrl)
     session.close()
   } catch (err) { next(err) }
 })
 
-// PUT `/api/paths/${pathName}/user/${username}/step/${urlEncoded}`
-router.post('/:pathName/user/:username/step/:stepUrl', async (req, res, next) => {
+// PUT `/api/paths/${pathUid}/user/${username}/step/${urlEncoded}`
+router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => {
   try {
 
-    const pathName = req.params.pathName
+    const uid = req.params.pathUid
     const username = req.params.username
     const stepUrl = decodeURIComponent(req.params.stepUrl)
     const createdDate = Date.now()
+    const newUid = shortid.generate()
 
     // create the resource if it doesn't exist yet
     if (req.body.type === 'new'){
       const resourceQuery = `
-      CREATE (r:Resource { name: {name}, description: {description}, createdDate: {createdDate}, url: {url} })
+      CREATE (r:Resource { name: {name}, description: {description}, createdDate: {createdDate}, url: {url}, uid: {uid} })
       `
       await session.run(resourceQuery, {
         name: req.body.title,
         description: req.body.description,
         url: stepUrl,
+        uid: newUid,
         createdDate
       })
     }
@@ -202,23 +209,23 @@ router.post('/:pathName/user/:username/step/:stepUrl', async (req, res, next) =>
     // Get last step name in path
     const query = `
     MATCH (u:User)-[:PATHS]->(p:Path)
-    WHERE p.name = {pathName} AND u.name = {username}
+    WHERE p.uid = {uid} AND u.name = {username}
     OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)
     RETURN s.name
     ORDER BY s.name DESC
     LIMIT 1
     `
-    const result = await session.run(query, {pathName, username, stepUrl})
+    const result = await session.run(query, {uid, username, stepUrl})
 
     // If there aren't any steps yet, add resource as 'Step 1'
     if(!result.records[0]._fields[0]){
       const addStep1Query = `
       MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
-      WHERE p.name = {pathName} AND u.name = {username} AND r.url = {stepUrl}
+      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
       CREATE (s:Step { name: "Step 1"}),
       (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
       `
-      const addedAsStep1 = await session.run(addStep1Query, {pathName, username, stepUrl})
+      const addedAsStep1 = await session.run(addStep1Query, {uid, username, stepUrl})
 
       res.send(addedAsStep1)
     } else {
@@ -229,11 +236,11 @@ router.post('/:pathName/user/:username/step/:stepUrl', async (req, res, next) =>
 
       const addStepQuery = `
       MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
-      WHERE p.name = {pathName} AND u.name = {username} AND r.url = {stepUrl}
+      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
       CREATE (s:Step { name: {newStepName} }),
       (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
       `
-      const addedNewStep = await session.run(addStepQuery, {pathName, username, stepUrl, newStepName})
+      const addedNewStep = await session.run(addStepQuery, {uid, username, stepUrl, newStepName})
 
       res.send(addedNewStep)
     }
@@ -245,13 +252,15 @@ router.post('/:pathName/user/:username/step/:stepUrl', async (req, res, next) =>
 router.post('/', async (req, res, next) => {
 
   const createdDate = Date.now()
+  const uid = shortid.generate()
+  const slug = makeSlug(req.body.name)
 
   try {
 
     const newPath = `
     MATCH (u:User), (c:Category)
     WHERE u.name = {username} AND c.name = {category}
-    CREATE (p:Path {name: {name}, description: {description}, level: {level}, status: {status}, owner: {username}, createdDate: {createdDate}}),
+    CREATE (p:Path {name: {name}, description: {description}, level: {level}, status: {status}, owner: {username}, createdDate: {createdDate}, uid: {uid}, slug: {slug}}),
     (u)-[:PATHS {notes: {notes}}]->(p),
     (p)-[:CATEGORY]->(c)`
 
@@ -263,6 +272,8 @@ router.post('/', async (req, res, next) => {
       level: req.body.level,
       status: 'draft',
       notes: '',
+      uid,
+      slug,
       createdDate
     })
 
@@ -276,17 +287,17 @@ router.post('/', async (req, res, next) => {
 })
 
 // DELETE: api/paths/:name
-router.delete('/:name', async (req, res, next) => {
+router.delete('/:uid', async (req, res, next) => {
   try {
-    const name = req.params.name
+    const uid = req.params.uid
 
     const query = `
-    MATCH (p:Path) WHERE p.name = {name}
+    MATCH (p:Path) WHERE p.uid = {uid}
     DETACH DELETE p`
 
-    await session.run(query, {name})
+    await session.run(query, {uid})
 
-    res.send(name)
+    res.send(uid)
     session.close()
   } catch (err) { next(err) }
 })

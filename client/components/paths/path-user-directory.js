@@ -22,14 +22,16 @@ const PathUserDirectory = ({paths, handleSelect, selected}) => {
       <h4 style={styles.header}>My Paths Directory</h4>
       <MenuList>
         { paths.map((path) => {
+          const uid = path[0].details.properties.uid
           const name = path[0].details.properties.name
+
           if (selected.details){
-            active = selected.details.properties.name === name
+            active = selected.details.properties.uid === uid
           }
             return (
               <MenuItem
-                key={name}
-                onClick={() => handleSelect(name)}
+                key={uid}
+                onClick={() => handleSelect(uid)}
                 selected={active}
               >
                 {name}

@@ -62,7 +62,6 @@ class SearchAny extends Component {
         {
           matches.map((match) => {
             const {name, uid, slug, url} = match
-            console.log('MATCH YIY', match)
             if(match.type === 'Path'){
               return <Link to={`/paths/${uid}/${slug}`} key={uid}><MatchRow><p>{name}</p></MatchRow></Link>
             }else{

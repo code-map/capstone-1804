@@ -4,6 +4,33 @@ let session = driver.session();
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
 
+router.get(`/:resourceName/reviews`, async (req,res,next) => {
+  try{
+    const resourceName = req.params.resourceName
+    const query = 
+    `
+      MATCH(u:User)-[:REVIEWS]->(rev:Review)-[:REVIEWS]->(r:Resource)
+      WHERE r.name={resourceName}
+      RETURN r.name AS resource,
+             u.name AS author,
+             rev.comments AS comments,
+             rev.score AS score
+      ORDER BY score
+      limit 3
+    `
+    const result = await session.run(query, {resourceName})
+  
+    const reducedResponse = recordsReducer(result.records)
+    const groupedResponse = {}
+    groupedResponse[resourceName] = reducedResponse
+
+    res.send(groupedResponse)
+    session.close()
+  }catch(e){
+    next(e)
+  }
+})
+
 router.get('/:resourceUid', async (req, res, next) => {
   try {
     const param = req.params.pathUid
@@ -25,9 +52,6 @@ router.get('/:resourceUid', async (req, res, next) => {
     console.error(err)
     next(err)
   }
-
 })
 
 module.exports = router
-
-
