@@ -92,7 +92,7 @@ class AddResource extends Component {
               <AddResourceDetails
                 handleClose={this.handleClose}
                 username={user}
-                pathName={path.details.properties.name}
+                pathUid={path[0].details.properties.uid}
                 resource={resource}
                 url={this.state.url}
               />

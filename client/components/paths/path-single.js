@@ -43,18 +43,20 @@ class SinglePath extends Component {
   }
 
   componentDidMount = () => {
-    if(this.props.path.steps.length > 1) {
-      const pathName = this.props.path.details.properties.name
+    const path = this.props.path[0]
+    if(path.steps.length > 1) {
+      const pathUid = path.details.properties.uid
       const username = this.props.user
-      this.props.getCompletedSteps(pathName, username)
+      this.props.getCompletedSteps(pathUid, username)
     }
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.path !== this.props.path){
-      const pathName = nextProps.path.details.properties.name
+    if(nextProps.path[0] !== this.props.path[0]){
+      const pathUid = nextProps.path[0].details.properties.uid
       const username = this.props.user
-      this.props.getCompletedSteps(pathName, username)
+
+      this.props.getCompletedSteps(pathUid, username)
     }
   }
 
@@ -75,18 +77,19 @@ class SinglePath extends Component {
   }
 
   handleCompletedClick = stepUrl => async () => {
-    const pathName = this.props.path.details.properties.name
+    const pathUid = this.props.path[0].details.properties.uid
     const username = this.props.user
     const bool = await this.checkForComplete(stepUrl)
 
-    this.props.toggleStepCompletion(pathName, username, stepUrl, bool)
+    this.props.toggleStepCompletion(pathUid, username, stepUrl, bool)
   }
 
   handleDeletePath = (event) => {
     event.preventDefault()
-    const pathName = this.props.path.details.properties.name
+    const pathName = this.props.path[0].details.properties.name
+    const uid = this.props.path[0].details.properties.uid
     if (window.confirm(`Are you sure you want to delete ${pathName}?`)){
-      this.props.deleteSinglePath(pathName)
+      this.props.deleteSinglePath(uid)
     }
   }
 
@@ -110,33 +113,38 @@ class SinglePath extends Component {
     const total = this.props.completedSteps.length
     let completed = 0
 
-    steps.forEach(step => step.completed ? completed++ : '')
-    return Math.round( (completed / total) * 100 )
-  }
-
-  toggleStatus = () => {
-
+    if(steps.length === 0) {
+      return 0
+    } else {
+      steps.forEach(step => step.completed ? completed++ : '')
+      return Math.round( (completed / total) * 100 )
+    }
   }
 
   render(){
-    const { path, user } = this.props
+    const { user, path } = this.props
+    const pathDetails = path[0].details.properties
+    const pathSteps = path[0].steps
     return (
       <div>
         <h3>
-          <Chip label={path.details.properties.status} style={styles.chip}/>
-          {path.details.properties.name}
+          { pathDetails.status === 'draft' &&
+            <Chip label='owner' style={styles.chip}/>
+          }
+          {pathDetails.name}
         </h3>
-        <p>{path.details.properties.description}</p>
+        <p>{pathDetails.description}</p>
 
-        { this.props.path.steps[0].step !== null &&
+        { pathSteps[0].step !== null &&
           <PathProgress progress={this.getCompletePercentage()} />
         }
 
         <div style={styles.container}>
           <List>
-            { this.props.path.steps[0].step !== null &&
-              path.steps.map(step => {
+            { pathSteps[0].step !== null &&
+              pathSteps.map(step => {
                 const stepUrl = step.resource.properties.url
+                const resourceImg = step.resource.properties.imageUrl
                 return (
                 <div key={stepUrl}>
                   <ListItem
@@ -153,11 +161,7 @@ class SinglePath extends Component {
                     />
 
                     {
-                      step.resource.properties.imageUrl ? (
-                        <img src={step.resource.properties.imageUrl} width={75} />
-                      ) : (
-                        <img src="../../default.png" width={75} />
-                      )
+                      <img src={resourceImg ? resourceImg : "../../default.png"} width={75} />
                     }
 
                     <ListItemText primary={step.resource.properties.name} />
@@ -178,7 +182,10 @@ class SinglePath extends Component {
                     timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItem button>
-                        <p>In the dropdown for <a href={step.resource.properties.url} target="_blank">{step.resource.properties.name}</a></p>
+                        <ul>
+                          <li>Description: {step.resource.properties.description}</li>
+                          <li>Visit resource: <a href={step.resource.properties.url} target="_blank">{step.resource.properties.name}</a></li>
+                        </ul>
                       </ListItem>
                     </List>
                   </Collapse>
@@ -187,7 +194,7 @@ class SinglePath extends Component {
                 )
             } ) }
 
-          { path.details.properties.owner === user &&
+          { path[0].details.properties.owner === user &&
             <AddResource user={user} path={path} />
           }
 
@@ -195,7 +202,7 @@ class SinglePath extends Component {
 
         </div>
 
-        { path.details.properties.owner === user &&
+        { path[0].details.properties.owner === user &&
           <div>
             <Button
               style={styles.deleteButton}
@@ -226,14 +233,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    deleteSinglePath: (name) => {
-      dispatch(deleteSinglePathThunk(name))
+    deleteSinglePath: (uid) => {
+      dispatch(deleteSinglePathThunk(uid))
     },
-    getCompletedSteps: (pathName, username) => {
-      dispatch(getStepCompletionSingleUserThunk(pathName, username))
+    getCompletedSteps: (pathUid, username) => {
+      dispatch(getStepCompletionSingleUserThunk(pathUid, username))
     },
-    toggleStepCompletion: (pathName, username, stepUrl, bool) => {
-      dispatch(toggleStepCompletionThunk(pathName, username, stepUrl, bool))
+    toggleStepCompletion: (pathUid, username, stepUrl, bool) => {
+      dispatch(toggleStepCompletionThunk(pathUid, username, stepUrl, bool))
     }
   }
 }
