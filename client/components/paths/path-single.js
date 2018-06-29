@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import PathProgress from './path-progress'
 import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
+import history from '../../history'
 
 import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
 
@@ -38,7 +39,8 @@ class SinglePath extends Component {
     super()
 
     this.state = {
-      selectedItems: []
+      selectedItems: [],
+      cleared: false
     }
   }
 
@@ -90,6 +92,7 @@ class SinglePath extends Component {
     const uid = this.props.path[0].details.properties.uid
     if (window.confirm(`Are you sure you want to delete ${pathName}?`)){
       this.props.deleteSinglePath(uid)
+      history.push('/user/dashboard/add-new-path')
     }
   }
 
