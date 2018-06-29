@@ -45,21 +45,18 @@ class SinglePath extends Component {
   componentDidMount = () => {
     const path = this.props.path[0]
     if(path.steps.length > 1) {
-      const pathName = path.details.properties.name
+      const pathUid = path.details.properties.uid
       const username = this.props.user
-      this.props.getCompletedSteps(pathName, username)
+      this.props.getCompletedSteps(pathUid, username)
     }
   }
 
   componentWillReceiveProps(nextProps){
     if(nextProps.path[0] !== this.props.path[0]){
-      const pathName = nextProps.path[0].details.properties.name
+      const pathUid = nextProps.path[0].details.properties.uid
       const username = this.props.user
 
-      if(nextProps.path[0].steps.length > 1) {
-        this.props.getCompletedSteps(pathName, username)
-      }
-
+      this.props.getCompletedSteps(pathUid, username)
     }
   }
 
@@ -116,8 +113,12 @@ class SinglePath extends Component {
     const total = this.props.completedSteps.length
     let completed = 0
 
-    steps.forEach(step => step.completed ? completed++ : '')
-    return Math.round( (completed / total) * 100 )
+    if(steps.length === 0) {
+      return 0
+    } else {
+      steps.forEach(step => step.completed ? completed++ : '')
+      return Math.round( (completed / total) * 100 )
+    }
   }
 
   render(){
@@ -235,8 +236,8 @@ const mapDispatchToProps = (dispatch) => {
     deleteSinglePath: (uid) => {
       dispatch(deleteSinglePathThunk(uid))
     },
-    getCompletedSteps: (pathName, username) => {
-      dispatch(getStepCompletionSingleUserThunk(pathName, username))
+    getCompletedSteps: (pathUid, username) => {
+      dispatch(getStepCompletionSingleUserThunk(pathUid, username))
     },
     toggleStepCompletion: (pathUid, username, stepUrl, bool) => {
       dispatch(toggleStepCompletionThunk(pathUid, username, stepUrl, bool))

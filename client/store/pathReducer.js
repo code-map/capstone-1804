@@ -190,7 +190,6 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
     case ADD_NEW_PATH:
       return {...state, allUserPaths: [...state.allUserPaths, action.path]}
     case DELETE_SINGLE_PATH: {
-      console.log('pathReducer', action.uid)
       const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.uid !== action.uid)
       return {...state, allUserPaths}
     }

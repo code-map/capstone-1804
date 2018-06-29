@@ -116,19 +116,19 @@ router.get('/byName/:name', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-// GET: api/paths/:name/user/:username/completed
-router.get('/:name/user/:username/completed', async (req, res, next) => {
+// GET: api/paths/:uid/user/:username/completed
+router.get('/:uid/user/:username/completed', async (req, res, next) => {
   try {
-    const pathName = req.params.name
+    const uid = req.params.uid
     const username = req.params.username
 
     const query = `MATCH (u)-[:PATHS]->(p:Path)
-    WHERE p.name = {pathName} and u.name = {username}
+    WHERE p.uid = {uid} and u.name = {username}
     OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
     OPTIONAL MATCH (u)-[c:COMPLETED]->(s)
     RETURN { steps: collect({ step: s, resource: r, completed: c })}`
 
-    const data = await session.run(query, {pathName, username})
+    const data = await session.run(query, {uid, username})
 
     const steps = data.records.map((record) => {
       return record._fields[0].steps
