@@ -91,7 +91,7 @@ class ResourceCard extends React.Component{
   }
 
   render() {
-    const isLoggedIn = this.props.isLoggedIn
+    const {isLoggedIn} = this.props
     const {classes, theme} = this.props
     return(
       <div style={styles.container}>

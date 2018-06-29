@@ -26,7 +26,7 @@ const CategoryAllPaths = (props) => {
           img='/squares-default.png'
           name={path.name}
           username={path.username || null }
-          rating={path.rating || 3}
+          rating={path.rating || 0}
           description={path.description}
         />
       )}
