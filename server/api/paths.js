@@ -78,11 +78,6 @@ router.get('/:pathUid', async (req, res, next) => {
   try {
     const param = req.params.pathUid
 
-    // const query = `
-    // MATCH (p:Path) WHERE p.uid = {uid}
-    // OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-    // RETURN { details: p, steps: collect( { step: s, resource: r } ) }`
-
     const query=`
       MATCH (p:Path), (u:User)-[:PATHS]->(p)
       WHERE p.uid = {uid}
