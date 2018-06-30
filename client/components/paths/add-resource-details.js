@@ -19,7 +19,7 @@ class AddResourceDetails extends Component {
       title: '',
       description: '',
       imageUrl: '',
-      type: ''
+      type1: ''
     }
   }
 
@@ -28,7 +28,7 @@ class AddResourceDetails extends Component {
       title: this.props.resource[0].name,
       description: this.props.resource[0].description,
       imageUrl: this.props.resource[0].imageUrl,
-      type: this.props.resource[0].type
+      type1: this.props.resource[0].type
     })
   }
 
@@ -41,12 +41,14 @@ class AddResourceDetails extends Component {
   handleSubmit = (event) => {
     event.preventDefault()
     const { username, pathUid, url } = this.props
-
+    console.log('submit event state', this.state)
     this.props.addStepToPath(username, pathUid, url, {...this.state}, 'new')
 
     this.setState({
       title: '',
-      description: ''
+      description: '',
+      imageUrl: '',
+      type1: ''
     })
 
     this.props.getSinglePath(pathUid)
@@ -60,7 +62,6 @@ class AddResourceDetails extends Component {
 
   render(){
     const { username, pathUid, resource, url } = this.props
-    console.log('thisprops', typeof resource[0])
     return (
       <div>
         { typeof resource !== 'string' ? (

@@ -1,13 +1,13 @@
-let neo4j = require('neo4j-driver').v1;
-let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
-let session = driver.session();
+let neo4j = require('neo4j-driver').v1
+let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
+let session = driver.session()
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
 const shortid = require('shortid')
 const {getMetadata} = require('../../script/metadata')
 
-const makeSlug = (string) => {
-  return string.replace(/[^a-z0-9]/gi,'')
+const makeSlug = string => {
+  return string.replace(/[^a-z0-9]/gi, '')
 }
 
 // GET: api/paths/all/user/:username/
@@ -21,13 +21,15 @@ router.get('/all/user/:username/', async (req, res, next) => {
 
     const result = await session.run(query, {username: param})
 
-    const paths = result.records.map((record) => {
+    const paths = result.records.map(record => {
       return record._fields
     })
 
     res.send(paths)
     session.close()
-  } catch (err) { next(err) }
+  } catch (err) {
+    next(err)
+  }
 })
 
 // GET: /api/paths/step/:url
@@ -42,8 +44,8 @@ router.get('/step/:url', async (req, res, next) => {
 
     const result = await session.run(query, {url})
 
-    if(result.records.length > 0){
-      const records = result.records.map((record) => {
+    if (result.records.length > 0) {
+      const records = result.records.map(record => {
         return record._fields
       })
       res.send(records[0][0].properties)
@@ -54,13 +56,15 @@ router.get('/step/:url', async (req, res, next) => {
     }
 
     session.close()
-  } catch (err) { next(err) }
+  } catch (err) {
+    next(err)
+  }
 })
 
 // returns the most popular paths (regardless of category)
 // GET: api/paths/popular
-router.get('/popular', async (req,res,next) => {
-    const query = `
+router.get('/popular', async (req, res, next) => {
+  const query = `
     MATCH (u: User)-[_p:PATHS]->(p: Path)<-[_r: REVIEWS]-(r:Review),
       (p)-[:CATEGORY]->(c:Category)
       RETURN p.name AS name,
@@ -72,19 +76,18 @@ router.get('/popular', async (req,res,next) => {
              p.slug AS slug,
              c.name AS category
       ORDER BY rating DESC LIMIT 10`
-    const result = await session.run(query)
+  const result = await session.run(query)
 
-    const reducedResponse = recordsReducer(result.records)
-    res.send(reducedResponse)
+  const reducedResponse = recordsReducer(result.records)
+  res.send(reducedResponse)
 })
-
 
 // GET: api/paths/:uid
 router.get('/:pathUid', async (req, res, next) => {
   try {
     const param = req.params.pathUid
 
-    const query=`
+    const query = `
       MATCH (p:Path), (u:User)-[:PATHS]->(p)
       WHERE p.uid = {uid}
       WITH p, count(distinct u) as subscribers
@@ -93,15 +96,16 @@ router.get('/:pathUid', async (req, res, next) => {
 
     const result = await session.run(query, {uid: param})
 
-    const singlePath = result.records.map((record) => {
+    const singlePath = result.records.map(record => {
       return record._fields
     })
 
     res.send(singlePath)
     session.close()
-  } catch (err) { next(err) }
+  } catch (err) {
+    next(err)
+  }
 })
-
 
 // GET: api/paths/byName/:name
 router.get('/byName/:name', async (req, res, next) => {
@@ -115,13 +119,15 @@ router.get('/byName/:name', async (req, res, next) => {
 
     const result = await session.run(query, {name: param})
 
-    const singlePath = result.records.map((record) => {
+    const singlePath = result.records.map(record => {
       return record._fields
     })
 
     res.send(singlePath[0])
     session.close()
-  } catch (err) { next(err) }
+  } catch (err) {
+    next(err)
+  }
 })
 
 // GET: api/paths/:uid/user/:username/completed
@@ -138,86 +144,94 @@ router.get('/:uid/user/:username/completed', async (req, res, next) => {
 
     const data = await session.run(query, {uid, username})
 
-    const steps = data.records.map((record) => {
+    const steps = data.records.map(record => {
       return record._fields[0].steps
     })
 
-    const completionStatus = steps[0].map((el) => {
+    const completionStatus = steps[0].map(el => {
       const completed = el.completed !== null
       return {
         stepName: el.resource.properties.name,
-        stepUrl:  el.resource.properties.url,
+        stepUrl: el.resource.properties.url,
         completed
       }
     })
 
     res.send(completionStatus)
     session.close()
-  } catch (err) { next(err) }
+  } catch (err) {
+    next(err)
+  }
 })
 
 // PUT: api/paths/:pathUid/user/:username/status/:bool/step/:stepUrl
-router.put('/:pathUid/user/:username/status/:completed/step/:stepUrl', async (req, res, next) => {
-  try {
+router.put(
+  '/:pathUid/user/:username/status/:completed/step/:stepUrl',
+  async (req, res, next) => {
+    try {
+      const uid = req.params.pathUid
+      const username = req.params.username
+      const stepUrl = decodeURIComponent(req.params.stepUrl)
+      const completed = req.params.completed
+      let query = ''
 
-    const uid = req.params.pathUid
-    const username = req.params.username
-    const stepUrl = decodeURIComponent(req.params.stepUrl)
-    const completed = req.params.completed
-    let query = ''
-
-    if (completed === 'true') {
-      // Remove the relationship
-      query = `
+      if (completed === 'true') {
+        // Remove the relationship
+        query = `
       MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
       WHERE u.name = {username} and p.uid = {uid} and r.url = {stepUrl}
       OPTIONAL MATCH (u)-[c:COMPLETED]->(s)
       DELETE c
       `
-    } else if (completed === 'false'){
-      // Add the relationship
-      query = `
+      } else if (completed === 'false') {
+        // Add the relationship
+        query = `
       MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
       WHERE u.name = {username} and p.uid = {uid} and r.url = {stepUrl}
       CREATE (u)-[:COMPLETED]->(s)
       `
+      }
+
+      await session.run(query, {uid, username, stepUrl})
+
+      res.send(stepUrl)
+      session.close()
+    } catch (err) {
+      next(err)
     }
-
-    await session.run(query, {uid, username, stepUrl})
-
-    res.send(stepUrl)
-    session.close()
-  } catch (err) { next(err) }
-})
+  }
+)
 
 // PUT `/api/paths/${pathUid}/user/${username}/step/${urlEncoded}`
-router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => {
-  try {
-    console.log('reqbody', req.body)
-    const uid = req.params.pathUid
-    const username = req.params.username
-    const stepUrl = decodeURIComponent(req.params.stepUrl)
-    const createdDate = Date.now()
-    const newUid = shortid.generate()
+router.post(
+  '/:pathUid/user/:username/step/:stepUrl',
+  async (req, res, next) => {
+    try {
+      console.log('reqbody', req.body)
+      const uid = req.params.pathUid
+      const username = req.params.username
+      const stepUrl = req.params.stepUrl.startsWith('http') ? decodeURIComponent(req.params.stepUrl) : decodeURIComponent('http://' + req.params.stepUrl)
+      const createdDate = Date.now()
+      const newUid = shortid.generate()
 
-    // create the resource if it doesn't exist yet
-    if (req.body.type === 'new'){
-      const resourceQuery = `
-      CREATE (r:Resource { name: {name}, description: {description}, createdDate: {createdDate}, url: {url}, uid: {uid}, type })
+      // create the resource if it doesn't exist yet
+      if (req.body.type === 'new') {
+        const resourceQuery = `
+      CREATE (r:Resource { name: {name}, description: {description}, createdDate: {createdDate}, url: {url}, uid: {uid}, type: {type}, imageUrl: {imageUrl} })
       `
-      await session.run(resourceQuery, {
-        name: req.body.title,
-        description: req.body.description,
-        type: req.body.type,
-        imageUrl: req.body.imageUrl,
-        url: stepUrl,
-        uid: newUid,
-        createdDate
-      })
-    }
+        await session.run(resourceQuery, {
+          name: req.body.title,
+          description: req.body.description,
+          type: req.body.type1,
+          imageUrl: req.body.imageUrl,
+          url: stepUrl,
+          uid: newUid,
+          createdDate
+        })
+      }
 
-    // Get last step name in path
-    const query = `
+      // Get last step name in path
+      const query = `
     MATCH (u:User)-[:PATHS]->(p:Path)
     WHERE p.uid = {uid} AND u.name = {username}
     OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)
@@ -225,48 +239,60 @@ router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => 
     ORDER BY s.name DESC
     LIMIT 1
     `
-    const result = await session.run(query, {uid, username, stepUrl})
+      const result = await session.run(query, {uid, username, stepUrl})
 
-    // If there aren't any steps yet, add resource as 'Step 1'
-    if(!result.records[0]._fields[0]){
-      const addStep1Query = `
+      // If there aren't any steps yet, add resource as 'Step 1'
+      if (!result.records[0]._fields[0]) {
+        const addStep1Query = `
       MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
       WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
       CREATE (s:Step { name: "Step 1"}),
       (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
       `
-      const addedAsStep1 = await session.run(addStep1Query, {uid, username, stepUrl})
+        const addedAsStep1 = await session.run(addStep1Query, {
+          uid,
+          username,
+          stepUrl
+        })
 
-      res.send(addedAsStep1)
-    } else {
-      // Else get last digit of last existing step and increment new step name
-      const lastStepName = result.records[0]._fields[0]
-      const newStepNum = lastStepName.substr(lastStepName.indexOf(' '), lastStepName.length - 1)
-      const newStepName = `Step ` + ( Number(newStepNum) + 1 )
+        res.send(addedAsStep1)
+      } else {
+        // Else get last digit of last existing step and increment new step name
+        const lastStepName = result.records[0]._fields[0]
+        const newStepNum = lastStepName.substr(
+          lastStepName.indexOf(' '),
+          lastStepName.length - 1
+        )
+        const newStepName = `Step ` + (Number(newStepNum) + 1)
 
-      const addStepQuery = `
+        const addStepQuery = `
       MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
       WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
       CREATE (s:Step { name: {newStepName} }),
       (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
       `
-      const addedNewStep = await session.run(addStepQuery, {uid, username, stepUrl, newStepName})
+        const addedNewStep = await session.run(addStepQuery, {
+          uid,
+          username,
+          stepUrl,
+          newStepName
+        })
 
-      res.send(addedNewStep)
+        res.send(addedNewStep)
+      }
+    } catch (err) {
+      next(err)
     }
-
-  } catch(err) { next(err) }
-})
+  }
+)
 
 // POST: api/paths/
 router.post('/', async (req, res, next) => {
-
   const createdDate = Date.now()
   const uid = shortid.generate()
   const slug = makeSlug(req.body.name)
 
   try {
-
     const newPath = `
     MATCH (u:User), (c:Category)
     WHERE u.name = {username} AND c.name = {category}
@@ -288,12 +314,14 @@ router.post('/', async (req, res, next) => {
     })
 
     const result = [
-      { details: { properties: created.summary.statement.parameters } }
+      {details: {properties: created.summary.statement.parameters}}
     ]
 
     res.send(result)
     session.close()
-  } catch (err) { next(err) }
+  } catch (err) {
+    next(err)
+  }
 })
 
 // DELETE: api/paths/:name
@@ -309,7 +337,9 @@ router.delete('/:uid', async (req, res, next) => {
 
     res.send(uid)
     session.close()
-  } catch (err) { next(err) }
+  } catch (err) {
+    next(err)
+  }
 })
 
 module.exports = router

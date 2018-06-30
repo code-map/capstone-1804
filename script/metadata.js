@@ -13,9 +13,10 @@ const getMetadata = url => {
       if (!data) {
         throw new Error('No metadata found')
       } else {
-        metaObj.name = data.name ? data.name : ''
+        metaObj.name = (metadata.general) ? metadata.general.title : ''
+
         metaObj.type = data.type ? data.type : ''
-        metaObj.description = data.description ? data.description : ''
+        metaObj.description = metadata.general.description ? metadata.general.description : ''
         metaObj.imageUrl = data.image ? data.image.url : ''
         metaObj.found = false
 
