@@ -27,7 +27,7 @@ class PopularPaths extends React.Component {
     const popularPaths = this.props.popularPaths
     return(
       <div style={styles.container}>
-        <h2 style={styles.header}>Popular Paths</h2>
+        <h2 style={styles.header}>Popular Learning Paths</h2>
         <Grid container spacing={40}>
         {
           (popularPaths)
