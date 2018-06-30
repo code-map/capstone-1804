@@ -166,8 +166,9 @@ router.get('/:uid/user/:username/completed', async (req, res, next) => {
 // PUT: /api/paths/:uid/togglePublic/
 router.put('/:uid/togglePublic', async (req, res, next) => {
   try {
-    console.log('hit the route', req.body)
-    let status = req.body.bool ? 'public' : 'draft'
+    // let status = req.body.bool ? 'public' : 'draft'
+    let status = req.body.hasOwnProperty('public') ? 'public' : 'draft'
+
     let uid = req.params.uid
     let result = await session.run(
       `

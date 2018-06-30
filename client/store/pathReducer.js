@@ -138,7 +138,6 @@ export const deleteSinglePathThunk = (uid) => {
 }
 
 export const togglePublicThunk = (uid, status) => {
-  console.log('thunky', uid, status)
   return async dispatch => {
     const {data} = await axios.put(`/api/paths/${uid}/togglePublic`, status)
     dispatch(togglePublic(data))

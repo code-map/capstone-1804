@@ -105,7 +105,6 @@ class SinglePath extends Component {
 
   render(){
     const { user, path } = this.props
-    console.log('thisprops', this.props)
     const pathDetails = path[0].details.properties
     const status = pathDetails.status
     const pathSteps = path[0].steps
