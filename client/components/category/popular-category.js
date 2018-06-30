@@ -8,7 +8,13 @@ const styles = {
   container: {
     padding: '0 20px',
     textAlign: 'center',
-    marginBottom: 50
+    marginBottom: 50,
+  },
+  inner: {
+    textAlign: 'center',
+    centerWrap: {
+      display: 'inline-block'
+    }
   },
   header: {
     textAlign: 'center',
@@ -28,11 +34,11 @@ class PopularCategories extends React.Component {
     return(
       <div style={styles.container}>
         <h2 style={styles.header}>Popular Categories</h2>
-        <Grid container spacing={40} >
+        <Grid container spacing={40}>
         {
           (popularCategories)
           ? popularCategories.map(cat =>
-            <Grid item xs={3} key={cat.Category.identity.low} >
+            <Grid item xs={3} key={cat.Category.identity.low}>
               <CategoryCard
                 categoryName={cat.Category.properties.name}
                 userCount={cat.Users.low}
