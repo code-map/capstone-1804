@@ -51,7 +51,6 @@ router.get('/step/:url', async (req, res, next) => {
       res.send(records[0][0].properties)
     } else {
       let md = await getMetadata(url)
-      console.log('gd', md)
       res.send(md)
     }
 
@@ -207,7 +206,6 @@ router.post(
   '/:pathUid/user/:username/step/:stepUrl',
   async (req, res, next) => {
     try {
-      console.log('reqbody', req.body)
       const uid = req.params.pathUid
       const username = req.params.username
       const stepUrl = req.params.stepUrl.startsWith('http') ? decodeURIComponent(req.params.stepUrl) : decodeURIComponent('http://' + req.params.stepUrl)

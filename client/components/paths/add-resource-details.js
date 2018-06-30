@@ -41,7 +41,6 @@ class AddResourceDetails extends Component {
   handleSubmit = (event) => {
     event.preventDefault()
     const { username, pathUid, url } = this.props
-    console.log('submit event state', this.state)
     this.props.addStepToPath(username, pathUid, url, {...this.state}, 'new')
 
     this.setState({

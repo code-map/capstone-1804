@@ -7,7 +7,6 @@ const getMetadata = url => {
   let metaObj = {}
   return scrape(url)
   .then(metadata => {
-      console.log(metadata)
       const data = metadata.openGraph ? metadata.openGraph : metadata.general
 
       if (!data) {
@@ -40,7 +39,6 @@ const updateSeed = async () => {
     md = {},
     metadata = {},
     res = {}
-  // console.log(urls)
 
   for (let i = 0; i < urls.length; i++) {
     try {
@@ -56,7 +54,6 @@ const updateSeed = async () => {
         metaObj.description = md.description ? md.description : ''
         metaObj.imageUrl = md.image ? md.image.url : ''
 
-        console.log(urls[i], metaObj)
         res = await session.run(
           `
           MATCH (r:Resource)
