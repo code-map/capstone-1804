@@ -32,23 +32,58 @@ router.get(`/all/parent`, async (req, res, next) => {
 
 router.get('/:categoryName/popular-paths', async (req,res,next) => {
   const category = req.params.categoryName
-  const query = `match(u:User)-[r:PATHS]->(p:Path {status: 'public'})-[:CATEGORY]->(c:Category)
-      where c.name={category}
-      with count(u) as Users,c,p
-      optional match(rev:Review)-[:REVIEWS]->(p)
-      return c.name as Category, p.name as Path, Users, avg(rev.score) as Rating
-      order by Users desc
-      limit 3
-     `
-  const topPathsByCategory = await session.run(query, { category })
-  res.json(topPathsByCategory)
+  const query = `
+      MATCH (u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
+      WHERE c.name = {category} AND p.status = "public"
+      WITH count(u) as Users,c,p
+      OPTIONAL MATCH (rev:Review)-[:REVIEWS]->(p)
+      RETURN c.name as Category, p.name as Path, Users, avg(rev.score) as Rating, p.owner as Owner, p.slug as Slug, p.uid as uid
+      ORDER BY Users desc
+      LIMIT 4`
+  
+  const result = await session.run(query, { category })
+
+  const data = result.records.map((el) => {
+    return {
+      category: el._fields[0],
+      name:  el._fields[1],
+      userCount: el._fieldLookup.Users,
+      rating: el._fields[3],
+      owner: el._fields[4],
+      slug: el._fields[5],
+      uid: el._fields[6]
+    }
+  })
+
+  res.json(data)
 })
 
 router.get('/:categoryName/all-paths', async (req,res,next) => {
-  const category = req.params.categoryName;
-  const query = `MATCH (p:Path {status: 'public'})-[:CATEGORY]->(c) WHERE c.name = {category} return p`
+  const category = req.params.categoryName
+  
+  const query = `
+  MATCH (u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
+  WHERE c.name = {category} AND p.status = "public"
+  WITH count(u) as Users,c,p
+  OPTIONAL MATCH (rev:Review)-[:REVIEWS]->(p)
+  RETURN c.name as Category, p.name as Path, Users, avg(rev.score) as Rating, p.owner as Owner, p.slug as Slug, p.uid as uid`
+
   const pathsInCategory = await session.run(query, { category })
-  res.send(pathsInCategory)})
+
+  const data = pathsInCategory.records.map((el) => {
+    return {
+      category: el._fields[0],
+      name:  el._fields[1],
+      userCount: el._fieldLookup.Users,
+      rating: el._fields[3],
+      owner: el._fields[4],
+      slug: el._fields[5],
+      uid: el._fields[6]
+    }
+  })
+
+  res.send(data)
+})
 
 //all the resources and paths that have this category
 router.get('/:categoryName/search', async(req,res,next) => {
