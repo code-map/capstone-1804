@@ -65,6 +65,9 @@ const AuthForm = props => {
                 name="password"
                 label="Password"
                 required={true}
+                inputProps={{
+                  type: 'password'
+                }}
               />
             </FormControl>
           <div>
