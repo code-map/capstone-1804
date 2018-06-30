@@ -6,7 +6,7 @@ import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
 
-import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
+import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, togglePublicThunk } from '../../store'
 
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
@@ -105,7 +105,9 @@ class SinglePath extends Component {
 
   render(){
     const { user, path } = this.props
+    console.log('thisprops', this.props)
     const pathDetails = path[0].details.properties
+    const status = pathDetails.status
     const pathSteps = path[0].steps
     return (
       <div>
@@ -154,8 +156,11 @@ class SinglePath extends Component {
             </Button>
 
             <PathToggleStatus
-              toggleStatus={this.state.toggleStatus}
-              style={styles.status} />
+              uid={path[0].details.properties.uid}
+              Status={status}
+              style={styles.status}
+              toggle={this.props.togglePublic}
+              />
 
           </div>
         }
@@ -181,6 +186,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     toggleStepCompletion: (pathUid, username, stepUrl, bool) => {
       dispatch(toggleStepCompletionThunk(pathUid, username, stepUrl, bool))
+    },
+    togglePublic: (uid, status) => {
+      dispatch(togglePublicThunk(uid, status))
     }
   }
 }

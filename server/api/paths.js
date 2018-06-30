@@ -163,6 +163,38 @@ router.get('/:uid/user/:username/completed', async (req, res, next) => {
   }
 })
 
+// PUT: /api/paths/:uid/togglePublic/
+router.put('/:uid/togglePublic', async (req, res, next) => {
+  try {
+    console.log('hit the route', req.body)
+    let status = req.body.bool ? 'public' : 'draft'
+    let uid = req.params.uid
+    let result = await session.run(
+      `
+        MATCH (p:Path), (u:User)-[:PATHS]->(p)
+        WHERE p.uid = {uid}
+        SET p.status = {status}
+        WITH p, count(distinct u) as subscribers
+        OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+        RETURN { details: p, steps: collect( { step: s, resource: r } ), subscribers: subscribers }
+
+      `,
+      {uid, status}
+    )
+
+
+    const singlePath = result.records.map(record => {
+      return record._fields
+    })
+
+    res.send(singlePath)
+
+
+  } catch (err) {
+    next(err)
+  }
+})
+
 // PUT: api/paths/:pathUid/user/:username/status/:bool/step/:stepUrl
 router.put(
   '/:pathUid/user/:username/status/:completed/step/:stepUrl',
@@ -208,7 +240,9 @@ router.post(
     try {
       const uid = req.params.pathUid
       const username = req.params.username
-      const stepUrl = req.params.stepUrl.startsWith('http') ? decodeURIComponent(req.params.stepUrl) : decodeURIComponent('http://' + req.params.stepUrl)
+      const stepUrl = req.params.stepUrl.startsWith('http')
+        ? decodeURIComponent(req.params.stepUrl)
+        : decodeURIComponent('http://' + req.params.stepUrl)
       const createdDate = Date.now()
       const newUid = shortid.generate()
 

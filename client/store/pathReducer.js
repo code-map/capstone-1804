@@ -8,6 +8,7 @@ const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
 const ADD_NEW_PATH = 'ADD_NEW_PATH'
 const ADD_STEP_TO_PATH = 'ADD_STEP_TO_PATH'
 const DELETE_SINGLE_PATH = 'DELETE_SINGLE_PATH'
+const TOGGLE_PUBLIC = 'TOGGLE_PUBLIC'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
@@ -49,6 +50,13 @@ const deleteSinglePath = (uid) => {
   return {
     type: DELETE_SINGLE_PATH,
     uid
+  }
+}
+
+const togglePublic = (path) => {
+  return {
+    type: TOGGLE_PUBLIC,
+    path
   }
 }
 
@@ -129,6 +137,14 @@ export const deleteSinglePathThunk = (uid) => {
   }
 }
 
+export const togglePublicThunk = (uid, status) => {
+  console.log('thunky', uid, status)
+  return async dispatch => {
+    const {data} = await axios.put(`/api/paths/${uid}/togglePublic`, status)
+    dispatch(togglePublic(data))
+  }
+}
+
 export const getSinglePathByNameThunk = (name) => {
   return async (dispatch) => {
     const { data } = await axios.get(`/api/paths/byName/${name}`)
@@ -190,6 +206,9 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
     case DELETE_SINGLE_PATH: {
       const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.uid !== action.uid)
       return {...state, allUserPaths}
+    }
+    case TOGGLE_PUBLIC: {
+      return {...state, singlePath: action.path}
     }
     case GET_PATHS_SINGLE_USER:
       return {...state, allUserPaths: action.paths}
