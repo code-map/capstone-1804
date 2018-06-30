@@ -6,12 +6,16 @@ import history from '../history'
 import {withStyles} from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+import FormControl from '@material-ui/core/FormControl'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
 
 /**
  * COMPONENT
  */
 
-const styles = theme => ({
+const styles = {
   container: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -25,49 +29,62 @@ const styles = theme => ({
   button: {
     marginTop: 10
   }
-})
+}
 
 const AuthForm = props => {
   const {name, displayName, handleSubmit, error, handleNewuser, classes} = props
 
   return (
-    <div>
-      <form
-        onSubmit={displayName === 'Sign Up' ? handleNewuser : handleSubmit}
-        name={name}
-        className={classes.container}
-      >
-        <TextField
-          id="username"
-          name="username"
-          label="Username"
-          required={true}
-        />
-        {displayName === 'Sign Up' && (
+    <Grid container spacing={24} direction="row">
+      <Grid container item spacing={24} justify="center" >
+      <Grid item xs={4} >
+        <form
+          onSubmit={displayName === 'Sign Up' ? handleNewuser : handleSubmit}
+          name={name}
+          className={classes.container}
+        >
+          <FormControl fullWidth>
+            <InputLabel htmlFor="adornment-amount">Username</InputLabel>
+            <Input
+              id="username"
+              name="username"
+              label="Username"
+              required={true}
+            />
+          </FormControl>
+          {displayName === 'Sign Up' && (
+            <FormControl fullWidth>
+              <InputLabel htmlFor="adornment-amount">Email</InputLabel>
+              <Input id="email" name="email" label="Email" required={true} />
+            </FormControl>
+          )}
+            <FormControl fullWidth>
+              <InputLabel htmlFor="adornment-amount">Password</InputLabel>
+              <Input
+                id="password"
+                name="password"
+                label="Password"
+                required={true}
+              />
+            </FormControl>
           <div>
-            <TextField id="email" name="email" label="Email" required={true} />
+            <Button
+              type="submit"
+              size="large"
+              className={classes.button}
+              variant="outlined"
+            >
+              {displayName}
+            </Button>
           </div>
-        )}
-        <TextField
-          id="password"
-          name="password"
-          label="Password"
-          required={true}
-        />
-        <div>
-          <Button
-            type="submit"
-            size="large"
-            className={classes.button}
-            variant="outlined"
-          >
-            {displayName}
-          </Button>
-        </div>
-        {error && error.response && <div> {error.response.data} </div>}
-      </form>
-      <a href="/auth/google">{displayName} with Google (COMING SOON!)</a>
-    </div>
+          {error && error.response && <div> {error.response.data} </div>}
+        </form>
+
+          {/* <a href="/auth/google">{displayName} with Google coming soon</a> */}
+
+        </Grid>
+      </Grid>
+    </Grid>
   )
 }
 
@@ -109,7 +126,7 @@ const mapDispatch = dispatch => {
       const email = evt.target.email.value
       const password = evt.target.password.value
       dispatch(newUserThunk(name, email, password))
-      history.push('/home')
+      history.push('/user/dashboard')
     }
   }
 }
