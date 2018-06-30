@@ -58,7 +58,7 @@ router.get('/step/:url', async (req, res, next) => {
 // GET: api/paths/popular
 router.get('/popular', async (req,res,next) => {
     const query = `
-    MATCH (u: User)-[_p:PATHS]->(p: Path)<-[_r: REVIEWS]-(r:Review),
+    MATCH (u: User)-[_p:PATHS]->(p: Path {status: 'public'})<-[_r: REVIEWS]-(r:Review),
       (p)-[:CATEGORY]->(c:Category)
       RETURN p.name AS name,
              p.owner AS owner,
@@ -82,7 +82,7 @@ router.get('/:pathUid', async (req, res, next) => {
     const param = req.params.pathUid
 
     const query = `
-    MATCH (p:Path) WHERE p.uid = {uid}
+    WHERE c.name = {category} AND p.status = "public"
     OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
     RETURN { details: p, steps: collect( { step: s, resource: r } ) }`
 
@@ -311,7 +311,7 @@ router.put('/:slug/:uid/follow', async (req, res, next) => {
   try {
     const { userUid, pathUid } = req.body
 
-    const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}})
+    const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}, status: 'public'})
     MERGE (u)-[:PATHS]->(p)
     RETURN u, p`
 
