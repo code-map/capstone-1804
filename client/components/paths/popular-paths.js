@@ -4,24 +4,35 @@ import { getPopularPathsInAllCategories } from '../../store'
 import { PathCard } from './index'
 import Grid from '@material-ui/core/Grid'
 
-class PopularPaths extends React.Component {
-  constructor(props){
-    super(props)
+const styles = {
+  container: {
+    padding: '0 20px',
+    textAlign: 'center',
+  },
+  header: {
+    textAlign: 'center',
+    fontWeight: 300,
+    paddingBottom: 40,
+    fontSize: 36
   }
+}
 
-  async componentDidMount(){
-    await this.props.getPopularPaths()
+class PopularPaths extends React.Component {
+
+  componentDidMount(){
+    this.props.getPopularPaths()
   }
 
   render() {
     const popularPaths = this.props.popularPaths
     return(
-      <div>
+      <div style={styles.container}>
+        <h2 style={styles.header}>Popular Paths</h2>
         <Grid container spacing={40}>
         {
           (popularPaths)
           ? popularPaths.map(path =>
-              <Grid item xs={3} key={path.name}>
+              <Grid item lg={3} key={path.name}>
                 <PathCard
                   reviewCount={path.reviewCount.low}
                   userCount={path.userCount.low}
@@ -30,6 +41,7 @@ class PopularPaths extends React.Component {
                   rating={path.rating}
                   uid={path.uid}
                   slug={path.slug}
+                  category={path.category}
                 />
               </Grid>
             )

@@ -1,11 +1,39 @@
 body {
   font-family: sans-serif;
+}
 
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
+h1, h2, h3, h4, h5 {
+  color: #2a3b47
 }
 
 a {
+  color: #2a3b47;
   text-decoration: none;
+}
+
+/* unvisited link */
+a:link {
+  color: #2a3b47;
+}
+
+/* visited link */
+a:visited {
+  color: #2a3b47;
+}
+
+/* mouse over link */
+a:hover {
+  color: #3F51B5;
+}
+
+/* selected link */
+a:active {
+  color: #3F51B5;
 }
 
 label {
@@ -25,7 +53,51 @@ p {
   line-height: 2.1em;
 }
 
-/* form div {
-  margin: 1em;
-  display: inline-block;
-} */
+/* Home */
+#home-fold::after {
+  content: "";
+  background: url('/world.svg');
+  opacity: 0.02;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+/* Search Bar */
+.search-bar-any {
+  display: table;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+.search-bar-any input[type=search] {
+  width: 600px;
+  height: 65px;
+  padding: 15px;
+  border: 1px solid #efefef;
+  font-size: 22px;
+  border-radius: 5px;
+}
+
+.search-bar-any input[type=search]:focus {
+  border-color:#333;
+}
+
+.search-bar-any ::-webkit-input-placeholder {
+  text-align: center;
+}
+
+.search-bar-any :-moz-placeholder { /* Firefox 18- */
+  text-align: center;
+}
+
+.search-bar-any ::-moz-placeholder {  /* Firefox 19+ */
+  text-align: center;
+}
+
+.search-bar-any :-ms-input-placeholder {
+  text-align: center;
+}
