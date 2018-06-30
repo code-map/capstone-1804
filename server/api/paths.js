@@ -59,15 +59,18 @@ router.get('/step/:url', async (req, res, next) => {
 // returns the most popular paths (regardless of category)
 // GET: api/paths/popular
 router.get('/popular', async (req,res,next) => {
-    const query = `MATCH (u: User)-[_p:PATHS]->(p: Path)<-[_r: REVIEWS]-(r:Review)
+    const query = `
+    MATCH (u: User)-[_p:PATHS]->(p: Path)<-[_r: REVIEWS]-(r:Review),
+      (p)-[:CATEGORY]->(c:Category)
       RETURN p.name AS name,
              p.owner AS owner,
              count(r) AS reviewCount,
              count(distinct u) AS userCount,
              avg(r.score) AS rating,
              p.uid AS uid,
-             p.slug AS slug
-      ORDER BY rating DESC LIMIT 20`
+             p.slug AS slug,
+             c.name AS category
+      ORDER BY rating DESC LIMIT 8`
     const result = await session.run(query)
 
     const reducedResponse = recordsReducer(result.records)
