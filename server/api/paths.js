@@ -207,6 +207,7 @@ router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => 
     }
 
     // Get last step name in path
+
     const query = `
     MATCH (u:User)-[:PATHS]->(p:Path)
     WHERE p.uid = {uid} AND u.name = {username}
@@ -242,9 +243,26 @@ router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => 
       `
       const addedNewStep = await session.run(addStepQuery, {uid, username, stepUrl, newStepName})
 
-      res.send(addedNewStep)
-    }
+      //find all subscribers of the path
+      //const findSubscribersQuery = `MATCH (u:User)-[:FOLLOWS]->(p:Path {uid}) RETURN u.uid AS userId`
+      //const pathFollowers = await session.run(findSubscribersQuery, {uid})
 
+      //if there are followers, update their path steps to match the public one
+      //if(pathFollowers.length){
+        //find resources with steps
+        //MATCH (p:Path)-[:STEPS]->(s)-[:RESOURCE]->(r) RETURN r, s
+        //destructure the object into an array of key/value pairs of resources with step name
+        //order the resources by the step numbers???
+        //const addedNewStepForPathFollowers = pathFollowers.map((user) => {
+          //console.log('PATH FOLLOWERS!!!', pathFollowers)
+          //for each resources in the step/resources array run the following query
+          //return await session.run(addStepQuery, {uid, stepUrl, newStepName, username: user.username})
+        //})
+        //res.send(addedNewStepForPathFollowers, addedNewSteps)
+      //}else{
+        res.send(addedNewStep)
+      //}
+    }
   } catch(err) { next(err) }
 })
 
@@ -300,6 +318,50 @@ router.delete('/:uid', async (req, res, next) => {
     res.send(uid)
     session.close()
   } catch (err) { next(err) }
+})
+
+
+//copy existing path
+//create path
+//that belongs to the new user
+//take each step for each and attach the matching resource for each
+
+router.post('/:uid/:slug/copy', (req, res, next) => {
+  try {
+    //point the user to the actual path
+    //make the steps on the new user's copy and point to the same resources
+    //update the source path to update the related paths when a new resource is added
+    const { userUid, pathUid } = req.body
+
+    const query = `MATCH (p:Path) WHERE p.uid = {pathUid}
+    OPTIONAL MATCH (r:Resource)-[:STEP]->(p)
+    CREATE (u:User {uid: userUid})-[:FOLLOWS]->(p)
+    RETURN r`
+
+    const copyPathAndReturnResources = await session.run(query, {userUid, pathUid})
+    //strip this object
+    console.log('RESOURCES RETRUNED', copyPathAndReturnResources)
+    //const resources = order the resources by the step numbers
+        //const duplicatePathSteps = resources.map((resource) => {
+          //for each resource in the step/resources array run the following query or similar:
+
+              //     const addStepQuery = `
+              // MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
+              // WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
+              // CREATE (s:Step { name: {newStepName} }),
+              // (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
+              // `
+
+          //return await session.run(addStepQuery, {uid, stepUrl, newStepName, username: user.username})
+        //})
+
+        //return the link of the path with the follow tag and user and steps - return a path with the edit options turned off
+
+
+  }catch(err) {
+    console.error(err)
+    next(err)
+  }
 })
 
 module.exports = router

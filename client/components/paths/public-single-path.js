@@ -20,6 +20,10 @@ const styles = {
     borderWidth: '1px',
     borderColor: '#efefef',
     borderStyle: 'solid'
+  },
+  header: {
+    textAlign: 'center',
+    fontWeight: 100
   }
 }
 
@@ -37,24 +41,36 @@ class PublicSinglePath extends Component {
     this.props.getPath(uid)
   }
 
+  copyPath = () => {
+
+
+  }
+
 
   renderPath = () => {
     const steps = this.props.path[0][0].steps
+    console.log('hello')
     const { description, level, name, owner, slug, status, uid } = this.props.path[0][0].details.properties
     return (
       <PageContainer>
         <PathContainer>
-          <h3>Path: {name}</h3>
+          <h1 style={styles.header} >{name}</h1>
+          <Button
+              variant="outlined"
+              color="primary"
+            >
+            copy this path to my dashboard
+            </Button>
           <div style={styles.container}>
             <List>
               { steps.length > 1 &&
                 steps.map(step => {
                   const stepUrl = step.resource.properties.url
                   return (
-                  <ResourceCard 
-                    key={step.resource.identity.low} 
+                  <ResourceCard
+                    key={step.resource.identity.low}
                     isLoggedIn={false}
-                    resourceProperties={step.resource.properties} 
+                    resourceProperties={step.resource.properties}
                     handleCompletedClick={() => true}
                     checkForComplete={() => true}
                   />
