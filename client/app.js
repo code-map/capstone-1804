@@ -1,6 +1,7 @@
 import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import {MainNav} from './components'
+import {Footer} from './components'
 import Routes from './routes'
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
       <CssBaseline />
       <MainNav />
       <Routes />
+      <Footer />
     </div>
   )
 }

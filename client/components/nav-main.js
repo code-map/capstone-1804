@@ -18,6 +18,17 @@ const styles = {
   },
   flex: {
     flex: 1,
+  },
+  logo: {
+    float: 'left',
+    marginRight: 20,
+    fontSize: 32,
+    title: {
+      float: 'left',
+      fontWeight: 300,
+      position: 'relative',
+      top: 5
+    }
   }
 }
 
@@ -26,9 +37,14 @@ const MainNav = ({handleClick, isLoggedIn, classes}) => (
     <AppBar position="static" color="default">
       <Toolbar>
 
-        <Typography variant="title" color="inherit" className={classes.flex}>
-          <Link to="/">Code Map</Link>
-        </Typography>
+      <div className={classes.flex}>
+          <Link to="/">
+            <div>
+              <i style={styles.logo} className="material-icons">explore</i>
+              <Typography style={styles.logo.title} variant="title" color="inherit">Code Map</Typography>
+            </div>
+          </Link>
+      </div>
 
         <div>
           <CategoryDropdown />

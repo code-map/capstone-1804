@@ -4,30 +4,41 @@ import { CategoryCard } from './index'
 import { getPopularCategoriesThunk } from '../../store'
 import Grid from '@material-ui/core/Grid'
 
-class PopularCategories extends React.Component {
-  constructor(props){
-    super(props)
+const styles = {
+  container: {
+    padding: '0 20px',
+    textAlign: 'center',
+    marginBottom: 50
+  },
+  header: {
+    textAlign: 'center',
+    fontWeight: 300,
+    paddingBottom: 40,
+    fontSize: 36
   }
+}
 
-  async componentDidMount(){
-    await this.props.getPopularCategories()
+class PopularCategories extends React.Component {
+  componentDidMount(){
+    this.props.getPopularCategories()
   }
 
   render() {
     const popularCategories = this.props.popularCategories
-    return( 
-      <div>
+    return(
+      <div style={styles.container}>
+        <h2 style={styles.header}>Popular Categories</h2>
         <Grid container spacing={40} >
         {
           (popularCategories)
-          ? popularCategories.map(cat => 
+          ? popularCategories.map(cat =>
             <Grid item xs={3} key={cat.Category.identity.low} >
-              <CategoryCard 
+              <CategoryCard
                 categoryName={cat.Category.properties.name}
                 userCount={cat.Users.low}
               />
             </Grid>
-          ) 
+          )
           : null
         }
         </Grid>
