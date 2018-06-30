@@ -14,7 +14,7 @@ router.get('/all/user/:username/', async (req, res, next) => {
   try {
     const param = req.params.username
 
-    const query = `match(u:User)-[:PATHS | :FOLLOWS ]->(p:Path)
+    const query = `match(u:User)-[:PATHS]->(p:Path)
     where u.name = {username}
     return {details: p}`
 
@@ -312,7 +312,7 @@ router.put('/:slug/:uid/follow', async (req, res, next) => {
     const { userUid, pathUid } = req.body
 
     const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}})
-    MERGE (u)-[r:FOLLOWS]->(p)
+    MERGE (u)-[:PATHS]->(p)
     RETURN u, p`
 
     const followPath = await session.run(query, {userUid, pathUid})
