@@ -5,10 +5,7 @@ import {Stars} from '../reviews'
 
 import history from '../../history'
 
-import CardMedia from '@material-ui/core/CardMedia'
-import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
-import Grid from '@material-ui/core/Grid'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
 
@@ -19,6 +16,10 @@ const styles = {
   },
   chip: {
     float: 'left'
+  },
+  popular: {
+    fontSize: 36,
+    color: '#049BE5'
   },
   content: {
     marginTop: 20,
@@ -45,23 +46,30 @@ const styles = {
   }
 }
 
-const PathCard = ({ name, uid, slug, owner, rating, userCount, category}) => {
+const PathCard = (props) => {
 
   function handleCategoryClick(event, cat){
     event.preventDefault()
     history.push(`/category/${cat}`);
   }
 
+  const { name, uid, slug, owner, rating, userCount, category, popular} = props
+
   return(
     <Card>
       <div style={styles.header}>
-        <Chip
-          style={styles.chip}
-          avatar={<Avatar> {category.slice(0, 1).toUpperCase()} </Avatar>}
-          label={category}
-          clickable
-          onClick={(event) => handleCategoryClick(event, category)}
+      { popular ? (
+          <i style={styles.popular} className="material-icons">stars</i>
+        ) : (
+          <Chip
+            style={styles.chip}
+            avatar={<Avatar> {category.slice(0, 1).toUpperCase()} </Avatar>}
+            label={category}
+            clickable
+            onClick={(event) => handleCategoryClick(event, category)}
         />
+        )
+      }
       </div>
 
       <div style={styles.content}>

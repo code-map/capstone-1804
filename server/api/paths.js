@@ -68,7 +68,7 @@ router.get('/popular', async (req,res,next) => {
              p.uid AS uid,
              p.slug AS slug,
              c.name AS category
-      ORDER BY rating DESC LIMIT 10`
+      ORDER BY rating DESC LIMIT 8`
     const result = await session.run(query)
 
     const reducedResponse = recordsReducer(result.records)
