@@ -8,6 +8,7 @@ const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
 const ADD_NEW_PATH = 'ADD_NEW_PATH'
 const ADD_STEP_TO_PATH = 'ADD_STEP_TO_PATH'
 const DELETE_SINGLE_PATH = 'DELETE_SINGLE_PATH'
+const FOLLOW_PATH = 'FOLLOW_PATH'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
@@ -87,6 +88,14 @@ const setSearchedPathsInCategory = (paths) => {
   }
 }
 
+const followPath = (path) => {
+  return {
+    type: FOLLOW_PATH,
+    path
+  }
+}
+
+
 /**
  * THUNK CREATORS
  */
@@ -94,6 +103,14 @@ export const addNewPathThunk = (path) => {
   return async (dispatch) => {
     const { data } = await axios.post('/api/paths', path)
     dispatch(addNewPath(data))
+  }
+}
+
+export const followPathThunk = (pathUid, slug, userUid, path) => {
+  return async (dispatch) => {
+    //need to migrate to using user uid, but for the time being will use userName
+    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}/follow`, {userUid, pathUid})
+    dispatch(followPath(path))
   }
 }
 
@@ -193,6 +210,9 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
     }
     case GET_PATHS_SINGLE_USER:
       return {...state, allUserPaths: action.paths}
+    case FOLLOW_PATH:
+    console.log('PATH', action.path)
+      return {...state, allUserPaths: [...state.allUserPaths, action.path]}
     case GET_SINGLE_PATH:
       return {...state, singlePath: action.path}
     case SET_POPULAR_PATHS_IN_CATEGORY:

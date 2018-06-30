@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import styled from "styled-components"
 import {ResourceCard} from '../resources'
 
-import { getSinglePathByUidThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk  } from '../../store'
+import { getSinglePathByUidThunk, followPathThunk  } from '../../store'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -41,26 +41,30 @@ class PublicSinglePath extends Component {
     this.props.getPath(uid)
   }
 
-  copyPath = () => {
-
-
+  followPath = () => {
+    const {uid, slug} = this.props.path[0][0].details.properties
+    const path = this.props.path[0]
+    this.props.followPath(uid, slug, this.props.user.uid, path)
   }
 
 
   renderPath = () => {
     const steps = this.props.path[0][0].steps
-    console.log('hello')
     const { description, level, name, owner, slug, status, uid } = this.props.path[0][0].details.properties
     return (
       <PageContainer>
         <PathContainer>
           <h1 style={styles.header} >{name}</h1>
-          <Button
+          {
+            this.props.user.name && <Button
               variant="outlined"
               color="primary"
+              onClick={this.followPath}
             >
             copy this path to my dashboard
             </Button>
+
+          }
           <div style={styles.container}>
             <List>
               { steps.length > 1 &&
@@ -71,8 +75,6 @@ class PublicSinglePath extends Component {
                     key={step.resource.identity.low}
                     isLoggedIn={false}
                     resourceProperties={step.resource.properties}
-                    handleCompletedClick={() => true}
-                    checkForComplete={() => true}
                   />
                   )
               } ) }
@@ -99,8 +101,7 @@ class PublicSinglePath extends Component {
 const mapStateToProps = (state) => {
   return {
     path: state.pathReducer.singlePath,
-    completedSteps: state.step.completedSteps,
-    userName: state.user.name
+    user: state.user
   }
 }
 
@@ -108,7 +109,11 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getPath: (uid) => {
       dispatch(getSinglePathByUidThunk(uid))
+    },
+    followPath: (pathUid, slug, userUid, path) => {
+      dispatch(followPathThunk(pathUid, slug, userUid, path))
     }
+
   }
 }
 
