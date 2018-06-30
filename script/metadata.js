@@ -5,10 +5,10 @@ let session = driver.session()
 
 const getMetadata = url => {
   let metaObj = {}
-
-  scrape(url)
-    .then(metadata => {
-      const data = metadata.openGraph
+  return scrape(url)
+  .then(metadata => {
+      console.log(metadata)
+      const data = metadata.openGraph ? metadata.openGraph : metadata.general
 
       if (!data) {
         throw new Error('No metadata found')
@@ -17,6 +17,8 @@ const getMetadata = url => {
         metaObj.type = data.type ? data.type : ''
         metaObj.description = data.description ? data.description : ''
         metaObj.imageUrl = data.image ? data.image.url : ''
+        metaObj.found = false
+
 
         return metaObj
       }
@@ -110,4 +112,5 @@ const updateSeed = async () => {
 }
 
 // updateSeed()
+// getMetadata('https://www.codeproject.com/Articles/126380/Writing-Readable-SQL')
 module.exports = {getMetadata, updateSeed}

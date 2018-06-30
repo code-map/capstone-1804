@@ -4,6 +4,7 @@ let session = driver.session();
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
 const shortid = require('shortid')
+const {getMetadata} = require('../../script/metadata')
 
 const makeSlug = (string) => {
   return string.replace(/[^a-z0-9]/gi,'')
@@ -47,7 +48,9 @@ router.get('/step/:url', async (req, res, next) => {
       })
       res.send(records[0][0].properties)
     } else {
-      res.send('Not found')
+      let md = await getMetadata(url)
+      console.log('gd', md)
+      res.send(md)
     }
 
     session.close()
@@ -187,7 +190,7 @@ router.put('/:pathUid/user/:username/status/:completed/step/:stepUrl', async (re
 // PUT `/api/paths/${pathUid}/user/${username}/step/${urlEncoded}`
 router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => {
   try {
-
+    console.log('reqbody', req.body)
     const uid = req.params.pathUid
     const username = req.params.username
     const stepUrl = decodeURIComponent(req.params.stepUrl)
@@ -197,11 +200,13 @@ router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => 
     // create the resource if it doesn't exist yet
     if (req.body.type === 'new'){
       const resourceQuery = `
-      CREATE (r:Resource { name: {name}, description: {description}, createdDate: {createdDate}, url: {url}, uid: {uid} })
+      CREATE (r:Resource { name: {name}, description: {description}, createdDate: {createdDate}, url: {url}, uid: {uid}, type })
       `
       await session.run(resourceQuery, {
         name: req.body.title,
         description: req.body.description,
+        type: req.body.type,
+        imageUrl: req.body.imageUrl,
         url: stepUrl,
         uid: newUid,
         createdDate

@@ -17,8 +17,19 @@ class AddResourceDetails extends Component {
     super()
     this.state = {
       title: '',
-      description: ''
+      description: '',
+      imageUrl: '',
+      type: ''
     }
+  }
+
+  componentDidMount = () => {
+    this.setState({
+      title: this.props.resource[0].name,
+      description: this.props.resource[0].description,
+      imageUrl: this.props.resource[0].imageUrl,
+      type: this.props.resource[0].type
+    })
   }
 
   handleChange = (event) => {
@@ -49,9 +60,10 @@ class AddResourceDetails extends Component {
 
   render(){
     const { username, pathUid, resource, url } = this.props
+    console.log('thisprops', typeof resource[0])
     return (
       <div>
-        { resource[0] === 'Not found' ? (
+        { typeof resource !== 'string' ? (
           <div>
             <p>We don't know this resource yet:</p>
             <p>{url}</p>
@@ -65,7 +77,7 @@ class AddResourceDetails extends Component {
               label="What is the title of the resource?"
               name="title"
               value={this.state.title}
-              placeholder="ie. Fullstack Academy Jumpstart Online"
+              placeholder={resource[0].name || "ie. Fullstack Academy Jumpstart Online"}
               fullWidth
               margin="normal"
               required={true}
@@ -78,7 +90,7 @@ class AddResourceDetails extends Component {
               label="Add a short description for the resource"
               name="description"
               value={this.state.description}
-              placeholder="ie. Jumpstart teaches the ABCs of programming in JavaScript"
+              placeholder={resource[0].description || "ie. Jumpstart teaches the ABCs of programming in JavaScript"}
               fullWidth
               margin="normal"
               required={true}
