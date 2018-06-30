@@ -29,6 +29,8 @@ router.get('/all/user/:username/', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+
+
 // GET: /api/paths/step/:url
 router.get('/step/:url', async (req, res, next) => {
   try {
@@ -247,6 +249,35 @@ router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => 
 
   } catch(err) { next(err) }
 })
+
+// Reorders a path,  
+// it takes in the indexes to move: from, to
+// POST: /api/paths/:uid/reorder/:from/:to
+router.post('/:uid/reorder/', async (req, res, next) => {
+  try{
+    //check if move range is valid
+
+    //get path properties, 
+      const uid = req.params.uid
+      const query = 
+      `
+        MATCH (p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(res:Resource)
+        WHERE p.uid={uid}
+        optional match (p)<-[:REVIEWS]-(rev:Review)
+        return p.name as PathName, s as Step, res.name, avg(rev.score) as Rating
+        order by Step.name asc
+      `
+      
+  } catch (err) { next(err) }
+})
+
+
+//gets all the steps of Resource
+/*
+  MATCH (p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(res:Resource)
+  WHERE p.uid='B1HWaF1XMX'
+  RETURN s as Step, res as Resource
+*/
 
 // POST: api/paths/
 router.post('/', async (req, res, next) => {
