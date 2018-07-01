@@ -129,9 +129,9 @@ export const followPathThunk = (pathUid, slug, userUid, path) => {
   }
 }
 
-export const unfollowPathThunk = (pathUid, userUid, slug) => {
+export const unfollowPathThunk = (pathUid, username, slug) => {
   return async (dispatch) => {
-    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}`, {userUid, pathUid})
+    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}/unfollow`, {username, pathUid})
     dispatch(unfollowPath(pathUid))
   }
 }
@@ -245,7 +245,7 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
     case FOLLOW_PATH:
       return {...state, allUserPaths: [...state.allUserPaths, action.path]}
     case UNFOLLOW_PATH: {
-        const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.uid !== action.uid)
+        const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.uid !== action.pathUid)
         return {...state, allUserPaths}
       }
     case GET_SINGLE_PATH:

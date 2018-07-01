@@ -405,11 +405,11 @@ router.put('/:slug/:uid/follow', async (req, res, next) => {
 
 router.put('/:slug/:uid/unfollow', async (req, res, next)=> {
   try{
-    const { userUid, pathUid } = req.body
-    const query = `MATCH (u:User {uid: {userUid}})-[r:PATHS]->(p:Path {uid: {pathUid})
+    const { username, pathUid } = req.body
+    const query = `MATCH (u:User {name: {username}})-[r:PATHS]->(p:Path {uid: {pathUid}})
     DELETE r
     `
-    const unfollowPath = await session.run(query, {userUid, pathUid})
+    const unfollowPath = await session.run(query, {username, pathUid})
     res.send(unfollowPath)
   }catch(err){
     console.error(err)

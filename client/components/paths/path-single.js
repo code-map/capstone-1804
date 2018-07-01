@@ -5,8 +5,9 @@ import {ResourceCard} from '../resources'
 import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
+import { withRouter } from 'react-router-dom'
 
-import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, togglePublicThunk } from '../../store'
+import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, togglePublicThunk, unfollowPathThunk } from '../../store'
 
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
@@ -76,6 +77,15 @@ class SinglePath extends Component {
     }
   }
 
+  handleUnfollowPath = (event) => {
+    event.preventDefault
+    const { slug, uid } = this.props.path[0].details.properties
+    const username = this.props.user
+    this.props.unfollowPath(uid, username, slug)
+    history.push('/user/dashboard/add-new-path')
+
+  }
+
   checkForComplete = (url) => {
     const completedSteps = this.props.completedSteps
     let found = false
@@ -108,6 +118,7 @@ class SinglePath extends Component {
     const pathDetails = path[0].details.properties
     const status = pathDetails.status
     const pathSteps = path[0].steps
+    const isOwner = pathDetails.owner === user
     return (
       <div>
         <h2>
@@ -164,6 +175,19 @@ class SinglePath extends Component {
           </div>
         }
 
+        { !isOwner &&
+          <div>
+            <Button
+              style={styles.deleteButton}
+              onClick={this.handleUnfollowPath}
+              variant="outlined"
+              color="secondary"
+            >
+            Unfollow Path
+            </Button>
+            </div>
+        }
+
       </div>
     )
   }
@@ -188,8 +212,11 @@ const mapDispatchToProps = (dispatch) => {
     },
     togglePublic: (uid, status) => {
       dispatch(togglePublicThunk(uid, status))
+    },
+    unfollowPath: (uid, user, slug) => {
+      dispatch(unfollowPathThunk(uid, user, slug))
     }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SinglePath)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SinglePath))
