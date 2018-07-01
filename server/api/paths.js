@@ -15,7 +15,7 @@ router.get('/all/user/:username/', async (req, res, next) => {
   try {
     const param = req.params.username
 
-    const query = `match(u:User) - [:PATHS*]->(p:Path)
+    const query = `match(u:User)-[:PATHS]->(p:Path)
     where u.name = {username}
     return {details: p}`
 
@@ -62,9 +62,9 @@ router.get('/step/:url', async (req, res, next) => {
 
 // returns the most popular paths (regardless of category)
 // GET: api/paths/popular
-router.get('/popular', async (req, res, next) => {
+router.get('/popular', async (req,res,next) => {
   const query = `
-    MATCH (u: User)-[_p:PATHS]->(p: Path)<-[_r: REVIEWS]-(r:Review),
+    MATCH (u: User)-[_p:PATHS]->(p: Path {status: 'public'})<-[_r: REVIEWS]-(r:Review),
       (p)-[:CATEGORY]->(c:Category)
       RETURN p.name AS name,
              p.owner AS owner,
@@ -74,7 +74,8 @@ router.get('/popular', async (req, res, next) => {
              p.uid AS uid,
              p.slug AS slug,
              c.name AS category
-      ORDER BY rating DESC LIMIT 10`
+      ORDER BY rating DESC LIMIT 8`
+    
   const result = await session.run(query)
 
   const reducedResponse = recordsReducer(result.records)
@@ -86,7 +87,12 @@ router.get('/:pathUid', async (req, res, next) => {
   try {
     const param = req.params.pathUid
 
-    const query = `
+    // const query = `
+    // MATCH (p:Path) WHERE p.uid = {uid}
+    // OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+    // RETURN { details: p, steps: collect( { step: s, resource: r } ) }`
+
+    const query=`
       MATCH (p:Path), (u:User)-[:PATHS]->(p)
       WHERE p.uid = {uid}
       WITH p, count(distinct u) as subscribers
@@ -338,6 +344,28 @@ router.delete('/:uid', async (req, res, next) => {
   } catch (err) {
     next(err)
   }
+})
+
+
+//follow a public path
+router.put('/:slug/:uid/follow', async (req, res, next) => {
+  try {
+    const { userUid, pathUid } = req.body
+
+    const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}, status: 'public'})
+    MERGE (u)-[:PATHS]->(p)
+    RETURN u, p`
+
+    const followPath = await session.run(query, {userUid, pathUid})
+
+    res.json(followPath)
+    session.close()
+
+  }catch(err){
+    console.error(err)
+    next(err)
+  }
+
 })
 
 module.exports = router

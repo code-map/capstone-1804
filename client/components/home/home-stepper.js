@@ -20,9 +20,10 @@ const styles = {
     marginTop: 30
   },
   instructions: {
+    height: 75,
     fontSize: 18,
     paddingLeft: 20,
-    paddingRight: 20
+    paddingRight: 20,
   }
 }
 

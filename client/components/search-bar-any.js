@@ -12,6 +12,7 @@ const DropDown = styled.div`
   padding-left: 40px;
   max-height:200px;
   overflow: scroll;
+  width: 600px;
 `
 
 const MatchRow = styled.div`
@@ -66,7 +67,7 @@ class SearchAny extends Component {
             }else{
               //coming soon!
               // return <Link to={`/resources/${uid}/${slug}`} key={uid}><MatchRow><p>{name}</p></MatchRow></Link>
-              return <a href={url} key={uid}><MatchRow><p>{name}</p></MatchRow></a>
+              // return <a href={url} key={uid}><MatchRow><p>{name}</p></MatchRow></a>
             }
           })
         }
