@@ -15,23 +15,30 @@ describe('Categories API Routes', () => {
     //re-seed db?
   })
 
-  describe('GET api/categories/all/parent', () => {
+  describe('GET /api/categories/all/parent', () => {
     it('returns all language categories', async () => {
-      const response = await agent.get('/categories/all/parent')
+      const response = await agent.get('/api/categories/all/parent')
       .expect(200)
     })
   })
 
   describe('/:categoryName/popular-paths', () => {
     it('returns the correct paths and other info', async () => {
-      const response = await agent.get('/Javascript/popular-paths')
+      const response = await agent.get('/api/categories/Javascript/popular-paths')
       .expect(200)
     })
   })
 
   describe('/:categoryName/search', () => {
     it('returns all resources and paths within queried category', async () => {
-      const response = await agent.get('/Javascript/search')
+      const response = await agent.get('/api/categories/Javascript/search')
+      .expect(200)
+    })
+  })
+
+  describe('/popular', () => {
+    it('returns the most popular categories, ordered by number of users', async () => {
+      const response = await agent.get('/api/categories/popular')
       .expect(200)
     })
   })
