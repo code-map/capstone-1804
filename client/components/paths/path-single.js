@@ -8,9 +8,11 @@ import history from '../../history'
 
 import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, togglePublicThunk } from '../../store'
 
+
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
 import Chip from '@material-ui/core/Chip'
+import { FormHelperText } from '@material-ui/core';
 
 const styles = {
   container: {
@@ -28,6 +30,8 @@ const styles = {
     marginRight: 20
   }
 }
+
+
 
 class SinglePath extends Component {
   constructor(){
@@ -115,7 +119,10 @@ class SinglePath extends Component {
             <Chip label='Private Path' style={styles.chip}/>
           }
           {pathDetails.name}
+
+
         </h2>
+        <h4>Category:</h4><Chip label={pathDetails.category} />
         <p>{pathDetails.description}</p>
 
         { pathSteps[0].step !== null &&

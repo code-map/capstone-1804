@@ -369,7 +369,7 @@ router.delete('/:uid', async (req, res, next) => {
     const uid = req.params.uid
 
     const query = `
-    MATCH (p:Path) WHERE p.uid = {uid}
+    MATCH (p:PATH) WHERE p.uid = {uid}
     DETACH DELETE p`
 
     await session.run(query, {uid})
@@ -389,6 +389,28 @@ router.put('/:slug/:uid/follow', async (req, res, next) => {
 
     const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}, status: 'public'})
     MERGE (u)-[:PATHS]->(p)
+    RETURN u, p`
+
+    const followPath = await session.run(query, {userUid, pathUid})
+
+    res.json(followPath)
+    session.close()
+
+  }catch(err){
+    console.error(err)
+    next(err)
+  }
+
+})
+
+
+//follow a public path
+router.put('/:slug/:uid/follow', async (req, res, next) => {
+  try {
+    const { userUid, pathUid } = req.body
+
+    const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}})
+    MERGE (u)-[r:PATHS]->(p)
     RETURN u, p`
 
     const followPath = await session.run(query, {userUid, pathUid})

@@ -55,12 +55,14 @@ class UserDashboard extends Component {
 
       this.props.getSinglePathByUid(pathUid)
       this.props.getCompletedSteps(pathUid, username)
+
     }
   }
 
   render () {
     const { allUserPaths, singlePath, user } = this.props
     const view = this.props.match.params.view
+
     return (
       <div style={styles.container}>
 

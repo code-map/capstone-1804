@@ -65,8 +65,7 @@ router.get('/:categoryName/all-paths', async (req,res,next) => {
   WHERE c.name = {category} AND p.status = "public"
   WITH count(u) as Users,c,p
   OPTIONAL MATCH (rev:Review)-[:REVIEWS]->(p)
-  RETURN c.name as Category, p.name as Path, Users, avg(rev.score) as Rating, p.owner as Owner, p.slug as Slug, p.uid as uid`
-
+  RETURN c.name as Category, p.name as Path, Users, avg(rev.score) as Rating, p.owner as Owner, p.slug as Slug, p.uid as uid, p`
   const pathsInCategory = await session.run(query, { category })
 
   const data = pathsInCategory.records.map((el) => {
