@@ -83,8 +83,8 @@ router.get('/:pathUid', async (req, res, next) => {
 
     const query = `
     MATCH (p:Path) WHERE p.uid = {uid}
-    OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-    RETURN { details: p, steps: collect( { step: s, resource: r } ) }`
+    OPTIONAL MATCH (c)<-[:CATEGORY]-(p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+    RETURN { details: p, steps: collect( { step: s, resource: r } ), category: c }`
 
     const result = await session.run(query, {uid: param})
 
@@ -295,7 +295,7 @@ router.delete('/:uid', async (req, res, next) => {
     const uid = req.params.uid
 
     const query = `
-    MATCH (p:Path) WHERE p.uid = {uid}
+    MATCH (p:PATH) WHERE p.uid = {uid}
     DETACH DELETE p`
 
     await session.run(query, {uid})
@@ -312,7 +312,7 @@ router.put('/:slug/:uid/follow', async (req, res, next) => {
     const { userUid, pathUid } = req.body
 
     const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}})
-    MERGE (u)-[r:Path]->(p)
+    MERGE (u)-[r:PATHS]->(p)
     RETURN u, p`
 
     const followPath = await session.run(query, {userUid, pathUid})

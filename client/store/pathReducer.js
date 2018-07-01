@@ -211,7 +211,6 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
     case GET_PATHS_SINGLE_USER:
       return {...state, allUserPaths: action.paths}
     case FOLLOW_PATH:
-    console.log('PATH', action.path)
       return {...state, allUserPaths: [...state.allUserPaths, action.path]}
     case GET_SINGLE_PATH:
       return {...state, singlePath: action.path}
