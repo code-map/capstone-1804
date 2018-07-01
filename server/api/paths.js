@@ -30,6 +30,60 @@ router.get('/all/user/:username/', async (req, res, next) => {
 })
 
 
+router.get('/reorder/:pathUid', async (req, res, next) => {
+  try{
+    console.log('inside of path')
+    res.json({'success': req.params.pathUid})
+  } catch (err) { next(err) }
+})
+
+
+// Reorders a path,  
+// it takes in the indexes to move: from, to
+// POST: /api/paths/:uid/reorder/:from/:to
+router.get('/reorder/:pathUid/:fromIndex/:toIndex', async (req, res, next) => {
+  try{
+    const from = req.params.fromIndex
+    const to   = req.params.toIndex
+
+    if(from !== to) {
+      const query = (from > to) ?
+      `  
+        MATCH (p:Path {uid : {pUid}})-[:STEPS*` + from + `]->(fromC:Step)
+        WITH fromC, p
+        MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
+        WITH fromC, fromP, fromN, p, fromPE, fromNE
+        MATCH (p)-[:STEPS*` + to + `]->(toC:Step)
+        WITH toC, fromC, fromP, fromN, fromPE, fromNE, p
+        MATCH (toP)-[toPE:STEPS]->(toC)
+        DELETE fromPE, fromNE, toPE
+        CREATE (fromP)-[:STEPS]->(fromN), (toP)-[:STEPS]->(fromC)-[:STEPS]->(toC)
+        RETURN fromP, fromC, fromN, toP, toC, p
+      ` :
+      `  
+        MATCH (p:Path {uid:{pUid}})-[:STEPS*` + from + `]->(fromC:Step)
+        WITH fromC, p
+        MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
+        WITH fromC, fromP, fromN, p, fromPE, fromNE
+        MATCH (p)-[:STEPS*` + to + `]->(toC:Step)
+        WITH toC, fromC, fromP, fromN, fromPE, fromNE, p
+        MATCH (toC)-[toNE:STEPS]->(toN)
+        DELETE fromPE, fromNE, toNE
+        CREATE (fromP)-[:STEPS]->(fromN), (toC)-[:STEPS]->(fromC)-[:STEPS]->(toN)
+        RETURN fromP, fromN, fromC, toC, toN, p
+      `
+      const result = await session.run(query, {
+        pUid : req.params.pathUid,
+      })
+
+      const reducedResult = recordsReducer(result.records)
+      res.send(reducedResult)
+      session.close()
+    }else {
+      throw new Error('api requires "from" and "to" values to be different')
+    }
+  } catch (err) { next(err) }
+})
 
 // GET: /api/paths/step/:url
 router.get('/step/:url', async (req, res, next) => {
@@ -253,34 +307,8 @@ router.post('/:pathUid/user/:username/step/:stepUrl', async (req, res, next) => 
   } catch(err) { next(err) }
 })
 
-// Reorders a path,  
-// it takes in the indexes to move: from, to
-// POST: /api/paths/:uid/reorder/:from/:to
-router.post('/:uid/reorder/', async (req, res, next) => {
-  try{
-    //check if move range is valid
-
-    //get path properties, 
-      const uid = req.params.uid
-      const query = 
-      `
-        MATCH (p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(res:Resource)
-        WHERE p.uid={uid}
-        optional match (p)<-[:REVIEWS]-(rev:Review)
-        return p.name as PathName, s as Step, res.name, avg(rev.score) as Rating
-        order by Step.name asc
-      `
-      
-  } catch (err) { next(err) }
-})
 
 
-//gets all the steps of Resource
-/*
-  MATCH (p:Path)-[:STEPS*]->(s:Step)-[:RESOURCE]->(res:Resource)
-  WHERE p.uid='B1HWaF1XMX'
-  RETURN s as Step, res as Resource
-*/
 
 // POST: api/paths/
 router.post('/', async (req, res, next) => {
