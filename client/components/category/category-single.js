@@ -1,195 +1,91 @@
 import React, { Component } from 'react'
-import { CategoryAllPaths, CategorySearch, CategoryPopularPaths } from './'
+import { CategoryAllPaths, CategoryPopularPaths } from './'
 import { connect } from 'react-redux'
-import { createGetSingleCategoryThunk } from '../../store'
-import styled from "styled-components";
-import {Link, NavLink} from 'react-router-dom'
+import { getAllPathsInCategory } from '../../store'
 import Grid from '@material-ui/core/Grid';
 import { SearchAny } from '../'
 
+const styles = {
+  loader: {
+    paddingTop: 100,
+    textAlign: 'center',
+    header: {
+      textAlign: 'center',
+      fontWeight: 300,
+      fontSize: 24
+    }
+  },
+  header: {
+    textAlign: 'center',
+    fontWeight: 300,
+    fontSize: 36,
+    marginTop: 75
+  }
+}
 
 class CategorySinglePage extends Component {
-  constructor() {
-    super()
-  }
 
-  async componentDidMount() {
+  componentDidMount() {
     const {categoryName} = this.props.match.params
-    await this.props.getAllItemsInCategory(categoryName)
+    this.props.getAllCategoryPaths(categoryName)
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.match.params !== this.props.match.params) {
       const {categoryName} = nextProps.match.params
-      this.props.getAllItemsInCategory(categoryName)
+      this.props.getAllCategoryPaths(categoryName)
     }
   }
 
   render() {
-    const {paths, resources, name, url} = this.props.categoryItems
-    if (paths.length) {
+    const paths = this.props.pathsInCategory
+    const {categoryName} = this.props.match.params
+
+    if(paths.length === 0){
       return (
-        <Container>
-          <HeaderSearchContainer>
-            <Header>{name.trim()}</Header>
-            <SearchBox>
-              <SearchAny category={name} />
-            </SearchBox>
-          </HeaderSearchContainer>
-          <HeadlineCol>
-            <SubHeader>{`Popular paths in ${name}`}</SubHeader>
-            <ScrollBox>
-              <CategoryAllPaths paths={paths} />
-            </ScrollBox>
-          </HeadlineCol>
-          <Headline>
-            <Grid container spacing={24}>
-              <Grid item xs={12} sm={6}>
-            <ListContainer>
-            <SubHeader style={{marginTop:'15px'}}>{`Popular resources in ${name}`}</SubHeader>
-              <div>
-              {
-                resources.map((resource) => {
-                  return <p key={resource.name}><a  href={resource.url}>{resource.name}</a></p>
-                })
-              }
-              </div>
-            </ListContainer>
-            </Grid>
-          <Grid item xs={12} sm={6}>
-          <ListContainer>
-          <SubHeader style={{marginTop:'15px'}}>{`All paths in ${name}`}</SubHeader>
-              <div>
-              {
-                paths.map((path) => {
-                  return(<p key={path.uid}><NavLink to={`/paths/${path.uid}/${path.slug}`} >{path.name}</NavLink></p>)
-                })
-              }
-              </div>
-            </ListContainer>
-            </Grid>
-            </Grid>
-          </Headline>
-        </Container>
+        <div style={styles.loader}>
+          <h2 style={styles.loader.header}>Loading...</h2>
+        </div>
       )
-    } else {
-      return <p>loading</p>
     }
+
+    return (
+      <Grid container>
+        <Grid item lg={12}>
+          <h2 style={styles.header}>Category: {categoryName}</h2>
+        </Grid>
+
+        <Grid item lg={12}>
+          <SearchAny category={categoryName} placeholder={`Search the ${categoryName} category...`} />
+        </Grid>
+
+        <Grid item lg={12}>
+          <CategoryPopularPaths categoryName={categoryName} />
+        </Grid>
+
+        <Grid item lg={12}>
+          <CategoryAllPaths
+            categoryName={categoryName}
+            paths={paths} />
+        </Grid>
+
+      </Grid>
+    )
   }
 }
 
 const mapState = state => {
   return {
-    categoryItems: state.singleCategory
+    pathsInCategory: state.pathReducer.allPathsInCategory
   }
 }
 
 const mapDispatch = dispatch => {
   return {
-    getAllItemsInCategory: categoryName => {
-      return dispatch(createGetSingleCategoryThunk(categoryName))
+    getAllCategoryPaths: (categoryName) => {
+      return dispatch(getAllPathsInCategory(categoryName))
     }
   }
 }
 
-const Header = styled.h1`
-  color: #55288b;
-  font-family: Helvetica;
-  font-weight: 400;
-  font-size: 4em;
-  line-height: 0.01;
-  display: inline-block;
-  margin-right: 20px;
-`
-
-const HeaderSearchContainer = styled.div`
-  display: flex;
-  width: 60vw;
-  justify-content: space-between;
-  align-self: center;
-  margin-top: -60px;
-`
-
-const SubHeader = styled.p`
-  color: black;
-  font-family: Helvetica;
-  font-size: 1.2em;
-  font-weight: 200;
-  margin: 0;
-`
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  width: 95vw;
-  margin-top: 50px
-  padding: 50px;
-  box-sizing: border-box;
-`
-
-const Headline = styled.div`
-  margin: 10px;
-  width: auto;
-  height: auto;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.13);
-  padding-left: 20px;
-  overflow: auto;
-  background-color: rgb(232, 194, 239, 0.2);
-`
-
-const HeadlineCol = styled.div`
-  margin: 20px;
-  width: 90vw;
-  height: 250px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.13);
-  background-color: rgb(232, 194, 239, 0.2);
-  align-self: center;
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  overflow: hidden;
-`
-
-const ScrollBox = styled.div`
-  width: 90vw;
-  height: 200px;
-  overflow: scroll;
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-self: center;
-`
-
-const SearchBox = styled.div`
-  margin: 10px;
-  width: 35vw;
-  align-self: center;
-  height: auto;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.13);
-  padding-left: 20px;
-  padding-top: 0;
-  background-color: white;
-  display: inline-block;
-`
-
-const ListContainer = styled.div`
-  width: auto;
-  height: auto;
-`
-
 export default connect(mapState, mapDispatch)(CategorySinglePage)
-
-//ORIGINAL SCROLL BOX, DO NOT DELETE!!!!!
-// const ScrollBox = styled.div`
-// margin: 10px;
-// width: 90vw;
-// height: 200px;
-// box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.13);
-// background-color: rgb(232, 194, 239, .2);
-// align-self: center;
-// overflow: scroll;
-// display: flex;
-// flex-wrap: nowrap;
-// justify-content: center;
-// `
