@@ -63,11 +63,11 @@ class SearchAny extends Component {
           matches.map((match) => {
             const {name, uid, slug, url} = match
             if(match.type === 'Path'){
-              return <Link to={`/paths/${uid}/${slug}`} key={uid}><MatchRow><p>{name}</p></MatchRow></Link>
+              return <Link to={`/paths/${uid}/${slug}`} key={uid}><MatchRow><p>In Learning Paths - {name}</p></MatchRow></Link>
             }else{
-              //coming soon!
-              // return <Link to={`/resources/${uid}/${slug}`} key={uid}><MatchRow><p>{name}</p></MatchRow></Link>
-              // return <a href={url} key={uid}><MatchRow><p>{name}</p></MatchRow></a>
+              const {name} = match
+              //console.log('MATCH', match)
+                 return <Link to={`/category/${name}/`} key={name}><MatchRow><p>In Categories - {name}</p></MatchRow></Link>
             }
           })
         }
