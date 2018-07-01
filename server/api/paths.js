@@ -14,7 +14,7 @@ router.get('/all/user/:username/', async (req, res, next) => {
   try {
     const param = req.params.username
 
-    const query = `match(u:User) - [:PATHS*]->(p:Path)
+    const query = `match(u:User)-[:PATHS]->(p:Path)
     where u.name = {username}
     return {details: p}`
 
@@ -58,7 +58,7 @@ router.get('/step/:url', async (req, res, next) => {
 // GET: api/paths/popular
 router.get('/popular', async (req,res,next) => {
     const query = `
-    MATCH (u: User)-[_p:PATHS]->(p: Path)<-[_r: REVIEWS]-(r:Review),
+    MATCH (u: User)-[_p:PATHS]->(p: Path {status: 'public'})<-[_r: REVIEWS]-(r:Review),
       (p)-[:CATEGORY]->(c:Category)
       RETURN p.name AS name,
              p.owner AS owner,
@@ -310,6 +310,28 @@ router.delete('/:uid', async (req, res, next) => {
     res.send(uid)
     session.close()
   } catch (err) { next(err) }
+})
+
+
+//follow a public path
+router.put('/:slug/:uid/follow', async (req, res, next) => {
+  try {
+    const { userUid, pathUid } = req.body
+
+    const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}, status: 'public'})
+    MERGE (u)-[:PATHS]->(p)
+    RETURN u, p`
+
+    const followPath = await session.run(query, {userUid, pathUid})
+
+    res.json(followPath)
+    session.close()
+
+  }catch(err){
+    console.error(err)
+    next(err)
+  }
+
 })
 
 module.exports = router
