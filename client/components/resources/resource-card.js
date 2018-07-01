@@ -3,22 +3,12 @@ import {Stars} from '../reviews'
 import {connect} from 'react-redux'
 
 import {getAllReviewsOfResource} from '../../store'
+import ResourceRating from './resource-rating'
 
-import Grid from '@material-ui/core/Grid'
-import Checkbox from '@material-ui/core/Checkbox'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
-import Collapse from '@material-ui/core/Collapse'
-import ExpandLess from '@material-ui/icons/ExpandLess'
-import ExpandMore from '@material-ui/icons/ExpandMore'
+import { Grid, Checkbox, List, ListItem, Collapse, Card, Typography, Chip} from '@material-ui/core'
+import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { withStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import Typography from '@material-ui/core/Typography'
-import CardMedia from '@material-ui/core/CardMedia'
-import Chip from '@material-ui/core/Chip'
 import PropTypes from 'prop-types'
-
 
 const styles = {
   container: {
@@ -70,8 +60,10 @@ const styles = {
     justifyContent: 'flexStart',
     alignItems: 'flexStart',
     flexGrow: 10
+  },
+  ratingCount: {
+    marginLeft: 5
   }
-
 }
 
 class ResourceCard extends React.Component{
@@ -79,19 +71,36 @@ class ResourceCard extends React.Component{
     super(props)
     this.state = {
       expanded : false,
+      avgRating: 0,
+      ratingCount: 0
     }
-    this.props.getResourceReviews(this.props.resourceProperties.name)
   }
 
   handleDropdownCollapse = () => {
     this.setState({
-        expanded: false,
+      expanded: false,
     })
   }
 
-  handleDropdownExpand = (resourceName) => {
+  handleDropdownExpand = () => {
+    this.props.getResourceReviews(this.props.resourceProperties.uid)
+
+    let avgRating = 0
+    let ratingCount = 0
+
+    if(this.props.reviews.data){
+      const ratingTotal = this.props.reviews.data.reduce((acc, review) => {
+        return acc + review.score.low
+      }, 0)
+
+      ratingCount = this.props.reviews.data.length
+      avgRating = ratingTotal / ratingCount
+    }
+
     this.setState({
-        expanded: true,
+      expanded: true,
+      avgRating,
+      ratingCount
     })
   }
 
@@ -99,6 +108,7 @@ class ResourceCard extends React.Component{
     const {isLoggedIn} = this.props
     const {classes, theme} = this.props
     const resourceImg = this.props.resourceProperties.imageUrl
+
     return(
       <div style={styles.container}>
           <Card className={classes.card}>
@@ -147,8 +157,14 @@ class ResourceCard extends React.Component{
         >
           <List component="div">
             <ListItem>
-              <Stars value={this.props.resourceProperties.rating} />
+              <Stars value={this.state.avgRating}/>
+              <span style={styles.ratingCount}>({this.state.ratingCount})</span>
             </ListItem>
+
+            <ListItem>
+              <ResourceRating />
+            </ListItem>
+
             <ListItem>
               <Typography style={styles.description}><b>Description</b>: {this.props.resourceProperties.description}</Typography>
             </ListItem>
@@ -158,7 +174,7 @@ class ResourceCard extends React.Component{
               </ListItem>
             }
             <ListItem>
-              <Typography>Link to <a href={this.props.resourceProperties.url} target="_blank">
+              <Typography>Visit <a href={this.props.resourceProperties.url} target="_blank">
                 {this.props.resourceProperties.name}</a>
               </Typography>
             </ListItem>

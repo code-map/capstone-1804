@@ -9,9 +9,9 @@ const setAllReviewsOfResource = (reviews) => {
   }
 }
 
-export const getAllReviewsOfResource = (resourceName) => {
+export const getAllReviewsOfResource = (uid) => {
   return async (dispatch) => {
-    const res = await axios.get(`/api/resources/${resourceName}/reviews`)
+    const res = await axios.get(`/api/resources/${uid}/reviews`)
     dispatch(setAllReviewsOfResource(res.data))
   }
 }
