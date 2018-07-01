@@ -5,7 +5,7 @@ import {ResourceCard} from '../resources'
 import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
-import styled from "styled-components"
+
 
 import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
 
@@ -31,12 +31,7 @@ const styles = {
   }
 }
 
-const CategoryBox = styled.div`
-  display: flex
-  width: 200px
-  justify-content: space-between
-  align-items: baseline
-`
+
 
 class SinglePath extends Component {
   constructor(){
