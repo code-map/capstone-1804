@@ -70,8 +70,10 @@ class SinglePath extends Component {
     const pathName = this.props.path[0].details.properties.name
     const uid = this.props.path[0].details.properties.uid
     const subscribers = Number(this.props.path[0].subscribers.low - 1)
+    const username = this.props.user
+
     if (window.confirm(`Are you sure you want to delete ${pathName}?  ${subscribers} other users subscribed to this path will no longer be able to access it.`)){
-      this.props.deleteSinglePath(uid)
+      this.props.deleteSinglePath(uid, username)
       history.push('/user/dashboard/add-new-path')
     }
   }
@@ -159,6 +161,7 @@ class SinglePath extends Component {
               Status={status}
               style={styles.status}
               toggle={this.props.togglePublic}
+              username={this.props.user}
               />
 
           </div>
@@ -177,8 +180,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    deleteSinglePath: (uid) => {
-      dispatch(deleteSinglePathThunk(uid))
+    deleteSinglePath: (uid, username) => {
+      dispatch(deleteSinglePathThunk(uid, username))
     },
     getCompletedSteps: (pathUid, username) => {
       dispatch(getStepCompletionSingleUserThunk(pathUid, username))
@@ -186,8 +189,8 @@ const mapDispatchToProps = (dispatch) => {
     toggleStepCompletion: (pathUid, username, stepUrl, bool) => {
       dispatch(toggleStepCompletionThunk(pathUid, username, stepUrl, bool))
     },
-    togglePublic: (uid, status) => {
-      dispatch(togglePublicThunk(uid, status))
+    togglePublic: (uid, status, username) => {
+      dispatch(togglePublicThunk(uid, status, username))
     }
   }
 }
