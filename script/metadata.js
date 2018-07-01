@@ -5,18 +5,20 @@ let session = driver.session()
 
 const getMetadata = url => {
   let metaObj = {}
-
-  scrape(url)
-    .then(metadata => {
-      const data = metadata.openGraph
+  return scrape(url)
+  .then(metadata => {
+      const data = metadata.openGraph ? metadata.openGraph : metadata.general
 
       if (!data) {
         throw new Error('No metadata found')
       } else {
-        metaObj.name = data.name ? data.name : ''
+        metaObj.name = (metadata.general) ? metadata.general.title : ''
+
         metaObj.type = data.type ? data.type : ''
-        metaObj.description = data.description ? data.description : ''
+        metaObj.description = metadata.general.description ? metadata.general.description : ''
         metaObj.imageUrl = data.image ? data.image.url : ''
+        metaObj.found = false
+
 
         return metaObj
       }
@@ -37,7 +39,6 @@ const updateSeed = async () => {
     md = {},
     metadata = {},
     res = {}
-  // console.log(urls)
 
   for (let i = 0; i < urls.length; i++) {
     try {
@@ -53,7 +54,6 @@ const updateSeed = async () => {
         metaObj.description = md.description ? md.description : ''
         metaObj.imageUrl = md.image ? md.image.url : ''
 
-        console.log(urls[i], metaObj)
         res = await session.run(
           `
           MATCH (r:Resource)
@@ -110,4 +110,5 @@ const updateSeed = async () => {
 }
 
 // updateSeed()
+// getMetadata('https://www.codeproject.com/Articles/126380/Writing-Readable-SQL')
 module.exports = {getMetadata, updateSeed}

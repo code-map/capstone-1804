@@ -12,6 +12,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 
+
 const styles = {
   icon: {
     marginRight: 20
@@ -56,7 +57,15 @@ class AddResource extends Component {
     this.props.removeResourceFromStore()
   }
 
-  handleResourceSubmit = () => {
+  handleResourceSubmit = async () => {
+
+  if (!this.state.url.startsWith('http')) {
+    await this.setState((previousState) => {
+      let newUrl = 'http://' + previousState.url
+      return { ...previousState, url: newUrl };
+  });
+  }
+
     const duplicateCheck = this.props.path[0].steps.find((step) => {
       if(step.resource !== null){
         return step.resource.properties.url === this.state.url
