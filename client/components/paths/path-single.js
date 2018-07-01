@@ -69,7 +69,8 @@ class SinglePath extends Component {
     event.preventDefault()
     const pathName = this.props.path[0].details.properties.name
     const uid = this.props.path[0].details.properties.uid
-    if (window.confirm(`Are you sure you want to delete ${pathName}?`)){
+    const subscribers = Number(this.props.path[0].subscribers.low - 1)
+    if (window.confirm(`Are you sure you want to delete ${pathName}?  ${subscribers} other users subscribed to this path will no longer be able to access it.`)){
       this.props.deleteSinglePath(uid)
       history.push('/user/dashboard/add-new-path')
     }
