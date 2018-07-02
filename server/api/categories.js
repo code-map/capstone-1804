@@ -39,7 +39,7 @@ router.get('/:categoryName/popular-paths', async (req,res,next) => {
       RETURN c.name as Category, p.name as Path, Users, avg(rev.score) as Rating, p.owner as Owner, p.slug as Slug, p.uid as uid
       ORDER BY Users desc
       LIMIT 4`
-  
+
   const result = await session.run(query, { category })
 
   const data = result.records.map((el) => {
@@ -59,7 +59,7 @@ router.get('/:categoryName/popular-paths', async (req,res,next) => {
 
 router.get('/:categoryName/all-paths', async (req,res,next) => {
   const category = req.params.categoryName
-  
+
   const query = `
   MATCH (u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
   WHERE c.name = {category} AND p.status = "public"
@@ -105,11 +105,12 @@ router.get('/:categoryName/search', async(req,res,next) => {
 router.post('/:categoryName/search', async (req, res, next) => {
   const category = req.params.categoryName
   const { searchString } = req.body
-  const query = `MATCH (n)-[:CATEGORY]->(c)
-  WHERE c.name = {category} AND toLower(n.name) CONTAINS toLower({searchString})
-  return n`
+  const query = `MATCH (p:Path)-[:CATEGORY]->(c)
+  WHERE c.name = {category} AND toLower(p.name) CONTAINS toLower({searchString})
+  return p`
   const response = await session.run(query, {category, searchString})
   const fuzzyMatchByCategory = response.records
+  console.log('FUZZY', fuzzyMatchByCategory)
   res.json(fuzzyMatchByCategory)
 })
 
