@@ -335,7 +335,6 @@ router.delete('/:uid', async (req, res, next) => {
 router.put('/:slug/:uid/unfollow', async (req, res, next)=> {
   try{
     const { username, pathUid } = req.body
-    console.log('pathy', pathUid)
     const query = `MATCH (u:User {name: {username}})-[r:PATHS]->(p:Path {uid: {pathUid}})
     DELETE r
     `
