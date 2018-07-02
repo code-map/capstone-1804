@@ -10,7 +10,7 @@ let session = driver.session()
 const app = require('../../../server/index.js')
 const agent = require('supertest')(app)
 
-describe('Paths API Routes', () => {
+xdescribe('Paths API Routes', () => {
   before(async () => {
     //re-seed db?
   })
