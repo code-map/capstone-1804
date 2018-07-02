@@ -7,7 +7,7 @@ import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
 import SortableList from './sortable-list'
 
-import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
+import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, togglePublicThunk } from '../../store'
 
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
@@ -73,7 +73,8 @@ class SinglePath extends Component {
     event.preventDefault()
     const pathName = this.props.path[0].details.properties.name
     const uid = this.props.path[0].details.properties.uid
-    if (window.confirm(`Are you sure you want to delete ${pathName}?`)){
+    const subscribers = Number(this.props.path[0].subscribers.low - 1)
+    if (window.confirm(`Are you sure you want to delete ${pathName}?  ${subscribers} other users subscribed to this path will no longer be able to access it.`)){
       this.props.deleteSinglePath(uid)
       history.push('/user/dashboard/add-new-path')
     }
@@ -112,6 +113,7 @@ class SinglePath extends Component {
   render(){
     const { user, path } = this.props
     const pathDetails = path[0].details.properties
+    const status = pathDetails.status
     const pathSteps = path[0].steps
 
   
@@ -186,8 +188,11 @@ class SinglePath extends Component {
             </Button>
 
             <PathToggleStatus
-              toggleStatus={this.state.toggleStatus}
-              style={styles.status} />
+              uid={path[0].details.properties.uid}
+              Status={status}
+              style={styles.status}
+              toggle={this.props.togglePublic}
+              />
 
           </div>
         }
@@ -213,6 +218,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     toggleStepCompletion: (pathUid, username, stepUrl, bool) => {
       dispatch(toggleStepCompletionThunk(pathUid, username, stepUrl, bool))
+    },
+    togglePublic: (uid, status) => {
+      dispatch(togglePublicThunk(uid, status))
     }
   }
 }

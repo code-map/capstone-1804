@@ -8,6 +8,8 @@ const GET_PATHS_SINGLE_USER = 'GET_PATHS_SINGLE_USER'
 const ADD_NEW_PATH = 'ADD_NEW_PATH'
 const ADD_STEP_TO_PATH = 'ADD_STEP_TO_PATH'
 const DELETE_SINGLE_PATH = 'DELETE_SINGLE_PATH'
+const TOGGLE_PUBLIC = 'TOGGLE_PUBLIC'
+const FOLLOW_PATH = 'FOLLOW_PATH'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
@@ -52,6 +54,13 @@ const deleteSinglePath = (uid) => {
   }
 }
 
+const togglePublic = (path) => {
+  return {
+    type: TOGGLE_PUBLIC,
+    path
+  }
+}
+
 const toggleStepCompletion = (step) => {
   return {
     type: TOGGLE_STEP_COMPLETION,
@@ -87,6 +96,14 @@ const setSearchedPathsInCategory = (paths) => {
   }
 }
 
+const followPath = (path) => {
+  return {
+    type: FOLLOW_PATH,
+    path
+  }
+}
+
+
 /**
  * THUNK CREATORS
  */
@@ -94,6 +111,14 @@ export const addNewPathThunk = (path) => {
   return async (dispatch) => {
     const { data } = await axios.post('/api/paths', path)
     dispatch(addNewPath(data))
+  }
+}
+
+export const followPathThunk = (pathUid, slug, userUid, path) => {
+  return async (dispatch) => {
+    //need to migrate to using user uid, but for the time being will use userName
+    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}/follow`, {userUid, pathUid})
+    dispatch(followPath(path))
   }
 }
 
@@ -126,6 +151,13 @@ export const deleteSinglePathThunk = (uid) => {
   return async (dispatch) => {
     const { data } = await axios.delete(`/api/paths/${uid}`)
     dispatch(deleteSinglePath(data))
+  }
+}
+
+export const togglePublicThunk = (uid, status) => {
+  return async dispatch => {
+    const {data} = await axios.put(`/api/paths/${uid}/togglePublic`, status)
+    dispatch(togglePublic(data))
   }
 }
 
@@ -191,8 +223,13 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
       const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.uid !== action.uid)
       return {...state, allUserPaths}
     }
+    case TOGGLE_PUBLIC: {
+      return {...state, singlePath: action.path}
+    }
     case GET_PATHS_SINGLE_USER:
       return {...state, allUserPaths: action.paths}
+    case FOLLOW_PATH:
+      return {...state, allUserPaths: [...state.allUserPaths, action.path]}
     case GET_SINGLE_PATH:
       return {...state, singlePath: action.path}
     case SET_POPULAR_PATHS_IN_CATEGORY:

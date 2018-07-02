@@ -1,15 +1,16 @@
 import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import {MainNav} from './components'
-import {Footer} from './components'
+import {MainNav, Footer} from './components'
 import Routes from './routes'
 
 const App = () => {
   return (
-    <div>
+    <div className="Site">
       <CssBaseline />
       <MainNav />
-      <Routes />
+      <div className="Site-content">
+        <Routes />
+      </div>
       <Footer />
     </div>
   )

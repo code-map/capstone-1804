@@ -24,7 +24,6 @@ router.get(`/all/parent`, async (req, res, next) => {
     const results = categories.map((category) => {
       return category[0].properties.name
     })
-
     res.send(results)
     session.close()
   } catch (err) { next(err) }
@@ -34,13 +33,13 @@ router.get('/:categoryName/popular-paths', async (req,res,next) => {
   const category = req.params.categoryName
   const query = `
       MATCH (u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
-      WHERE c.name = {category}
+      WHERE c.name = {category} AND p.status = "public"
       WITH count(u) as Users,c,p
       OPTIONAL MATCH (rev:Review)-[:REVIEWS]->(p)
       RETURN c.name as Category, p.name as Path, Users, avg(rev.score) as Rating, p.owner as Owner, p.slug as Slug, p.uid as uid
       ORDER BY Users desc
-      LIMIT 4
-     `
+      LIMIT 4`
+  
   const result = await session.run(query, { category })
 
   const data = result.records.map((el) => {
@@ -59,10 +58,11 @@ router.get('/:categoryName/popular-paths', async (req,res,next) => {
 })
 
 router.get('/:categoryName/all-paths', async (req,res,next) => {
-  const category = req.params.categoryName;
+  const category = req.params.categoryName
+  
   const query = `
   MATCH (u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
-  WHERE c.name = {category}
+  WHERE c.name = {category} AND p.status = "public"
   WITH count(u) as Users,c,p
   OPTIONAL MATCH (rev:Review)-[:REVIEWS]->(p)
   RETURN c.name as Category, p.name as Path, Users, avg(rev.score) as Rating, p.owner as Owner, p.slug as Slug, p.uid as uid`
@@ -87,7 +87,7 @@ router.get('/:categoryName/all-paths', async (req,res,next) => {
 //all the resources and paths that have this category
 router.get('/:categoryName/search', async(req,res,next) => {
   const category = req.params.categoryName
-  const query = `match (p:Path)-[:CATEGORY]->(c) where c.name={category}
+  const query = `match (p:Path)-[:CATEGORY]->(c) WHERE c.name={category} AND p.status = "public"
   optional match(rev:Review)-[:REVIEWS]->(p)
   RETURN p AS combined, avg(rev.score) as rating
   UNION
