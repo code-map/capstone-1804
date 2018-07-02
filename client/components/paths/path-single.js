@@ -5,7 +5,9 @@ import {ResourceCard} from '../resources'
 import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
-import SortableList from './sortable-list'
+//import SortableList from './sortable-list'
+import Sortable from 'react-sortablejs'
+
 import {
        deleteSinglePathThunk, 
        getStepCompletionSingleUserThunk, 
@@ -59,7 +61,6 @@ class SinglePath extends Component {
 
   componentWillReceiveProps(nextProps){
     if(nextProps.path[0] !== this.props.path[0]){
-      console.log('nextProps', nextProps)
       const pathUid = nextProps.path[0].details.properties.uid
       const username = this.props.user
 
@@ -87,6 +88,7 @@ class SinglePath extends Component {
   }
 
   handleOrderChange = (evt) => {
+
     const path = this.props.path[0]
     const pathUid = path.details.properties.uid
     //add 1 to each index since variable length queries
@@ -95,7 +97,6 @@ class SinglePath extends Component {
     const newIndex = evt.newIndex + 1
     const stepCount = path.steps.length
 
-    console.log('orderChangeData = ', pathUid, stepCount, oldIndex,newIndex)
 
     this.props.reorderSteps(pathUid,stepCount,oldIndex,newIndex)
   }
@@ -133,22 +134,19 @@ class SinglePath extends Component {
     const status = pathDetails.status
     const pathSteps = path[0].steps
 
-  
-    const pathItems = pathSteps[0].steps !== null &&
-      pathSteps.map((step, index) => {
-      const stepUrl = step.resource.properties.url
-      return (
-        <ResourceCard
-          key={step.resource.identity.low}
-          data-id={index}
-          isLoggedIn={!!user}
-          resourceProperties={step.resource.properties}
-          handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
-          checkForComplete={() => this.checkForComplete(stepUrl)}
-        />
-      )
-    }) 
-
+    let mutablePathSteps = pathSteps[0].step !== null &&
+      pathSteps.map(step => {
+        const stepUrl = step.resource.properties.url
+        return (
+          <ResourceCard
+            key={step.resource.identity.low}
+            isLoggedIn={!!user}
+            resourceProperties={step.resource.properties}
+            handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
+            checkForComplete={() => this.checkForComplete(stepUrl)}
+          />
+        )
+      })
 
     return (
       <div>
@@ -164,26 +162,31 @@ class SinglePath extends Component {
           <PathProgress progress={this.getCompletePercentage()} />
         }
         <div style={styles.container}>
-            <SortableList
-              items = { pathSteps[0].step !== null &&
-                pathSteps.map(step => {
-                  const stepUrl = step.resource.properties.url
-                  return (
-                    <ResourceCard
-                      key={step.resource.identity.low}
-                      isLoggedIn={!!user}
-                      resourceProperties={step.resource.properties}
-                      handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
-                      checkForComplete={() => this.checkForComplete(stepUrl)}
-                    />
-                  )
-              })}
-              tag="ul"
-              onChange={(order,sortable,evt) => {this.handleOrderChange(evt)}}
-            />
-            { path[0].details.properties.owner === user &&
-              <AddResource user={user} path={path} />
-            }
+        <Sortable
+          options={{
+            animation: 100,
+            onStart: (evt) => {
+
+            },
+            onEnd:    (evt) => {
+              mutablePathSteps = evt.to
+            },
+            handle: ".resource-handle"
+          }}
+          ref={(c) => {
+              if (c) {
+                  this.sortable = c.sortable;
+              }
+          }}
+          onChange={(order, sortable, evt) => {
+            this.handleOrderChange(evt)
+          }}
+        >
+          {mutablePathSteps}
+        </Sortable>
+        { path[0].details.properties.owner === user &&
+          <AddResource user={user} path={path} />
+        }
         </div>
 
 
@@ -238,5 +241,26 @@ const mapDispatchToProps = (dispatch) => {
     }
   }
 }
+
+/*
+            <SortableList
+              items = { pathSteps[0].step !== null &&
+                pathSteps.map(step => {
+                  const stepUrl = step.resource.properties.url
+                  return (
+                    <ResourceCard
+                      key={step.resource.identity.low}
+                      isLoggedIn={!!user}
+                      resourceProperties={step.resource.properties}
+                      handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
+                      checkForComplete={() => this.checkForComplete(stepUrl)}
+                    />
+                  )
+              })}
+              tag="ul"
+              onChange={(order,sortable,evt) => }
+            />
+
+*/
 
 export default connect(mapStateToProps, mapDispatchToProps)(SinglePath)

@@ -42,8 +42,6 @@ router.post('/reorder/:pathUid/:stepCount/:fromIndex/:toIndex', async (req, res,
     const to     = req.params.toIndex
     const lastIndex = req.params.stepCount
     
-    console.log('reordering steps', lastIndex, from, to )
-
     if(from === to || 
        from < 1 ||
        to   < 1 ||
@@ -216,8 +214,6 @@ router.get('/:pathUid', async (req, res, next) => {
     const singlePath = result.records.map(record => {
       return record._fields
     })
-
-    console.log('paths in singleuserPaths route is: ', singlePath)
     res.send(singlePath)
     session.close()
   } catch (err) {

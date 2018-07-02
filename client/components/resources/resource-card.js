@@ -140,6 +140,12 @@ class ResourceCard extends React.Component{
                   <ExpandMore onClick={() => this.handleDropdownExpand()} />
                 }
               </div>
+              <div className={classes.details}>
+                <div className="resource-handle">
+                  <i className="material-icons"> reorder </i>
+                </div>
+              </div>
+              
         </Card>
         <Collapse
           in      = {this.state.expanded}

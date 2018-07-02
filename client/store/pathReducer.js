@@ -171,7 +171,6 @@ export const getSinglePathByNameThunk = (name) => {
 export const getSinglePathByUidThunk = (uid) => {
   return async (dispatch) => {
     const { data } = await axios.get(`/api/paths/${uid}`)
-    console.log('data in getSinglePathByUidThunk is', data)
     dispatch(getSinglePath(data))
   }
 }
@@ -207,7 +206,6 @@ export const searchPathsInCategory = (categoryName, searchVal) => {
 export const reorderStepsThunk = (pathId, pathLength, fromIndex, toIndex) => {
   return async (dispatch) => {
     const { data } = await axios.post(`/api/paths/reorder/${pathId}/${pathLength}/${fromIndex}/${toIndex}`)
-    console.log('data in reorderStepsThunk is', data)
     dispatch(getSinglePath(data))
   }
 }
