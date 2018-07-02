@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
-import {auth, newUserThunk} from '../store'
+import {auth, newUserThunk, getSingleUserPathsThunk} from '../store'
 import history from '../history'
 import {withStyles} from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
@@ -122,6 +122,10 @@ const mapDispatch = dispatch => {
       const name = evt.target.username.value
       const password = evt.target.password.value
       dispatch(auth(name, password, formName))
+      //get user paths so that we know which public paths
+      //to display as follow and which to display as unfollow
+      dispatch(getSingleUserPathsThunk(name))
+
     },
     handleNewuser(evt) {
       evt.preventDefault()

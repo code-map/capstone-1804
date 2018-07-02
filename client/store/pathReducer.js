@@ -10,6 +10,7 @@ const ADD_STEP_TO_PATH = 'ADD_STEP_TO_PATH'
 const DELETE_SINGLE_PATH = 'DELETE_SINGLE_PATH'
 const TOGGLE_PUBLIC = 'TOGGLE_PUBLIC'
 const FOLLOW_PATH = 'FOLLOW_PATH'
+const UNFOLLOW_PATH = 'UNFOLLOW_PATH'
 
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
@@ -103,6 +104,13 @@ const followPath = (path) => {
   }
 }
 
+const unfollowPath = (pathUid) => {
+  return {
+    type: UNFOLLOW_PATH,
+    pathUid
+  }
+}
+
 
 /**
  * THUNK CREATORS
@@ -119,13 +127,18 @@ export const addNewPathThunk = (path) => {
 /** Authed User Endpoint **/
 export const followPathThunk = (pathUid, slug, userUid, path) => {
   return async (dispatch) => {
-    //need to migrate to using user uid, but for the time being will use userName
-    const { data } = await axios.put(`/api/userAuth/paths/${slug}/${pathUid}/follow`, {userUid, pathUid})
+    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}/follow`, {userUid, pathUid})
     dispatch(followPath(path))
   }
 }
 
-/** Authed User Endpoint **/
+export const unfollowPathThunk = (pathUid, username, slug) => {
+  return async (dispatch) => {
+    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}/unfollow`, {username, pathUid})
+    dispatch(unfollowPath(pathUid))
+  }
+}
+
 export const addStepToPathThunk = (username, pathUid, url, form, type) => {
   return async (dispatch) => {
     const urlEncoded = encodeURIComponent(url)
@@ -235,6 +248,10 @@ export const pathReducer = ( state = initialState, action) => { // eslint-disabl
       return {...state, allUserPaths: action.paths}
     case FOLLOW_PATH:
       return {...state, allUserPaths: [...state.allUserPaths, action.path]}
+    case UNFOLLOW_PATH: {
+        const allUserPaths = state.allUserPaths.filter(path => path[0].details.properties.uid !== action.pathUid)
+        return {...state, allUserPaths}
+      }
     case GET_SINGLE_PATH:
       return {...state, singlePath: action.path}
     case SET_POPULAR_PATHS_IN_CATEGORY:

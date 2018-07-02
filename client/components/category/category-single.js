@@ -56,7 +56,7 @@ class CategorySinglePage extends Component {
         </Grid>
 
         <Grid item lg={12}>
-          <SearchAny category={categoryName} placeholder={`Search the ${categoryName} category...`} />
+          <SearchAny category={categoryName} placeholder={`Search paths in the ${categoryName} category...`} />
         </Grid>
 
         <Grid item lg={12}>
