@@ -403,7 +403,7 @@ router.put('/:slug/:uid/follow', async (req, res, next) => {
 
 })
 
-router.put('/:slug/:uid/unfollow', async (req, res, next)=> {
+router.put('/:slug/:uid/unfollow', async (req, res, next) => {
   try{
     const { username, pathUid } = req.body
     const query = `MATCH (u:User {name: {username}})-[r:PATHS]->(p:Path {uid: {pathUid}})
@@ -417,4 +417,56 @@ router.put('/:slug/:uid/unfollow', async (req, res, next)=> {
   }
 })
 
+
+router.get('/:pathuid/:username/get-review', async (req, res, next) => {
+  try{
+    const { username, pathuid } = req.params
+    const query = `MATCH (u:User)-[:REVIEWS]->(r)-[:REVIEWS]->(p:Path)
+    WHERE u.name = {username} AND p.uid = {pathuid}
+    RETURN r.score, r.comments
+    `
+    const currentUserRating = await session.run(query, {username, pathuid})
+    res.json(currentUserRating)
+
+  } catch(err) {
+    console.error(err)
+    next(err)
+  }
+
+})
+
+
+router.post('/:uid/rate-path', async (req, res, next) => {
+  try {
+    const { username, pathuid, ratingText, ratingStars} = req.body
+    const newId = shortid.generate()
+    const query = `MATCH (u:User), (p:Path)
+    WHERE u.name = {username} AND p.uid = {pathuid}
+    MERGE (u)-[:REVIEWS]->(r:Review)-[:REVIEWS]->(p)
+    ON CREATE SET
+      r.score = {ratingStars},
+      r.comments = {ratingText},
+      r.createdDate = timestamp(),
+      r.uid = {newId}
+    ON MATCH SET
+      r.score = {ratingStars},
+      r.comments = {ratingText}
+    RETURN r`
+
+    const ratePath = await session.run(query, {username, pathuid, ratingText, newId, ratingStars})
+    res.json(ratePath)
+
+  } catch(err) {
+    console.error(err)
+    next(err)
+  }
+})
+
 module.exports = router
+
+//old path review query
+// `MATCH (u:User {name: {username}})-[:PATHS]->(p:Path)
+//     WHERE p.uid = {pathuid}
+//     CREATE (r:Review {score: {ratingStars}, comments: {ratingText}, uid: {newId}, createdDate: timestamp()}),
+//     (u)-[:REVIEWS]->(r)-[:REVIEWS]->(p)
+//     RETURN r`
