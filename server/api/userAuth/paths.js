@@ -121,7 +121,7 @@ router.put('/:slug/:uid/follow', async (req, res, next) => {
   try {
     const { userUid, pathUid } = req.body
 
-    if (req.user.name !== userUid ){
+    if (req.user.uid !== userUid ){
       res.status(403).send('Unauthorized')
     }
 
