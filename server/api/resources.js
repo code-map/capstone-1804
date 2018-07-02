@@ -20,7 +20,8 @@ router.get(`/:uid/reviews`, async (req,res,next) => {
 
     const reducedResponse = recordsReducer(result.records)
     const groupedResponse = {}
-    groupedResponse[uid] = reducedResponse
+    groupedResponse['data'] = reducedResponse
+    groupedResponse.uid = uid
 
     res.send(groupedResponse)
     session.close()

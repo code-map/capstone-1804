@@ -71,14 +71,14 @@ class ResourceCard extends React.Component{
     super(props)
     this.state = {
       expanded : false,
-      avgRating: 0,
-      ratingCount: 0
+      totalAvg: 0,
+      totalReviews: 0
     }
   }
 
   componentDidMount = async () => {
     const uid = this.props.resourceProperties.uid
-    await this.props.getResourceReviews(uid)
+    this.props.getResourceReviews(uid)
   }
 
   handleDropdownCollapse = () => {
@@ -87,37 +87,22 @@ class ResourceCard extends React.Component{
     })
   }
 
-  handleDropdownExpand = async () => {
+  handleDropdownExpand = () => {
     const uid = this.props.resourceProperties.uid
-    await this.getAverageReviewRating(uid)
-
+    this.getCommunityRating(uid)
     this.setState({
-      expanded: true,
+      expanded: true
     })
   }
 
-  getAverageReviewRating = (uid) => {
-    let avgRating = 0
-    let ratingCount = 0
-
-    const resourceReview = this.props.reviews.find((review) => {
-      return review.hasOwnProperty(uid)
+  getCommunityRating = (uid) => {
+    const found =  this.props.reviews.find((item) => {
+      return item.resource.uid === uid
     })
 
-    // console.log('resourceReview', resourceReview)
-
-    if(resourceReview[uid].length > 0){
-      const ratingTotal = resourceReview[uid].reduce((acc, review) => {
-        return acc + review.score.low
-      }, 0)
-
-      ratingCount = resourceReview[uid].length
-      avgRating = ratingTotal / ratingCount
-    }
-
     this.setState({
-      avgRating,
-      ratingCount
+      totalAvg: found.resource.totalAvg,
+      totalReviews: found.resource.totalReviews
     })
   }
 
@@ -125,7 +110,7 @@ class ResourceCard extends React.Component{
     const {isLoggedIn} = this.props
     const {classes, theme} = this.props
     const resourceImg = this.props.resourceProperties.imageUrl
-    console.log('this.props.reviews', this.props.reviews)
+
     return(
       <div style={styles.container}>
           <Card className={classes.card}>
@@ -174,8 +159,8 @@ class ResourceCard extends React.Component{
         >
           <List component="div">
             <ListItem>
-              <Stars value={this.state.avgRating}/>
-              <span style={styles.ratingCount}>({this.state.ratingCount})</span>
+              <Stars value={this.state.totalAvg}/>
+              <span style={styles.ratingCount}>({this.state.totalReviews})</span>
             </ListItem>
 
             <ListItem>
