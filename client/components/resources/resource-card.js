@@ -2,10 +2,10 @@ import React from 'react'
 import {Stars} from '../reviews'
 import {connect} from 'react-redux'
 
-import {getAllReviewsOfResource} from '../../store'
+import {getAllReviewsOfResource, getUserResourceReview} from '../../store'
 import ResourceRating from './resource-rating'
 
-import { Grid, Checkbox, List, ListItem, Collapse, Card, Typography, Chip} from '@material-ui/core'
+import { Button, Grid, Checkbox, List, ListItem, Collapse, Card, Typography, Chip, Dialog} from '@material-ui/core'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
@@ -72,19 +72,37 @@ class ResourceCard extends React.Component{
     this.state = {
       expanded : false,
       totalAvg: 0,
-      totalReviews: 0
+      totalReviews: 0,
+      ratingOpen: false
     }
   }
 
-  componentDidMount = async () => {
-    const uid = this.props.resourceProperties.uid
-    this.props.getResourceReviews(uid)
+  componentDidMount = () => {
+    const resourceUid = this.props.resourceProperties.uid
+
+    const body = {
+      userUid: this.props.user.uid,
+      resourceUid
+    }
+
+    this.props.getResourceReviews(resourceUid)
+    this.props.getUserResourceRating(body)
   }
 
   handleDropdownCollapse = () => {
     this.setState({
       expanded: false,
     })
+  }
+
+  handleClickOpen = () => {
+    this.setState({
+      ratingOpen: true
+    })
+  }
+
+  handleClose = () => {
+    this.setState({ ratingOpen: false })
   }
 
   handleDropdownExpand = () => {
@@ -94,6 +112,7 @@ class ResourceCard extends React.Component{
       expanded: true
     })
   }
+
 
   getCommunityRating = (uid) => {
     const found =  this.props.reviews.find((item) => {
@@ -164,7 +183,16 @@ class ResourceCard extends React.Component{
             </ListItem>
 
             <ListItem>
-              <ResourceRating />
+            <Button onClick={this.handleClickOpen} variant="outlined">Rate this resource</Button>
+              <Dialog open={this.state.ratingOpen}>
+                <ResourceRating
+                  userRating={this.props.resourceRating}
+                  resourceUid = {this.props.resourceProperties.uid}
+                  resourceName = {this.props.resourceProperties.name}
+                  userUid={this.props.userUid}
+                  handleClose={this.handleClose}
+                />
+              </Dialog>
             </ListItem>
 
             <ListItem>
@@ -195,7 +223,9 @@ ResourceCard.propTypes = {
 
 const mapState = (state) => {
   return({
-    reviews: state.reviews.allResourceReviews
+    user: state.user,
+    reviews: state.reviews.allResourceReviews,
+    resourceRating: state.reviews.resourceReviewRating
   })
 }
 
@@ -203,6 +233,12 @@ const mapDispatch = (dispatch) => {
   return({
     getResourceReviews : (resourceName) => {
       dispatch(getAllReviewsOfResource(resourceName))
+    },
+    lastUserResourceReview: (body) => {
+      dispatch(getUserResourceReview(body))
+    },
+    getUserResourceRating: (body) => {
+      dispatch(getUserResourceReview(body))
     }
   })
 }

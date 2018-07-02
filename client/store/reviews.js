@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const SET_ALL_REVIEWS_OF_RESOURCE = 'SET_ALL_REVIEWS_OF_RESOURCE'
-const REVIEW_RESOURCE = 'REVIEW_RESOURCE'
+const GOT_USER_RESOURCE_REVIEW = 'GOT_USER_RESOURCE_REVIEW'
 
 const setAllReviewsOfResource = (reviews, uid) => {
   return {
@@ -11,10 +11,10 @@ const setAllReviewsOfResource = (reviews, uid) => {
   }
 }
 
-const reviewResource = (review) => {
+const gotUserResourceReview = (rating) => {
   return {
-    type: REVIEW_RESOURCE,
-    review
+    type: GOT_USER_RESOURCE_REVIEW,
+    rating
   }
 }
 
@@ -26,18 +26,20 @@ export const getAllReviewsOfResource = (uid) => {
 }
 
 export const addResourceReview = (rating) => {
-  const urlEncoded = encodeURIComponent(rating.resourceUrl)
-
   return async (dispatch) => {
-    await axios.post(`/api/userAuth/resources/${urlEncoded}/review`, rating)
-    dispatch(reviewResource(rating))
+    await axios.post(`/api/userAuth/reviews/review`, rating)
+  }
+}
+
+export const getUserResourceReview = (body) => {
+  return async (dispatch) => {
+    const { data } = await axios.get(`/api/userAuth/reviews/resource/${body.resourceUid}/user/${body.userUid}`)
+    console.log('getUserResourceReview ****', data)
+    // dispatch(gotUserResourceReview(data[0]))
   }
 }
 
 const getAverageReviewRating = (reviews) => {
-
-  console.log('getAverageReviewRating', reviews.data)
-
   let ratingTotal = 0
 
   if(reviews.data.length > 0){
@@ -57,7 +59,7 @@ const getAverageReviewRating = (reviews) => {
 
 const initialState = {
   allResourceReviews: [],
-  // lastRating: []
+  resourceReviewRating: 0
 }
 
 export default function( state = initialState, action ){
@@ -65,18 +67,19 @@ export default function( state = initialState, action ){
     case SET_ALL_REVIEWS_OF_RESOURCE: {
       const totalAvg = getAverageReviewRating(action.reviews)
       const totalReviews = action.reviews.data.length
-
       const result = {
         resource: {...action.reviews, totalAvg, totalReviews}
       }
-
       return {
         ...state,
         allResourceReviews: [...state.allResourceReviews, result]
       }
     }
-    // case REVIEW_RESOURCE:
-    //   return {...state, lastRating: action.rating}
+    case GOT_USER_RESOURCE_REVIEW: {
+      let resourceReviewRating = action.rating.low ? action.rating.low : action.rating
+
+      return {...state, resourceReviewRating}
+    }
     default:
       return state
   }

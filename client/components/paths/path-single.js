@@ -143,6 +143,7 @@ class SinglePath extends Component {
                   <ResourceCard
                     key={step.resource.identity.low}
                     isLoggedIn={!!user}
+                    userUid={user.uid}
                     resourceProperties={step.resource.properties}
                     handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
                     checkForComplete={() => this.checkForComplete(stepUrl)}
