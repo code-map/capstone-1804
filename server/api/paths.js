@@ -75,7 +75,7 @@ router.get('/popular', async (req,res,next) => {
              p.slug AS slug,
              c.name AS category
       ORDER BY rating DESC LIMIT 8`
-    
+
   const result = await session.run(query)
 
   const reducedResponse = recordsReducer(result.records)
@@ -401,6 +401,20 @@ router.put('/:slug/:uid/follow', async (req, res, next) => {
     next(err)
   }
 
+})
+
+router.put('/:slug/:uid/unfollow', async (req, res, next)=> {
+  try{
+    const { username, pathUid } = req.body
+    const query = `MATCH (u:User {name: {username}})-[r:PATHS]->(p:Path {uid: {pathUid}})
+    DELETE r
+    `
+    const unfollowPath = await session.run(query, {username, pathUid})
+    res.send(unfollowPath)
+  }catch(err){
+    console.error(err)
+    next(err)
+  }
 })
 
 module.exports = router

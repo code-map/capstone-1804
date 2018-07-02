@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import styled from "styled-components"
 import {ResourceCard} from '../resources'
 
-import { getSinglePathByUidThunk, followPathThunk  } from '../../store'
+import { getSinglePathByUidThunk, followPathThunk, getSingleUserPathsThunk  } from '../../store'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -39,6 +39,7 @@ class PublicSinglePath extends Component {
   componentDidMount = () => {
     const uid = this.props.match.params.pathUid
     this.props.getPath(uid)
+    this.props.getUserPaths(this.props.user.name)
   }
 
   followPath = () => {
@@ -47,16 +48,24 @@ class PublicSinglePath extends Component {
     this.props.followPath(uid, slug, this.props.user.uid, path)
   }
 
+  userFollowsPath = (paths) => {
+    const pathIds = paths.map((path) => {
+      return path[0].details.properties.uid
+    })
+    return pathIds.includes(this.props.path[0][0].details.properties.uid)
+  }
 
   renderPath = () => {
     const steps = this.props.path[0][0].steps
+    const { userPaths } = this.props
+    const isFollowing = this.userFollowsPath(userPaths)
     const { description, level, name, owner, slug, status, uid } = this.props.path[0][0].details.properties
     return (
       <PageContainer>
         <PathContainer>
           <h1 style={styles.header} >{name}</h1>
           {
-            this.props.user.name && <Button
+            this.props.user.name && !isFollowing && <Button
               variant="outlined"
               color="primary"
               onClick={this.followPath}
@@ -101,7 +110,8 @@ class PublicSinglePath extends Component {
 const mapStateToProps = (state) => {
   return {
     path: state.pathReducer.singlePath,
-    user: state.user
+    user: state.user,
+    userPaths: state.pathReducer.allUserPaths
   }
 }
 
@@ -112,6 +122,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     followPath: (pathUid, slug, userUid, path) => {
       dispatch(followPathThunk(pathUid, slug, userUid, path))
+    },
+    getUserPaths: (userName) => {
+      dispatch(getSingleUserPathsThunk(userName))
     }
 
   }
