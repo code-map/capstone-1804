@@ -127,7 +127,7 @@ export const addNewPathThunk = (path) => {
 /** Authed User Endpoint **/
 export const followPathThunk = (pathUid, slug, userUid, path) => {
   return async (dispatch) => {
-    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}/follow`, {userUid, pathUid})
+    const { data } = await axios.put(`/api/userAuth/paths/${slug}/${pathUid}/follow`, {userUid, pathUid})
     dispatch(followPath(path))
   }
 }

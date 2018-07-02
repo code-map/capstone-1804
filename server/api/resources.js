@@ -15,14 +15,12 @@ router.get(`/:uid/reviews`, async (req,res,next) => {
              u.name AS author,
              rev.comments AS comments,
              rev.score AS score
-      ORDER BY score
-      limit 3
     `
     const result = await session.run(query, {uid})
 
     const reducedResponse = recordsReducer(result.records)
     const groupedResponse = {}
-    groupedResponse['data'] = reducedResponse
+    groupedResponse[uid] = reducedResponse
 
     res.send(groupedResponse)
     session.close()

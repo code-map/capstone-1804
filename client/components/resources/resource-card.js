@@ -76,29 +76,46 @@ class ResourceCard extends React.Component{
     }
   }
 
+  componentDidMount = async () => {
+    const uid = this.props.resourceProperties.uid
+    await this.props.getResourceReviews(uid)
+  }
+
   handleDropdownCollapse = () => {
     this.setState({
       expanded: false,
     })
   }
 
-  handleDropdownExpand = () => {
-    this.props.getResourceReviews(this.props.resourceProperties.uid)
+  handleDropdownExpand = async () => {
+    const uid = this.props.resourceProperties.uid
+    await this.getAverageReviewRating(uid)
 
+    this.setState({
+      expanded: true,
+    })
+  }
+
+  getAverageReviewRating = (uid) => {
     let avgRating = 0
     let ratingCount = 0
 
-    if(this.props.reviews.data){
-      const ratingTotal = this.props.reviews.data.reduce((acc, review) => {
+    const resourceReview = this.props.reviews.find((review) => {
+      return review.hasOwnProperty(uid)
+    })
+
+    // console.log('resourceReview', resourceReview)
+
+    if(resourceReview[uid].length > 0){
+      const ratingTotal = resourceReview[uid].reduce((acc, review) => {
         return acc + review.score.low
       }, 0)
 
-      ratingCount = this.props.reviews.data.length
+      ratingCount = resourceReview[uid].length
       avgRating = ratingTotal / ratingCount
     }
 
     this.setState({
-      expanded: true,
       avgRating,
       ratingCount
     })
@@ -108,7 +125,7 @@ class ResourceCard extends React.Component{
     const {isLoggedIn} = this.props
     const {classes, theme} = this.props
     const resourceImg = this.props.resourceProperties.imageUrl
-
+    console.log('this.props.reviews', this.props.reviews)
     return(
       <div style={styles.container}>
           <Card className={classes.card}>
@@ -193,7 +210,7 @@ ResourceCard.propTypes = {
 
 const mapState = (state) => {
   return({
-    reviews: state.resource.reviews
+    reviews: state.reviews.allResourceReviews
   })
 }
 

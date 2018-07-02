@@ -34,18 +34,17 @@ export const addResourceReview = (rating) => {
 }
 
 const initialState = {
-  resourceReviews: [],
-  lastRating: []
+  allResourceReviews: [],
+  // lastRating: []
 }
 
-export default function( state = initialState, action ){ // eslint-disable-line
+export default function( state = initialState, action ){
   switch (action.type) {
     case SET_ALL_REVIEWS_OF_RESOURCE: {
-      // const combinedReviews = Object.assign(state.reviews, action.reviews)
-      return {...state, resourceReviews: action.reviews}
+      return {...state, allResourceReviews: [...state.allResourceReviews, action.reviews]}
     }
-    case REVIEW_RESOURCE:
-      return {...state, lastRating: action.rating}
+    // case REVIEW_RESOURCE:
+    //   return {...state, lastRating: action.rating}
     default:
       return state
   }
