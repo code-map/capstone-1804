@@ -26,13 +26,13 @@ function getSteps() {
 function getStepContent(step) {
   switch (step) {
     case 0:
-      return `To get started, add a learning path to your profile by selecting “Add New Path” above .
-      Paths are a coollection of resources pulled from the internet.
+      return `To get started, add a learning path to your profile by selecting “Add New Path” above.
+      Paths are a collection of resources pulled from the internet.
       You can add resources to your path by clicking on the plus sign on the bottom of your path and pasting a url into the pop-up box that appears. `;
       //OR, if you would like a suggestion, click the suggestion button on the bottom of your path.
 
     case 1:
-      return `You can also subscribe to any learning path on Code Map by clicking “Copy this path to my dashboard” button on the top of the selected path.
+      return `You can also subscribe to any learning path on Code Map by clicking the “Copy this path to my dashboard” button on the top of the selected path.
       To find paths you would like to follow, navigate to topic pages by using the “Categories” dropdown menu in the nav bar.  You can also use the search bar to look up learning paths and categories by name.`;
     case 2:
       return `Keep track of your progress by checking the complete button.  We’ll show you your progress on the bar at the top of your path.  Happy learning!!`;
