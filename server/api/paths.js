@@ -1,6 +1,8 @@
-let neo4j = require('neo4j-driver').v1
-let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
-let session = driver.session()
+// let neo4j = require('neo4j-driver').v1
+// let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
+// let session = driver.session()
+let session = require('../db/neo')
+
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
 const {getMetadata} = require('../../script/metadata')
@@ -49,7 +51,7 @@ router.get('/popular', async (req,res,next) => {
              c.name AS category
       ORDER BY rating DESC LIMIT 8`
 
-  const result = await session.run(query)
+    const result = await session.run(query)
 
   const reducedResponse = recordsReducer(result.records)
   res.send(reducedResponse)

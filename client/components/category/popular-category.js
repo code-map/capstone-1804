@@ -41,7 +41,7 @@ class PopularCategories extends React.Component {
             <Grid item xs={3} key={cat.Category.identity.low}>
               <CategoryCard
                 categoryName={cat.Category.properties.name}
-                userCount={cat.Users.low}
+                pathCount={cat.Paths.low}
               />
             </Grid>
           )

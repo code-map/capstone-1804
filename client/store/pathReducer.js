@@ -127,6 +127,7 @@ export const addNewPathThunk = (path) => {
 /** Authed User Endpoint **/
 export const followPathThunk = (pathUid, slug, userUid, path) => {
   return async (dispatch) => {
+    //need to migrate to using user uid, but for the time being will use userName
     const { data } = await axios.put(`/api/userAuth/paths/${slug}/${pathUid}/follow`, {userUid, pathUid})
     dispatch(followPath(path))
   }
@@ -134,11 +135,12 @@ export const followPathThunk = (pathUid, slug, userUid, path) => {
 
 export const unfollowPathThunk = (pathUid, username, slug) => {
   return async (dispatch) => {
-    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}/unfollow`, {username, pathUid})
+    const { data } = await axios.put(`/api/userAuth/paths/${slug}/${pathUid}/unfollow`, {username, pathUid})
     dispatch(unfollowPath(pathUid))
   }
 }
 
+/** Authed User Endpoint **/
 export const addStepToPathThunk = (username, pathUid, url, form, type) => {
   return async (dispatch) => {
     const urlEncoded = encodeURIComponent(url)
