@@ -1,13 +1,15 @@
-let neo4j = require('neo4j-driver').v1;
-let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
-let session = driver.session();
+// let neo4j = require('neo4j-driver').v1;
+// let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
+// let session = driver.session();
+let session = require('../db/neo')
+
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
 
 router.get(`/:resourceName/reviews`, async (req,res,next) => {
   try{
     const resourceName = req.params.resourceName
-    const query = 
+    const query =
     `
       MATCH(u:User)-[:REVIEWS]->(rev:Review)-[:REVIEWS]->(r:Resource)
       WHERE r.name={resourceName}
@@ -19,7 +21,7 @@ router.get(`/:resourceName/reviews`, async (req,res,next) => {
       limit 3
     `
     const result = await session.run(query, {resourceName})
-  
+
     const reducedResponse = recordsReducer(result.records)
     const groupedResponse = {}
     groupedResponse[resourceName] = reducedResponse
