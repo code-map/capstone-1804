@@ -5,12 +5,15 @@ import {ResourceCard} from '../resources'
 import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
+import SortableList from './sortable-list'
 
 import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
 
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
 import Chip from '@material-ui/core/Chip'
+
+
 
 const styles = {
   container: {
@@ -35,7 +38,8 @@ class SinglePath extends Component {
 
     this.state = {
       selectedItems: [],
-      cleared: false
+      cleared: false,
+      items: [1,2,3,4,5,6]
     }
   }
 
@@ -75,6 +79,9 @@ class SinglePath extends Component {
     }
   }
 
+  handleOrderChange = (event) => {
+  }
+
   checkForComplete = (url) => {
     const completedSteps = this.props.completedSteps
     let found = false
@@ -106,6 +113,24 @@ class SinglePath extends Component {
     const { user, path } = this.props
     const pathDetails = path[0].details.properties
     const pathSteps = path[0].steps
+
+  
+    const pathItems = pathSteps[0].steps !== null &&
+      pathSteps.map((step, index) => {
+      const stepUrl = step.resource.properties.url
+      return (
+        <ResourceCard
+          key={step.resource.identity.low}
+          data-id={index}
+          isLoggedIn={!!user}
+          resourceProperties={step.resource.properties}
+          handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
+          checkForComplete={() => this.checkForComplete(stepUrl)}
+        />
+      )
+    }) 
+
+
     return (
       <div>
         <h2>
@@ -121,25 +146,33 @@ class SinglePath extends Component {
         }
         <div style={styles.container}>
           <List>
-            { pathSteps[0].step !== null &&
-              pathSteps.map(step => {
-                const stepUrl = step.resource.properties.url
-                return (
-                  <ResourceCard
-                    key={step.resource.identity.low}
-                    isLoggedIn={!!user}
-                    resourceProperties={step.resource.properties}
-                    handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
-                    checkForComplete={() => this.checkForComplete(stepUrl)}
-                  />
-                )
-            } ) }
+              { pathSteps[0].step !== null &&
+                pathSteps.map(step => {
+                  const stepUrl = step.resource.properties.url
+                  return (
+                    <ResourceCard
+                      key={step.resource.identity.low}
+                      isLoggedIn={!!user}
+                      resourceProperties={step.resource.properties}
+                      handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
+                      checkForComplete={() => this.checkForComplete(stepUrl)}
+                    />
+                  )
+              })}
 
-          { path[0].details.properties.owner === user &&
-            <AddResource user={user} path={path} />
-          }
+            { path[0].details.properties.owner === user &&
+              <AddResource user={user} path={path} />
+            }
           </List>
         </div>
+
+        <SortableList
+          items = {pathItems}
+          tag="ul"
+          onChange={(items) => {
+            console.log(items)
+          }}
+        />
 
         { path[0].details.properties.owner === user &&
           <div>

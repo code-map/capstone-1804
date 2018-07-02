@@ -29,19 +29,10 @@ router.get('/all/user/:username/', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-
-router.get('/reorder/:pathUid', async (req, res, next) => {
-  try{
-    console.log('inside of path')
-    res.json({'success': req.params.pathUid})
-  } catch (err) { next(err) }
-})
-
-
-// Reorders a path,  
+// Reorders a path's steps
 // it takes in the indexes to move: from, to
-// POST: /api/paths/:uid/reorder/:from/:to
-router.get('/reorder/:pathUid/:fromIndex/:toIndex', async (req, res, next) => {
+// POST: /api/paths/:uid/reorder/:fromIndex/:toIndex
+router.post('/reorder/:pathUid/:fromIndex/:toIndex', async (req, res, next) => {
   try{
     const from = req.params.fromIndex
     const to   = req.params.toIndex
