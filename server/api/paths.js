@@ -25,6 +25,7 @@ router.get('/all/user/:username/', async (req, res, next) => {
       return record._fields
     })
 
+
     res.send(paths)
     session.close()
   } catch (err) {
@@ -34,49 +35,113 @@ router.get('/all/user/:username/', async (req, res, next) => {
 
 // Reorders a path's steps
 // it takes in the indexes to move: from, to
-// POST: /api/paths/:uid/reorder/:fromIndex/:toIndex
-router.post('/reorder/:pathUid/:fromIndex/:toIndex', async (req, res, next) => {
+// POST: /api/paths/reorder/:stepCount/:uid/:fromIndex/:toIndex
+router.post('/reorder/:pathUid/:stepCount/:fromIndex/:toIndex', async (req, res, next) => {
   try{
-    const from = req.params.fromIndex
-    const to   = req.params.toIndex
+    const from   = req.params.fromIndex
+    const to     = req.params.toIndex
+    const lastIndex = req.params.stepCount
+    
+    console.log('reordering steps', lastIndex, from, to )
 
-    if(from !== to) {
-      const query = (from > to) ?
-      `  
-        MATCH (p:Path {uid : {pUid}})-[:STEPS*` + from + `]->(fromC:Step)
-        WITH fromC, p
-        MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
-        WITH fromC, fromP, fromN, p, fromPE, fromNE
-        MATCH (p)-[:STEPS*` + to + `]->(toC:Step)
-        WITH toC, fromC, fromP, fromN, fromPE, fromNE, p
-        MATCH (toP)-[toPE:STEPS]->(toC)
-        DELETE fromPE, fromNE, toPE
-        CREATE (fromP)-[:STEPS]->(fromN), (toP)-[:STEPS]->(fromC)-[:STEPS]->(toC)
-        RETURN fromP, fromC, fromN, toP, toC, p
-      ` :
-      `  
-        MATCH (p:Path {uid:{pUid}})-[:STEPS*` + from + `]->(fromC:Step)
-        WITH fromC, p
-        MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
-        WITH fromC, fromP, fromN, p, fromPE, fromNE
-        MATCH (p)-[:STEPS*` + to + `]->(toC:Step)
-        WITH toC, fromC, fromP, fromN, fromPE, fromNE, p
-        MATCH (toC)-[toNE:STEPS]->(toN)
-        DELETE fromPE, fromNE, toNE
-        CREATE (fromP)-[:STEPS]->(fromN), (toC)-[:STEPS]->(fromC)-[:STEPS]->(toN)
-        RETURN fromP, fromN, fromC, toC, toN, p
-      `
-      const result = await session.run(query, {
-        pUid : req.params.pathUid,
-      })
+    if(from === to || 
+       from < 1 ||
+       to   < 1 ||
+       from > lastIndex ||
+       to   > lastIndex) {
+        throw new Error('"from" and "to" values are either out of range or the same value!!')
+    } else {
 
-      const reducedResult = recordsReducer(result.records)
-      res.send(reducedResult)
-      session.close()
-    }else {
-      throw new Error('api requires "from" and "to" values to be different')
-    }
-  } catch (err) { next(err) }
+        let query = ''
+  
+        if(from < to) {
+          //moving from top down
+          if(to === lastIndex) {
+            //if moving TO the last index
+            query = `  
+              MATCH (p:Path {uid : {pUid}})-[:STEPS*` + from + `]->(fromC:Step)
+              WITH fromC, p
+              MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
+              WITH fromC, fromP, fromN, p, fromPE, fromNE
+              MATCH (p)-[:STEPS*` + to + `]->(toC:Step)
+              WITH toC, fromC, fromP, fromN, fromPE, fromNE, p
+              MATCH (toP)-[toPE:STEPS]->(toC)
+              DELETE fromPE, fromNE
+              CREATE (fromP)-[:STEPS]->(fromN), (toC)-[:STEPS]->(fromC)
+            `
+          } else{
+            query = `  
+              MATCH (p:Path {uid : {pUid}})-[:STEPS*` + from + `]->(fromC:Step)
+              WITH fromC, p
+              MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
+              WITH fromC, fromP, fromN, p, fromPE, fromNE
+              MATCH (p)-[:STEPS*` + to + `]->(toC:Step)
+              WITH toC, fromC, fromP, fromN, fromPE, fromNE, p
+              MATCH (toP)-[toPE:STEPS]->(toC)-[toNE:STEPS]->(toN)
+              DELETE fromPE, fromNE, toNE
+              CREATE (fromP)-[:STEPS]->(fromN), (toC)-[:STEPS]->(fromC)-[:STEPS]->(toN)
+            ` 
+          }
+        }else{
+          //moving from bottom up
+          if(from === lastIndex) {
+          //if moving FROM the last index
+            query = `  
+              MATCH (p:Path {uid:{pUid}})-[:STEPS*` + from + `]->(fromC:Step)
+              WITH fromC, p
+              MATCH (fromP)-[fromPE:STEPS]->(fromC)
+              WITH fromC, fromP, p, fromPE
+              MATCH (p)-[:STEPS*` + to + `]->(toC:Step)
+              WITH fromC, fromP, p, fromPE, toC 
+              MATCH (toP)-[toPE:STEPS]->(toC)-[toNE:STEPS]->(toN)
+              DELETE fromPE, toPE
+              CREATE (toP)-[:STEPS]->(fromC)-[:STEPS]->(toC) 
+            `
+          }else{
+            query = `  
+              MATCH (p:Path {uid:{pUid}})-[:STEPS*` + from + `]->(fromC:Step)
+              WITH fromC, p
+              MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
+              WITH fromC, fromP, fromN, p, fromPE, fromNE
+              MATCH (p)-[:STEPS*` + to + `]->(toC:Step)
+              WITH toC, fromC, fromP, fromN, fromPE, fromNE, p
+              MATCH (toP)-[toPE:STEPS]->(toC)-[toNE:STEPS]->(toN)
+              DELETE fromPE, fromNE, toPE
+              CREATE (fromP)-[:STEPS]->(fromN), (toP)-[:STEPS]->(fromC)-[:STEPS]->(toC) 
+            `
+          }
+        }
+      
+        const queryReturn = `
+          WITH p
+          MATCH (u:User)-[:PATHS]->(p)
+          WITH p, count(distinct u) as subscribers
+  
+          OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+          RETURN { 
+            details: p, 
+            steps: collect({
+              step: s, 
+              resource: r }), 
+            subscribers: subscribers 
+          }
+        `
+
+        query += queryReturn
+  
+        const result = await session.run(query, {
+           pUid : req.params.pathUid,
+        })
+  
+        const singlePath = result.records.map(record => {
+          return record._fields
+        })
+    
+        res.send(singlePath)
+        session.close()
+
+      }
+    }catch (err) { next(err) }
 })
 
 // GET: /api/paths/step/:url
@@ -152,6 +217,7 @@ router.get('/:pathUid', async (req, res, next) => {
       return record._fields
     })
 
+    console.log('paths in singleuserPaths route is: ', singlePath)
     res.send(singlePath)
     session.close()
   } catch (err) {

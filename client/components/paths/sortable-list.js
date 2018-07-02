@@ -8,7 +8,8 @@ import uniqueId from 'lodash/uniqueId'
 const SortableList = ({ items, onChange }) => {
     let sortable = null; // sortable instance
 
-    const listItems = items.map(val => (<div data-id={val}>{val}</div>));
+    console.log('items are', items)
+    const listItems = items.map(val => (<div key={val.key} data-id={val.key}>{val}</div>));
  
     return (
         <div>
@@ -34,7 +35,7 @@ const SortableList = ({ items, onChange }) => {
                 // @param {Object} sortable The sortable instance.
                 // @param {Event} evt The event object.
                 onChange={(order, sortable, evt) => {
-                    onChange(order);
+                    onChange(order, sortable, evt);
                 }}
             >
                 {listItems}

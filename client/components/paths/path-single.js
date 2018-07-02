@@ -6,8 +6,13 @@ import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
 import SortableList from './sortable-list'
-
-import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, togglePublicThunk } from '../../store'
+import {
+       deleteSinglePathThunk, 
+       getStepCompletionSingleUserThunk, 
+       toggleStepCompletionThunk, 
+       togglePublicThunk , 
+       reorderStepsThunk
+     } from '../../store'
 
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
@@ -54,6 +59,7 @@ class SinglePath extends Component {
 
   componentWillReceiveProps(nextProps){
     if(nextProps.path[0] !== this.props.path[0]){
+      console.log('nextProps', nextProps)
       const pathUid = nextProps.path[0].details.properties.uid
       const username = this.props.user
 
@@ -80,7 +86,18 @@ class SinglePath extends Component {
     }
   }
 
-  handleOrderChange = (event) => {
+  handleOrderChange = (evt) => {
+    const path = this.props.path[0]
+    const pathUid = path.details.properties.uid
+    //add 1 to each index since variable length queries
+    //in neo4j start from index 1
+    const oldIndex = evt.oldIndex + 1
+    const newIndex = evt.newIndex + 1
+    const stepCount = path.steps.length
+
+    console.log('orderChangeData = ', pathUid, stepCount, oldIndex,newIndex)
+
+    this.props.reorderSteps(pathUid,stepCount,oldIndex,newIndex)
   }
 
   checkForComplete = (url) => {
@@ -147,8 +164,8 @@ class SinglePath extends Component {
           <PathProgress progress={this.getCompletePercentage()} />
         }
         <div style={styles.container}>
-          <List>
-              { pathSteps[0].step !== null &&
+            <SortableList
+              items = { pathSteps[0].step !== null &&
                 pathSteps.map(step => {
                   const stepUrl = step.resource.properties.url
                   return (
@@ -161,20 +178,14 @@ class SinglePath extends Component {
                     />
                   )
               })}
-
+              tag="ul"
+              onChange={(order,sortable,evt) => {this.handleOrderChange(evt)}}
+            />
             { path[0].details.properties.owner === user &&
               <AddResource user={user} path={path} />
             }
-          </List>
         </div>
 
-        <SortableList
-          items = {pathItems}
-          tag="ul"
-          onChange={(items) => {
-            console.log(items)
-          }}
-        />
 
         { path[0].details.properties.owner === user &&
           <div>
@@ -221,6 +232,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     togglePublic: (uid, status) => {
       dispatch(togglePublicThunk(uid, status))
+    },
+    reorderSteps: (pathUid, stepCount, fromIndex, toIndex) => {
+      dispatch(reorderStepsThunk(pathUid, stepCount, fromIndex, toIndex))
     }
   }
 }
