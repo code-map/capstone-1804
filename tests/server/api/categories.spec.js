@@ -15,7 +15,7 @@ describe('Categories API Routes', () => {
     //re-seed db?
   })
 
-  describe('GET /api/categories/all/parent', () => {
+  xdescribe('GET /api/categories/all/parent', () => {
     it('returns all language categories', async () => {
       const response = await agent.get('/api/categories/all/parent')
       .expect(200)
