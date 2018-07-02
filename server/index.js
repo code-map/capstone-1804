@@ -11,9 +11,10 @@ const sessionStore = new SequelizeStore({db})
 const PORT = process.env.PORT || 8080
 const app = express()
 const socketio = require('socket.io')
-const neo4j = require('neo4j-driver').v1;
-const driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
-const neoSession = driver.session();
+// const neo4j = require('neo4j-driver').v1;
+// const driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
+// const neoSession = driver.session();
+const neoSession = require('../server/db/neo')
 module.exports = app
 
 // This is a global Mocha hook, used for resource cleanup.

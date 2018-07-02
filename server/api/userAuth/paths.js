@@ -1,6 +1,8 @@
-let neo4j = require('neo4j-driver').v1
-let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
-let session = driver.session()
+// let neo4j = require('neo4j-driver').v1
+// let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
+// let session = driver.session()
+let session = require('../../db/neo')
+
 const express = require('express')
 const router = express.Router()
 const shortid = require('shortid')
@@ -333,6 +335,7 @@ router.delete('/:uid', async (req, res, next) => {
 router.put('/:slug/:uid/unfollow', async (req, res, next)=> {
   try{
     const { username, pathUid } = req.body
+    console.log('pathy', pathUid)
     const query = `MATCH (u:User {name: {username}})-[r:PATHS]->(p:Path {uid: {pathUid}})
     DELETE r
     `
