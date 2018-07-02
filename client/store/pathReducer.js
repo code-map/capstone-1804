@@ -115,41 +115,44 @@ const unfollowPath = (pathUid) => {
 /**
  * THUNK CREATORS
  */
+
+/** Authed User Endpoint **/
 export const addNewPathThunk = (path) => {
   return async (dispatch) => {
-    const { data } = await axios.post('/api/paths', path)
+    const { data } = await axios.post('/api/userAuth/paths', path)
     dispatch(addNewPath(data))
   }
 }
 
+/** Authed User Endpoint **/
 export const followPathThunk = (pathUid, slug, userUid, path) => {
   return async (dispatch) => {
-    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}/follow`, {userUid, pathUid})
+    //need to migrate to using user uid, but for the time being will use userName
+    const { data } = await axios.put(`/api/userAuth/paths/${slug}/${pathUid}/follow`, {userUid, pathUid})
     dispatch(followPath(path))
   }
 }
 
 export const unfollowPathThunk = (pathUid, username, slug) => {
   return async (dispatch) => {
-    const { data } = await axios.put(`/api/paths/${slug}/${pathUid}/unfollow`, {username, pathUid})
+    const { data } = await axios.put(`/api/userAuth/paths/${slug}/${pathUid}/unfollow`, {username, pathUid})
     dispatch(unfollowPath(pathUid))
   }
 }
 
+/** Authed User Endpoint **/
 export const addStepToPathThunk = (username, pathUid, url, form, type) => {
   return async (dispatch) => {
     const urlEncoded = encodeURIComponent(url)
-    const { data } = await axios.post(`/api/paths/${pathUid}/user/${username}/step/${urlEncoded}`, {...form, type})
-
-    // Need to update singlePath in the store with the new step
-    // So that steps update on screen without refresh
+    const { data } = await axios.post(`/api/userAuth/paths/${pathUid}/user/${username}/step/${urlEncoded}`, {...form, type})
     dispatch(addStepToPath(data))
   }
 }
 
+/** Authed User Endpoint **/
 export const getSingleUserPathsThunk = (username) => {
   return async (dispatch) => {
-    const { data } = await axios.get(`/api/paths/all/user/${username}`)
+    const { data } = await axios.get(`/api/userAuth/paths/all/user/${username}`)
     dispatch(getSingleUserPaths(data))
   }
 }
@@ -161,16 +164,19 @@ export const getPopularPathsInAllCategories = () => {
   }
 }
 
-export const deleteSinglePathThunk = (uid) => {
+/** Authed User Endpoint **/
+export const deleteSinglePathThunk = (uid, username) => {
   return async (dispatch) => {
-    const { data } = await axios.delete(`/api/paths/${uid}`)
+    const { data } = await axios.delete(`/api/userAuth/paths/${uid}`, { data: { username } })
     dispatch(deleteSinglePath(data))
   }
 }
 
-export const togglePublicThunk = (uid, status) => {
+/** Authed User Endpoint **/
+export const togglePublicThunk = (uid, status, username) => {
+  const body = { [status]: '', username}
   return async dispatch => {
-    const {data} = await axios.put(`/api/paths/${uid}/togglePublic`, status)
+    const {data} = await axios.put(`/api/userAuth/paths/${uid}/togglePublic`, body)
     dispatch(togglePublic(data))
   }
 }
