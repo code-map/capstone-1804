@@ -329,4 +329,19 @@ router.delete('/:uid', async (req, res, next) => {
   }
 })
 
+// PUT: api/userAuth/paths/byName/:name
+router.put('/:slug/:uid/unfollow', async (req, res, next)=> {
+  try{
+    const { username, pathUid } = req.body
+    const query = `MATCH (u:User {name: {username}})-[r:PATHS]->(p:Path {uid: {pathUid}})
+    DELETE r
+    `
+    const unfollowPath = await session.run(query, {username, pathUid})
+    res.send(unfollowPath)
+  }catch(err){
+    console.error(err)
+    next(err)
+  }
+})
+
 module.exports = router
