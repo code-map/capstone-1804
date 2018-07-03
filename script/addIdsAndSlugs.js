@@ -1,6 +1,7 @@
-let neo4j = require('neo4j-driver').v1;
-let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
-let session = driver.session();
+// let neo4j = require('neo4j-driver').v1;
+// let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
+// let session = driver.session();
+let session = require('../server/db/neo')
 const shortid = require('shortid');
 
 
@@ -63,10 +64,25 @@ const addIdResource = async () => {
    })
 }
 
+const addIdUsers = async () => {
+  const data = await session.run(`MATCH (n:User) RETURN n`)
+  const nodes = data.records
+  data.records.forEach(async (node) => {
+    const searchName = node._fields[0].properties.name
+    const newId = shortid.generate()
+    const query = `MATCH (n)
+      WHERE n.name = {searchName}
+      SET n.uid = {newId}`
+    const response = await session.run(query, {searchName, newId})
+   })
+}
+
 addIdPaths()
 addIdResource()
+addIdUsers()
 addSlugPaths()
 addSlugResource()
+
 console.log('id/slug ran')
 
 module.exports = {addIdPaths, addIdResource, addSlugPaths, addSlugResource}

@@ -3,12 +3,8 @@ import Switch from '@material-ui/core/Switch'
 
 class PathToggleStatus extends Component {
 
-  state = {
-    status: true
-  }
-
-  handleChange = name => event => {
-    this.setState({ [name]: event.target.checked });
+  handleChange = () => {
+    this.props.toggle(this.props.uid, this.props.Status === 'draft' ? 'public' : 'draft', this.props.username)
   }
 
   render() {
@@ -16,13 +12,13 @@ class PathToggleStatus extends Component {
       <div>
         <p>Toggle Path Public or Private</p>
         <Switch
-          checked={this.state.status}
-          onChange={this.handleChange('status')}
+          checked={this.props.Status === 'public'}
+          onChange={this.handleChange}
           value="status"
           color="primary"
         />
       </div>
-    );
+    )
   }
 }
 

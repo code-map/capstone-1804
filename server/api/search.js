@@ -1,6 +1,8 @@
-let neo4j = require('neo4j-driver').v1;
-let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
-let session = driver.session();
+// let neo4j = require('neo4j-driver').v1;
+// let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
+// let session = driver.session();
+let session = require('../db/neo')
+
 const router = require('express').Router()
 const apoc = require('apoc')
 const shortid = require('shortid');
@@ -12,9 +14,9 @@ router.post('/', async (req, res, next) => {
     WHERE toLower(p.name) CONTAINS toLower({searchString})
     RETURN p AS matches
     UNION
-    MATCH (r:Resource)
-    WHERE toLower(r.name) CONTAINS toLower({searchString})
-    RETURN r AS matches`
+    MATCH (c:Category)
+    WHERE toLower(c.name) CONTAINS toLower({searchString})
+    RETURN c AS matches`
     const response = await session.run(query, {searchString})
     const fuzzyMatch = response.records
     //console.log('FUZZY', fuzzyMatch)

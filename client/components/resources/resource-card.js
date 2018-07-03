@@ -70,7 +70,16 @@ const styles = {
     justifyContent: 'flexStart',
     alignItems: 'flexStart',
     flexGrow: 10
-  }
+  },
+  xButtonHover: {
+    cursor: 'pointer',
+  },
+  xButton: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flexStart',
+    justifyContent: 'flexStart',
+  },
 
 }
 
@@ -141,12 +150,13 @@ class ResourceCard extends React.Component{
                 }
               </div>
 
-                <div className={classes.details}>
+                <div className={classes.xButton}>
                   <i className="material-icons" onClick={()=>this.props.removeResourceCard()}>
-                    clear
+                    <div className={classes.xButtonHover}>
+                        clear
+                    </div>
                   </i>
                </div>
-              }
 
 
         </Card>

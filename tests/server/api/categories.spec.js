@@ -11,27 +11,34 @@ const app = require('../../../server/index.js');
 const agent = require('supertest')(app);
 
 describe('Categories API Routes', () => {
-  before(async () => {
-    //re-seed db?
-  })
+  // before(async () => {
+  //   //re-seed db?
+  // })
 
-  describe('GET api/categories/all/parent', () => {
+  xdescribe('GET /api/categories/all/parent', () => {
     it('returns all language categories', async () => {
-      const response = await agent.get('/categories/all/parent')
+      const response = await agent.get('/api/categories/all/parent')
       .expect(200)
     })
   })
 
-  describe('/:categoryName/popular-paths', () => {
+  xdescribe('/:categoryName/popular-paths', () => {
     it('returns the correct paths and other info', async () => {
-      const response = await agent.get('/Javascript/popular-paths')
+      const response = await agent.get('/api/categories/Javascript/popular-paths')
       .expect(200)
     })
   })
 
-  describe('/:categoryName/search', () => {
+  xdescribe('/:categoryName/search', () => {
     it('returns all resources and paths within queried category', async () => {
-      const response = await agent.get('/Javascript/search')
+      const response = await agent.get('/api/categories/Javascript/search')
+      .expect(200)
+    })
+  })
+
+  xdescribe('/popular', () => {
+    it('returns the most popular categories, ordered by number of users', async () => {
+      const response = await agent.get('/api/categories/popular')
       .expect(200)
     })
   })

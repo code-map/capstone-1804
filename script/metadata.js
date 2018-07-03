@@ -1,22 +1,26 @@
 const scrape = require('html-metadata')
-let neo4j = require('neo4j-driver').v1
-let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
-let session = driver.session()
+// let neo4j = require('neo4j-driver').v1
+// let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
+// let session = driver.session()
+let session = require('../server/db/neo')
+
 
 const getMetadata = url => {
   let metaObj = {}
-
-  scrape(url)
-    .then(metadata => {
-      const data = metadata.openGraph
+  return scrape(url)
+  .then(metadata => {
+      const data = metadata.openGraph ? metadata.openGraph : metadata.general
 
       if (!data) {
         throw new Error('No metadata found')
       } else {
-        metaObj.name = data.name ? data.name : ''
+        metaObj.name = (metadata.general) ? metadata.general.title : ''
+
         metaObj.type = data.type ? data.type : ''
-        metaObj.description = data.description ? data.description : ''
+        metaObj.description = metadata.general.description ? metadata.general.description : ''
         metaObj.imageUrl = data.image ? data.image.url : ''
+        metaObj.found = false
+
 
         return metaObj
       }
@@ -37,7 +41,6 @@ const updateSeed = async () => {
     md = {},
     metadata = {},
     res = {}
-  // console.log(urls)
 
   for (let i = 0; i < urls.length; i++) {
     try {
@@ -53,7 +56,6 @@ const updateSeed = async () => {
         metaObj.description = md.description ? md.description : ''
         metaObj.imageUrl = md.image ? md.image.url : ''
 
-        console.log(urls[i], metaObj)
         res = await session.run(
           `
           MATCH (r:Resource)
@@ -110,4 +112,5 @@ const updateSeed = async () => {
 }
 
 // updateSeed()
+// getMetadata('https://www.codeproject.com/Articles/126380/Writing-Readable-SQL')
 module.exports = {getMetadata, updateSeed}

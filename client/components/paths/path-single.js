@@ -5,8 +5,8 @@ import {ResourceCard} from '../resources'
 import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
-
-import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, removeResourceFromPathThunk} from '../../store'
+import { withRouter } from 'react-router-dom'
+import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, togglePublicThunk, unfollowPathThunk,  removeResourceFromPathThunk} from '../../store'
 
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
@@ -69,10 +69,22 @@ class SinglePath extends Component {
     event.preventDefault()
     const pathName = this.props.path[0].details.properties.name
     const uid = this.props.path[0].details.properties.uid
-    if (window.confirm(`Are you sure you want to delete ${pathName}?`)){
-      this.props.deleteSinglePath(uid)
+    const subscribers = Number(this.props.path[0].subscribers.low - 1)
+    const username = this.props.user
+
+    if (window.confirm(`Are you sure you want to delete ${pathName}?  ${subscribers} other users subscribed to this path will no longer be able to access it.`)){
+      this.props.deleteSinglePath(uid, username)
       history.push('/user/dashboard/add-new-path')
     }
+  }
+
+  handleUnfollowPath = (event) => {
+    event.preventDefault
+    const { slug, uid } = this.props.path[0].details.properties
+    const username = this.props.user
+    this.props.unfollowPath(uid, username, slug)
+    history.push('/user/dashboard/add-new-path')
+
   }
 
   checkForComplete = (url) => {
@@ -105,8 +117,10 @@ class SinglePath extends Component {
   render(){
     const { user, path } = this.props
     const pathDetails = path[0].details.properties
+    const status = pathDetails.status
     const pathSteps = path[0].steps
     const pathUid = pathDetails.uid
+    const isOwner = pathDetails.owner === user
     return (
       <div>
         <h2>
@@ -155,10 +169,27 @@ class SinglePath extends Component {
             </Button>
 
             <PathToggleStatus
-              toggleStatus={this.state.toggleStatus}
-              style={styles.status} />
+              uid={path[0].details.properties.uid}
+              Status={status}
+              style={styles.status}
+              toggle={this.props.togglePublic}
+              username={this.props.user}
+              />
 
           </div>
+        }
+
+        { !isOwner &&
+          <div>
+            <Button
+              style={styles.deleteButton}
+              onClick={this.handleUnfollowPath}
+              variant="outlined"
+              color="secondary"
+            >
+            Unfollow Path
+            </Button>
+            </div>
         }
 
       </div>
@@ -174,8 +205,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    deleteSinglePath: (uid) => {
-      dispatch(deleteSinglePathThunk(uid))
+    deleteSinglePath: (uid, username) => {
+      dispatch(deleteSinglePathThunk(uid, username))
     },
     getCompletedSteps: (pathUid, username) => {
       dispatch(getStepCompletionSingleUserThunk(pathUid, username))
@@ -185,8 +216,14 @@ const mapDispatchToProps = (dispatch) => {
     },
     removeResourceFromPath: (pathId, lastIndex, stepIndex) => {
       dispatch(removeResourceFromPathThunk(pathId, lastIndex, stepIndex))
+    },
+    togglePublic: (uid, status, username) => {
+      dispatch(togglePublicThunk(uid, status, username))
+    },
+    unfollowPath: (uid, user, slug) => {
+      dispatch(unfollowPathThunk(uid, user, slug))
     }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SinglePath)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SinglePath))

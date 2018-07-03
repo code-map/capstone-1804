@@ -54,7 +54,7 @@ EXAMPLE INPUT: queryResult.records =
   .
 ]
 
-EXAMPLE OUTPUT: returnedArray = 
+EXAMPLE OUTPUT: returnedArray =
 [
   {
     name: "All About React",
