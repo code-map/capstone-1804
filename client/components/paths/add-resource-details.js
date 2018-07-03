@@ -59,9 +59,13 @@ class AddResourceDetails extends Component {
     this.props.addStepToPath(username, pathUid, url, body, 'existing')
   }
 
+  componentWillReceiveProps(nextprops){
+    console.log('nextprops', nextprops)
+  }
+
   render(){
     const { username, pathUid, resource, url } = this.props
-    console.log('render resource or something', resource)
+    console.log('child resource', resource)
     return (
       <div>
         { typeof resource[0] !== 'string' ? (
@@ -112,7 +116,7 @@ class AddResourceDetails extends Component {
           ) : (
             <div>
             <p>Resource exists! We'll add it right into your path.</p>
-            {this.addResourceToPath(username, pathUid, url)}
+            {/* {this.addResourceToPath(username, pathUid, url)} */}
             </div>
           )
         }

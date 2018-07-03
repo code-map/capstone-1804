@@ -60,10 +60,10 @@ class AddResource extends Component {
   handleResourceSubmit = async () => {
 
   if (!this.state.url.startsWith('http')) {
-    await this.setState((previousState) => {
-      let newUrl = 'http://' + previousState.url
-      return { ...previousState, url: newUrl };
-  });
+  //   await this.setState((previousState) => {
+  //     let newUrl = 'http://' + previousState.url
+  //     return { ...previousState, url: newUrl };
+  // });
   }
 
     const duplicateCheck = this.props.path[0].steps.find((step) => {
@@ -82,9 +82,11 @@ class AddResource extends Component {
     }
   }
 
+
+
   render() {
     const { user, path, resource} = this.props
-    console.log('resource props', resource)
+    console.log('parent resource', resource)
     console.log('resource url in state', this.state.url)
 
     return (
