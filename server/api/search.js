@@ -26,6 +26,22 @@ router.post('/', async (req, res, next) => {
   }
 })
 
+
+router.get('/:uid/category', async (req, res, next) => {
+  const {uid} = req.params
+
+  const query= `
+  MATCH (p:Path)-[:CATEGORY]->(c)
+  WHERE p.uid = {uid}
+  RETURN c
+  `
+  const { records } = await session.run(query, {uid})
+
+  res.json(records)
+
+
+})
+
 // router.put('/', async (req, res, next) => {
 //     var randomId = shortid.generate()
 //     const query = `MATCH p = (n)-[*]->(END)

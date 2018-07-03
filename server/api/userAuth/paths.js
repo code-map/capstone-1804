@@ -20,7 +20,7 @@ router.get('/all/user/:username/', async (req, res, next) => {
       res.status(403).send('Unauthorized')
     }
 
-    const query = `match(u:User)-[:PATHS]->(p:Path)
+    const query = `match(u:User)-[:PATHS]->(p:Path)-[:CATEGORY]->(c)
     where u.name = {username}
     return {details: p}`
 
@@ -30,6 +30,7 @@ router.get('/all/user/:username/', async (req, res, next) => {
       return record._fields
     })
 
+    console.log('PATHS', paths)
     res.send(paths)
     session.close()
   } catch (err) {
@@ -307,6 +308,86 @@ router.post(
     }
   }
 )
+
+
+
+router.post(
+  '/:pathUid/user/:username/step/:stepUrl/add-suggestion',
+  async (req, res, next) => {
+
+    if (req.user.name !== req.params.username ){
+      res.status(403).send('Unauthorized')
+    }
+
+    try {
+      const uid = req.params.pathUid
+      const username = req.params.username
+      const stepUrl = req.params.stepUrl.startsWith('http')
+        ? decodeURIComponent(req.params.stepUrl)
+        : decodeURIComponent('http://' + req.params.stepUrl)
+      const createdDate = Date.now()
+      const newUid = shortid.generate()
+
+
+
+      // Get last step name in path
+      const query = `
+    MATCH (u:User)-[:PATHS]->(p:Path)
+    WHERE p.uid = {uid} AND u.name = {username}
+    OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)
+    RETURN s.name
+    ORDER BY s.name DESC
+    LIMIT 1
+    `
+      const result = await session.run(query, {uid, username, stepUrl})
+
+      // If there aren't any steps yet, add resource as 'Step 1'
+      if (!result.records[0]._fields[0]) {
+        const addStep1Query = `
+      MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
+      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
+      CREATE (s:Step { name: "Step 1"}),
+      (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
+      `
+        const addedAsStep1 = await session.run(addStep1Query, {
+          uid,
+          username,
+          stepUrl
+        })
+
+        res.send(addedAsStep1)
+      } else {
+        // Else get last digit of last existing step and increment new step name
+        const lastStepName = result.records[0]._fields[0]
+        const newStepNum = lastStepName.substr(
+          lastStepName.indexOf(' '),
+          lastStepName.length - 1
+        )
+        const newStepName = `Step ` + (Number(newStepNum) + 1)
+
+        const addStepQuery = `
+      MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
+      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
+      CREATE (s:Step { name: {newStepName} }),
+      (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
+      `
+        const addedNewStep = await session.run(addStepQuery, {
+          uid,
+          username,
+          stepUrl,
+          newStepName
+        })
+
+        res.send(addedNewStep)
+      }
+    } catch (err) {
+      next(err)
+    }
+  }
+)
+
+
+
 
 // DELETE: api/userAuth/paths/:name
 router.delete('/:uid', async (req, res, next) => {

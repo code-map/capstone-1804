@@ -121,6 +121,7 @@ class SinglePath extends Component {
     const status = pathDetails.status
     const pathSteps = path[0].steps
     const isOwner = pathDetails.owner === user
+
     return (
       <div>
         <h2>

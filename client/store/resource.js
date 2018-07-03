@@ -24,11 +24,19 @@ export const getAllReviewsOfResource = (resourceName) => {
   }
 }
 
-export const getRecommendationsThunk = (resourceUid, category) => {
+export const getRecommendationsThunk = (resourceUid, pathUid) => {
   return async (dispatch) => {
-    const { data } = await axios.get(`/${resourceUid}/${category}/suggestions`)
-    console.log('DATA', data)
-    //dispatch(makeSuggestions())
+    const { data } = await axios.get(`/api/search/${pathUid}/category`)
+    const category = data[0]._fields[0].properties.name
+    const res = await axios.get(`/api/resources/${resourceUid}/${category}/suggestions`)
+    const suggestions = res.data.map(suggestion => {
+      const resource = suggestion._fields[0].properties
+      const { uid } = resource
+      const numReviews = suggestion._fields[1].low
+      const averageRating = suggestion._fields[2]
+      return { resource, uid, numReviews, averageRating}
+    })
+    dispatch(makeSuggestions(suggestions))
   }
 }
 

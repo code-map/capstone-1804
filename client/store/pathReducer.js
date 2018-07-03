@@ -223,6 +223,18 @@ export const searchPathsInCategory = (categoryName, searchVal) => {
   }
 }
 
+export const addSuggestionThunk = (pathUid, username, stepUrl) => {
+   return async (dispatch) => {
+    ///:pathUid/user/:username/step/:stepUrl/add-suggestion
+    const urlEncoded = encodeURIComponent(stepUrl)
+     const res = await axios.post(`/api/userAuth/paths/${pathUid}/user/${username}/step/${urlEncoded}/add-suggestion`)
+     console.log('thuuuunk', res )
+   }
+
+}
+
+
+
 const initialState = {
   allUserPaths: [],
   singlePath: [],
