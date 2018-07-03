@@ -151,7 +151,7 @@ class SinglePath extends Component {
             } ) }
 
           { path[0].details.properties.owner === user &&
-            <AddResource user={user} path={path} />
+            <AddResource user={user} path={path} steps={pathSteps} />
           }
           </List>
         </div>

@@ -11,12 +11,13 @@ router.get(`/:resourceName/reviews`, async (req,res,next) => {
     const resourceName = req.params.resourceName
     const query =
     `
-      MATCH(u:User)-[:REVIEWS]->(rev:Review)-[:REVIEWS]->(r:Resource)
+      MATCH(u:User)-[:REVIEWS]->(rev:Review)-[:REVIEWS]->(r:Resource)-[:CATEGORY]-(c)
       WHERE r.name={resourceName}
       RETURN r.name AS resource,
              u.name AS author,
              rev.comments AS comments,
-             rev.score AS score
+             rev.score AS score,
+             c AS category
       ORDER BY score
       limit 3
     `
@@ -56,4 +57,24 @@ router.get('/:resourceUid', async (req, res, next) => {
   }
 })
 
+router.get('/:resourceUid/:category/suggestions', async (req, res, next) => {
+  try {
+    const { resourceUid, category } = req.params
+    const query = `MATCH (c:Category), (rev:Review), (resource:Resource),
+    (rev)-[re:REVIEWS]->(resource)-[:CATEGORY]->(c:Category)
+    WHERE c.name = {category} AND resource.uid <> {resourceUid}
+    RETURN resource,count(rev) AS numReviews , avg(rev.score) AS averageRating`
+
+    const { records } = await session.run(query, {category, resourceUid})
+
+    res.json(records)
+
+  }catch(err){
+    console.error(err)
+    next(err)
+  }
+})
+
 module.exports = router
+
+

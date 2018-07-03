@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getStepResourceThunk, getSinglePathByUidThunk, removeResourceFromStore } from '../../store'
+import { getStepResourceThunk, getSinglePathByUidThunk, removeResourceFromStore, getRecommendationsThunk } from '../../store'
 import AddResourceDetails from './add-resource-details'
 
 import ListItem from '@material-ui/core/ListItem'
@@ -29,6 +29,7 @@ class AddResource extends Component {
     super()
     this.state = {
       open: false,
+      openSuggestions: false,
       url: '',
       errorMessage: ''
     }
@@ -43,6 +44,7 @@ class AddResource extends Component {
   handleClickOpen = () => {
     this.setState({ open: true });
   }
+
 
   handleClose = () => {
     this.setState({
@@ -81,8 +83,14 @@ class AddResource extends Component {
     }
   }
 
+  getSuggestions = () => {
+    const { steps } = this.props
+    getNextStepSuggestion(steps[steps.length-1], )
+
+  }
+
   render() {
-    const { user, path, resource} = this.props
+    const { user, path, resource, steps} = this.props
 
     return (
       <div>
@@ -141,6 +149,28 @@ class AddResource extends Component {
           </DialogContent>
 
         </Dialog>
+
+        <ListItem button={true} onClick={this.getSuggestions}>
+          <AddCircleOutline style={styles.icon}/>
+          <p style={styles.text}>get a suggestion</p>
+        </ListItem>
+
+        <Dialog
+          open={this.state.openSuggestions}
+          onClose={this.handleClose}
+        >
+          <DialogTitle>Suggested Next Step</DialogTitle>
+
+          <DialogContent>
+            {
+              this.state.suggestions.map(suggestion => {
+                return <p>{suggestion.name}{suggestion.stars}</p>
+              })
+            }
+          </DialogContent>
+
+        </Dialog>
+
       </div>
     );
   }
@@ -148,7 +178,8 @@ class AddResource extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    resource: state.step.resource
+    resource: state.step.resource,
+    suggestions: state.resource.suggestions
   }
 }
 
@@ -162,6 +193,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     removeResourceFromStore: () => {
       dispatch(removeResourceFromStore())
+    },
+    getNextStepSuggestion: (resourceUid, category) => {
+      dispatch(getRecommendationsThunk(category, resourceUid))
     }
   }
 }
