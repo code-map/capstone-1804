@@ -1,6 +1,7 @@
-let neo4j = require('neo4j-driver').v1;
-let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
-let session = driver.session();
+// let neo4j = require('neo4j-driver').v1;
+// let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
+// let session = driver.session();
+let session = require('../db/neo')
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
 
@@ -117,13 +118,12 @@ router.post('/:categoryName/search', async (req, res, next) => {
 //route for getting the most popular categories
 router.get('/popular', async (req,res,next) => {
   const query =
-  `
-    match(u:User)-[r:PATHS]-(p:Path)-[:CATEGORY]-(c:Category)
+`  match (p:Path)-[:CATEGORY]->(c:Category)
     where c.isLanguage=true
-    return c as Category, count(u) as Users
-    order by count(u) desc
-    limit 10
-  `
+    return c as Category, count(p) as Paths
+    order by count(p) desc
+    limit 10`
+
   const result = await session.run(query)
 
   const reducedResponse = recordsReducer(result.records)

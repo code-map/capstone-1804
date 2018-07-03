@@ -69,7 +69,7 @@ p {
 #home-fold::after {
   content: "";
   background: url('/world.svg');
-  opacity: 0.02;
+  opacity: 0.04;
   top: 0;
   left: 0;
   bottom: 0;

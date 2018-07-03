@@ -10,12 +10,12 @@ let session = driver.session()
 const app = require('../../../server/index.js')
 const agent = require('supertest')(app)
 
-describe('Paths API Routes', () => {
+xdescribe('Paths API Routes', () => {
   before(async () => {
     //re-seed db?
   })
 
-  describe('GET /api/paths/all/user/:username/', () => {
+  xdescribe('GET /api/paths/all/user/:username/', () => {
     it('returns all of a users paths', async () => {
       const response = await agent.get('/api/paths/all/user/Jami').expect(200)
     })
@@ -48,7 +48,7 @@ describe('Paths API Routes', () => {
   //redundent route?  probably replaced by uid
   // pi/paths/byName/:name
 
-  describe('/api/paths/:uid/user/:username/completed', () => {
+  xdescribe('/api/paths/:uid/user/:username/completed', () => {
     // uid will change with each seed of the database
 
     it('returns an array of paths, with completion status', async () => {

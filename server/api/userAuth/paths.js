@@ -1,120 +1,51 @@
 // let neo4j = require('neo4j-driver').v1
 // let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
 // let session = driver.session()
-let session = require('../db/neo')
+let session = require('../../db/neo')
 
-const router = require('express').Router()
-const recordsReducer = require('./records-reducer.js')
-const {getMetadata} = require('../../script/metadata')
+const express = require('express')
+const router = express.Router()
+const shortid = require('shortid')
 
-// GET: /api/paths/step/:url
-router.get('/step/:url', async (req, res, next) => {
+const makeSlug = string => {
+  return string.replace(/[^a-z0-9]/gi, '')
+}
+
+// GET: api/paths/all/user/:username/
+router.get('/all/user/:username/', async (req, res, next) => {
   try {
-    const url = decodeURIComponent(req.params.url)
+    const param = req.params.username
 
-    const query = `
-    MATCH (r:Resource) WHERE r.url = {url}
-    return r
-    `
-
-    const result = await session.run(query, {url})
-
-    if (result.records.length > 0) {
-      const records = result.records.map(record => {
-        return record._fields
-      })
-      res.send(records[0][0].properties)
-    } else {
-      let md = await getMetadata(url)
-      res.send(md)
+    if (req.user.name !== param ){
+      res.status(403).send('Unauthorized')
     }
 
-    session.close()
-  } catch (err) {
-    next(err)
-  }
-})
+    const query = `match(u:User)-[:PATHS]->(p:Path)
+    where u.name = {username}
+    return {details: p}`
 
-// returns the most popular paths (regardless of category)
-// GET: api/paths/popular
-router.get('/popular', async (req,res,next) => {
-  const query = `
-    MATCH (u: User)-[_p:PATHS]->(p: Path {status: 'public'})<-[_r: REVIEWS]-(r:Review),
-      (p)-[:CATEGORY]->(c:Category)
-      RETURN p.name AS name,
-             p.owner AS owner,
-             count(r) AS reviewCount,
-             count(distinct u) AS userCount,
-             avg(r.score) AS rating,
-             p.uid AS uid,
-             p.slug AS slug,
-             c.name AS category
-      ORDER BY rating DESC LIMIT 8`
+    const result = await session.run(query, {username: param})
 
-    const result = await session.run(query)
-
-  const reducedResponse = recordsReducer(result.records)
-  res.send(reducedResponse)
-})
-
-// GET: api/paths/:uid
-router.get('/:pathUid', async (req, res, next) => {
-  try {
-    const param = req.params.pathUid
-
-    // const query = `
-    // MATCH (p:Path) WHERE p.uid = {uid}
-    // OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-    // RETURN { details: p, steps: collect( { step: s, resource: r } ) }`
-
-    const query=`
-      MATCH (p:Path), (u:User)-[:PATHS]->(p)
-      WHERE p.uid = {uid}
-      WITH p, count(distinct u) as subscribers
-      OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-      RETURN { details: p, steps: collect( { step: s, resource: r } ), subscribers: subscribers }`
-
-    const result = await session.run(query, {uid: param})
-
-    const singlePath = result.records.map(record => {
+    const paths = result.records.map(record => {
       return record._fields
     })
 
-    res.send(singlePath)
+    res.send(paths)
     session.close()
   } catch (err) {
     next(err)
   }
 })
 
-// GET: api/paths/byName/:name
-router.get('/byName/:name', async (req, res, next) => {
-  try {
-    const param = req.params.name
-
-    const query = `
-    MATCH (p:Path) WHERE p.name = {name}
-    OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-    RETURN { details: p, steps: collect( { step: s, resource: r } ) }`
-
-    const result = await session.run(query, {name: param})
-
-    const singlePath = result.records.map(record => {
-      return record._fields
-    })
-
-    res.send(singlePath[0])
-    session.close()
-  } catch (err) {
-    next(err)
-  }
-})
-
-// GET: api/paths/:uid/user/:username/completed
+// GET - api/userAuth/paths/:uid/user/:username/completed
 router.get('/:uid/user/:username/completed', async (req, res, next) => {
   try {
     const uid = req.params.uid
     const username = req.params.username
+
+    if (req.user.name !== username ){
+      res.status(403).send('Unauthorized')
+    }
 
     const query = `MATCH (u)-[:PATHS]->(p:Path)
     WHERE p.uid = {uid} and u.name = {username}
@@ -144,11 +75,80 @@ router.get('/:uid/user/:username/completed', async (req, res, next) => {
   }
 })
 
-// PUT: /api/paths/:uid/togglePublic/
+// POST: api/paths/
+router.post('/', async (req, res, next) => {
+  const createdDate = Date.now()
+  const uid = shortid.generate()
+  const slug = makeSlug(req.body.name)
+
+  if (req.user.name !== req.body.user ){
+    res.status(403).send('Unauthorized')
+  }
+
+  try {
+    const newPath = `
+    MATCH (u:User), (c:Category)
+    WHERE u.name = {username} AND c.name = {category}
+    CREATE (p:Path {name: {name}, description: {description}, level: {level}, status: {status}, owner: {username}, createdDate: {createdDate}, uid: {uid}, slug: {slug}}),
+    (u)-[:PATHS {notes: {notes}}]->(p),
+    (p)-[:CATEGORY]->(c)`
+
+    const created = await session.run(newPath, {
+      category: req.body.language,
+      username: req.body.user,
+      name: req.body.name,
+      description: req.body.description,
+      level: req.body.level,
+      status: 'draft',
+      notes: '',
+      uid,
+      slug,
+      createdDate
+    })
+
+    const result = [
+      {details: {properties: created.summary.statement.parameters}}
+    ]
+
+    res.send(result)
+    session.close()
+  } catch (err) {
+    next(err)
+  }
+})
+
+// Follow a public path
+// PUT - api/userAuth/paths/:slug/:uid/follow
+router.put('/:slug/:uid/follow', async (req, res, next) => {
+  try {
+    const { userUid, pathUid } = req.body
+
+    if (req.user.uid !== userUid ){
+      res.status(403).send('Unauthorized')
+    }
+
+    const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}, status: 'public'})
+    MERGE (u)-[:PATHS]->(p)
+    RETURN u, p`
+
+    const followPath = await session.run(query, {userUid, pathUid})
+
+    res.json(followPath)
+    session.close()
+
+  }catch(err){
+    next(err)
+  }
+})
+
+// PUT - api/userAuth/paths/:uid/togglePublic
 router.put('/:uid/togglePublic', async (req, res, next) => {
   try {
-    // let status = req.body.bool ? 'public' : 'draft'
     let status = req.body.hasOwnProperty('public') ? 'public' : 'draft'
+
+    if (req.user.name !== req.body.username ){
+      res.status(403).send('Unauthorized')
+    }
 
     let uid = req.params.uid
     let result = await session.run(
@@ -164,23 +164,26 @@ router.put('/:uid/togglePublic', async (req, res, next) => {
       {uid, status}
     )
 
-
     const singlePath = result.records.map(record => {
       return record._fields
     })
 
     res.send(singlePath)
 
-
   } catch (err) {
     next(err)
   }
 })
 
-// PUT: api/paths/:pathUid/user/:username/status/:bool/step/:stepUrl
+// PUT: api/userAuth/paths/:pathUid/user/:username/status/:bool/step/:stepUrl
 router.put(
   '/:pathUid/user/:username/status/:completed/step/:stepUrl',
   async (req, res, next) => {
+
+    if (req.user.name !== req.params.username ){
+      res.status(403).send('Unauthorized')
+    }
+
     try {
       const uid = req.params.pathUid
       const username = req.params.username
@@ -215,10 +218,15 @@ router.put(
   }
 )
 
-// PUT `/api/paths/${pathUid}/user/${username}/step/${urlEncoded}`
+// PUT `/api/userAuth/paths/${pathUid}/user/${username}/step/${urlEncoded}`
 router.post(
   '/:pathUid/user/:username/step/:stepUrl',
   async (req, res, next) => {
+
+    if (req.user.name !== req.params.username ){
+      res.status(403).send('Unauthorized')
+    }
+
     try {
       const uid = req.params.pathUid
       const username = req.params.username
@@ -300,46 +308,13 @@ router.post(
   }
 )
 
-// POST: api/paths/
-router.post('/', async (req, res, next) => {
-  const createdDate = Date.now()
-  const uid = shortid.generate()
-  const slug = makeSlug(req.body.name)
-
-  try {
-    const newPath = `
-    MATCH (u:User), (c:Category)
-    WHERE u.name = {username} AND c.name = {category}
-    CREATE (p:Path {name: {name}, description: {description}, level: {level}, status: {status}, owner: {username}, createdDate: {createdDate}, uid: {uid}, slug: {slug}}),
-    (u)-[:PATHS {notes: {notes}}]->(p),
-    (p)-[:CATEGORY]->(c)`
-
-    const created = await session.run(newPath, {
-      category: req.body.language,
-      username: req.body.user,
-      name: req.body.name,
-      description: req.body.description,
-      level: req.body.level,
-      status: 'draft',
-      notes: '',
-      uid,
-      slug,
-      createdDate
-    })
-
-    const result = [
-      {details: {properties: created.summary.statement.parameters}}
-    ]
-
-    res.send(result)
-    session.close()
-  } catch (err) {
-    next(err)
-  }
-})
-
-// DELETE: api/paths/:name
+// DELETE: api/userAuth/paths/:name
 router.delete('/:uid', async (req, res, next) => {
+
+  if (req.user.name !== req.body.username ){
+    res.status(403).send('Unauthorized')
+  }
+
   try {
     const uid = req.params.uid
 
@@ -356,29 +331,8 @@ router.delete('/:uid', async (req, res, next) => {
   }
 })
 
-
-//follow a public path
-router.put('/:slug/:uid/follow', async (req, res, next) => {
-  try {
-    const { userUid, pathUid } = req.body
-
-    const query = `MATCH (u:User { uid: {userUid} }),(p:Path {uid: {pathUid}, status: 'public'})
-    MERGE (u)-[:PATHS]->(p)
-    RETURN u, p`
-
-    const followPath = await session.run(query, {userUid, pathUid})
-
-    res.json(followPath)
-    session.close()
-
-  }catch(err){
-    console.error(err)
-    next(err)
-  }
-
-})
-
-router.put('/:slug/:uid/unfollow', async (req, res, next) => {
+// PUT: api/userAuth/paths/byName/:name
+router.put('/:slug/:uid/unfollow', async (req, res, next)=> {
   try{
     const { username, pathUid } = req.body
     const query = `MATCH (u:User {name: {username}})-[r:PATHS]->(p:Path {uid: {pathUid}})
@@ -387,51 +341,6 @@ router.put('/:slug/:uid/unfollow', async (req, res, next) => {
     const unfollowPath = await session.run(query, {username, pathUid})
     res.send(unfollowPath)
   }catch(err){
-    console.error(err)
-    next(err)
-  }
-})
-
-
-router.get('/:pathuid/:username/get-review', async (req, res, next) => {
-  try{
-    const { username, pathuid } = req.params
-    const query = `MATCH (u:User)-[:REVIEWS]->(r)-[:REVIEWS]->(p:Path)
-    WHERE u.name = {username} AND p.uid = {pathuid}
-    RETURN r.score, r.comments
-    `
-    const currentUserRating = await session.run(query, {username, pathuid})
-    res.json(currentUserRating)
-
-  } catch(err) {
-    console.error(err)
-    next(err)
-  }
-
-})
-
-
-router.post('/:uid/rate-path', async (req, res, next) => {
-  try {
-    const { username, pathuid, ratingText, ratingStars} = req.body
-    const newId = shortid.generate()
-    const query = `MATCH (u:User), (p:Path)
-    WHERE u.name = {username} AND p.uid = {pathuid}
-    MERGE (u)-[:REVIEWS]->(r:Review)-[:REVIEWS]->(p)
-    ON CREATE SET
-      r.score = {ratingStars},
-      r.comments = {ratingText},
-      r.createdDate = timestamp(),
-      r.uid = {newId}
-    ON MATCH SET
-      r.score = {ratingStars},
-      r.comments = {ratingText}
-    RETURN r`
-
-    const ratePath = await session.run(query, {username, pathuid, ratingText, newId, ratingStars})
-    res.json(ratePath)
-
-  } catch(err) {
     console.error(err)
     next(err)
   }
