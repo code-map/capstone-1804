@@ -6,18 +6,28 @@ import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
 import Sortable from 'react-sortablejs'
+import { ReviewPathDialog } from '../'
 import {
        deleteSinglePathThunk, 
        getStepCompletionSingleUserThunk, 
        toggleStepCompletionThunk, 
        togglePublicThunk , 
-       reorderStepsThunk ,
-       unfollowPathThunk
+       unfollowPathThunk,
+       addPathReviewThunk, 
+       getCurrentPathReviewThunk,
+       reorderStepsThunk
      } from '../../store'
 import { withRouter } from 'react-router-dom'
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
 import Chip from '@material-ui/core/Chip'
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import StarRatingComponent from 'react-star-rating-component';
 
 const styles = {
   container: {
@@ -28,6 +38,7 @@ const styles = {
   },
   deleteButton: {
     marginTop: 20,
+    marginLeft: 20,
     float: 'right'
   },
   chip: {
@@ -45,13 +56,16 @@ class SinglePath extends Component {
     this.state = {
       selectedItems: [],
       cleared: false,
-      items: [1,2,3,4,5,6],
+      open: false,
+      pathStars: 0,
+      review: '',
       pathSteps: pathStepsArray,
     }
   }
 
   componentDidMount = () => {
     const path = this.props.path[0]
+//    const pathReview = this.props.pathReview
     if(path.steps.length > 1) {
       const pathUid = path.details.properties.uid
       const username = this.props.user
@@ -69,7 +83,9 @@ class SinglePath extends Component {
       this.setState({
         pathSteps: pathStepsArray
       })
+
       this.props.getCompletedSteps(pathUid, username)
+      this.props.getPathRating(pathUid, username)
     }
   }
 
@@ -143,8 +159,35 @@ class SinglePath extends Component {
     }
   }
 
+  captureReview = (event) => {
+    this.setState({
+      review: event.target.value
+    })
+  }
+
+
+  onStarClick(event) {
+    this.setState({
+      pathStars: event,
+      open: false
+    });
+    const ratingStars = event
+    const ratingText = this.state.review
+    const pathuid = this.props.path[0].details.properties.uid
+    const username = this.props.user
+    this.props.ratePath(username, pathuid, ratingText, ratingStars)
+  }
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
   render(){
-    const { user, path } = this.props
+    const { user, path, pathReview } = this.props
     const pathDetails = path[0].details.properties
     const status = pathDetails.status
     const pathSteps = path[0].steps
@@ -237,6 +280,8 @@ class SinglePath extends Component {
 
         { !isOwner &&
           <div>
+
+
             <Button
               style={styles.deleteButton}
               onClick={this.handleUnfollowPath}
@@ -245,7 +290,45 @@ class SinglePath extends Component {
             >
             Unfollow Path
             </Button>
+
+            <Button
+              style={styles.deleteButton}
+              onClick={this.handleClickOpen}
+              variant="outlined"
+              color="primary"
+            >
+            Review Path
+            </Button>
+            <p>{pathReview}</p>
+              <Dialog
+                open={this.state.open}
+                onClose={this.handleClose}
+                aria-labelledby="form-dialog-title" >
+                <DialogTitle id="form-dialog-title">Write a Review</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    what did you think of this path?
+                  </DialogContentText>
+                      <textarea rows="10" cols="75"
+                      id="review"
+                      type="text"
+                      value={this.state.review}
+                      onChange={this.captureReview}
+                      ></textarea>
+                </DialogContent>
+                <DialogActions>
+                  <StarRatingComponent
+                        name="stars"
+                        editing={true}
+                        starCount={5}
+                        value={this.state.pathStars}
+                        onStarClick={this.onStarClick.bind(this)}
+                      />
+                </DialogActions>
+              </Dialog>
             </div>
+
+
         }
 
       </div>
@@ -254,8 +337,10 @@ class SinglePath extends Component {
 }
 
 const mapStateToProps = (state) => {
+  //console.log('REVIEW ON STATE', state.reviews)
   return {
-    completedSteps: state.step.completedSteps
+    completedSteps: state.step.completedSteps,
+    displayedPathReview: state.reviews.pathReview
   }
 }
 
@@ -275,6 +360,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     unfollowPath: (uid, user, slug) => {
       dispatch(unfollowPathThunk(uid, user, slug))
+    },
+    ratePath: (username, pathuid, ratingText, ratingStars) => {
+      dispatch(addPathReviewThunk(username, pathuid, ratingText, ratingStars))
+    },
+    getPathRating: (username, pathuid) => {
+      dispatch(getCurrentPathReviewThunk(username, pathuid))
     },
     reorderSteps: (pathUid, stepCount, fromIndex, toIndex) => {
       dispatch(reorderStepsThunk(pathUid, stepCount, fromIndex, toIndex))
