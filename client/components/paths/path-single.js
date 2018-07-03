@@ -125,7 +125,7 @@ class SinglePath extends Component {
   }
 
   handleUnfollowPath = (event) => {
-    event.preventDefault
+    event.preventDefault()
     const { slug, uid } = this.props.path[0].details.properties
     const username = this.props.user
     this.props.unfollowPath(uid, username, slug)
@@ -240,6 +240,7 @@ class SinglePath extends Component {
                   <ResourceCard
                     key={step.resource.identity.low}
                     isLoggedIn={!!user}
+                    userUid={user.uid}
                     isOwner={path[0].details.properties.owner === user}
                     resourceProperties={step.resource.properties}
                     handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
