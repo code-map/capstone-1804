@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
 import DashboardLanding from './dashboard-landing'
-import { getSingleUserPathsThunk, getSinglePathByUidThunk } from '../store'
+import { getSingleUserPathsThunk, getSinglePathByUidThunk, getCurrentPathReviewThunk } from '../store'
 import { PathUserDirectory, PathSingle, PathBuilder } from './paths'
 import Grid from '@material-ui/core/Grid'
 import history from '../history'
@@ -36,6 +36,7 @@ class UserDashboard extends Component {
   }
 
   handleSelect = (uid) => {
+    const username = this.props.user.name
     const selectedPath = this.props.allUserPaths.find((path) => {
       return path[0].details.properties.uid === uid
     })
@@ -45,6 +46,7 @@ class UserDashboard extends Component {
     })
 
     this.props.getSinglePathByUid(uid)
+    this.props.getSinglePathReview(username, uid)
     history.push('/user/dashboard/my-paths')
   }
 
@@ -54,12 +56,13 @@ class UserDashboard extends Component {
       const username = this.props.user
 
       this.props.getSinglePathByUid(pathUid)
+      this.props.getSinglePathReview(username, uid)
       this.props.getCompletedSteps(pathUid, username)
     }
   }
 
   render () {
-    const { allUserPaths, singlePath, user } = this.props
+    const { allUserPaths, singlePath, user, currentPathReview } = this.props
     const view = this.props.match.params.view
     return (
       <div style={styles.container}>
@@ -85,6 +88,7 @@ class UserDashboard extends Component {
               <PathSingle
                 user={user.name}
                 path={singlePath[0]}
+                pathReview={currentPathReview}
               />
             }
 
@@ -114,7 +118,8 @@ const mapStateToProps = (state) => {
   return {
     user: state.user,
     allUserPaths: state.pathReducer.allUserPaths,
-    singlePath: state.pathReducer.singlePath
+    singlePath: state.pathReducer.singlePath,
+    singlePathRev: state.reviews.pathReview
   }
 }
 
@@ -125,6 +130,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getSinglePathByUid: (uid) => {
       dispatch(getSinglePathByUidThunk(uid))
+    },
+    getSinglePathReview: (username, uid) => {
+      dispatch(getCurrentPathReviewThunk(username, uid))
     }
   }
 }

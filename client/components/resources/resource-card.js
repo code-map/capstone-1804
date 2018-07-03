@@ -28,6 +28,9 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
   },
+  handle: {
+    cursor: 'row-resize',
+  },
   description: {
     width: '100%'
   },
@@ -126,7 +129,7 @@ class ResourceCard extends React.Component{
   }
 
   render() {
-    const {isLoggedIn} = this.props
+    const {isLoggedIn, isOwner} = this.props
     const {classes, theme} = this.props
     const resourceImg = this.props.resourceProperties.imageUrl
 
@@ -171,6 +174,20 @@ class ResourceCard extends React.Component{
                   <ExpandMore onClick={() => this.handleDropdownExpand()} />
                 }
               </div>
+
+              { (isLoggedIn && isOwner) &&
+                <div className={classes.details}>
+                  <div className="resource-handle" >
+                    <i className="material-icons">
+                      <div className={classes.handle}>
+                        reorder
+                      </div>
+                    </i>
+                  </div>
+               </div>
+              }
+
+              
         </Card>
         <Collapse
           in      = {this.state.expanded}

@@ -9,6 +9,7 @@ import step from './step'
 import singleCategory from './single-category'
 import reviews from './reviews'
 import searchMatches from './search'
+import reviews from './reviews'
 
 const reducer = combineReducers({
   user,
@@ -16,8 +17,9 @@ const reducer = combineReducers({
   category,
   step,
   singleCategory,
-  reviews,
-  searchMatches
+  resource,
+  searchMatches,
+  reviews
 })
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
@@ -32,3 +34,4 @@ export * from './step'
 export * from './single-category'
 export * from './reviews'
 export * from './search'
+export * from './reviews'
