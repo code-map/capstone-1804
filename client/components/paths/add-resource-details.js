@@ -61,9 +61,10 @@ class AddResourceDetails extends Component {
 
   render(){
     const { username, pathUid, resource, url } = this.props
+    console.log('render resource or something', resource)
     return (
       <div>
-        { typeof resource !== 'string' ? (
+        { typeof resource[0] !== 'string' ? (
           <div>
             <p>We don't know this resource yet:</p>
             <p>{url}</p>
@@ -111,7 +112,7 @@ class AddResourceDetails extends Component {
           ) : (
             <div>
             <p>Resource exists! We'll add it right into your path.</p>
-            {this.addResourceToPath(username, pathUid, resource[0].url)}
+            {this.addResourceToPath(username, pathUid, url)}
             </div>
           )
         }

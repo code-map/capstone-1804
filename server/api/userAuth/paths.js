@@ -261,7 +261,12 @@ router.post(
     ORDER BY s.name DESC
     LIMIT 1
     `
-      const result = await session.run(query, {uid, username, stepUrl})
+      const result = await session.run(query, {uid, username})
+
+      console.log('let step in path', result)
+      console.log('let step in path', result.records[0])
+      console.log('last step in path', result.records[0]._fields[0])
+      console.log('! last', !result.records[0]._fields[0])
 
       // If there aren't any steps yet, add resource as 'Step 1'
       if (!result.records[0]._fields[0]) {
@@ -281,6 +286,7 @@ router.post(
       } else {
         // Else get last digit of last existing step and increment new step name
         const lastStepName = result.records[0]._fields[0]
+        console.log('laststep', lastStepName)
         const newStepNum = lastStepName.substr(
           lastStepName.indexOf(' '),
           lastStepName.length - 1
@@ -288,16 +294,17 @@ router.post(
         const newStepName = `Step ` + (Number(newStepNum) + 1)
 
         const addStepQuery = `
-      MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
-      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
+      MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(ls:Step), (r:Resource)
+      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl} AND ls.name= {lastStepName}
       CREATE (s:Step { name: {newStepName} }),
-      (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
+      (ls)-[:STEPS]->(s)-[:RESOURCE]->(r)
       `
         const addedNewStep = await session.run(addStepQuery, {
           uid,
           username,
           stepUrl,
-          newStepName
+          newStepName,
+          lastStepName
         })
 
         res.send(addedNewStep)

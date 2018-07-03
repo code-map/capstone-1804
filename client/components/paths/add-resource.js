@@ -73,16 +73,19 @@ class AddResource extends Component {
     })
 
     if(!duplicateCheck){
+      console.log('checking this value for dupe', this.state.url)
       this.props.checkResource(this.state.url)
     } else {
-      this.setState({
-        errorMessage: 'That resource is already added to your path.'
-      })
+      // this.setState({
+      //   errorMessage: 'That resource is already added to your path.'
+      // })
     }
   }
 
   render() {
     const { user, path, resource} = this.props
+    console.log('resource props', resource)
+    console.log('resource url in state', this.state.url)
 
     return (
       <div>

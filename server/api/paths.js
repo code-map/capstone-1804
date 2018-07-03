@@ -19,11 +19,15 @@ router.get('/step/:url', async (req, res, next) => {
 
     const result = await session.run(query, {url})
 
+    console.log('result in api', result)
+
     if (result.records.length > 0) {
       const records = result.records.map(record => {
         return record._fields
       })
-      res.send(records[0][0].properties)
+      // res.send(records[0][0].properties)
+      res.send('Record already exists in database.')
+
     } else {
       let md = await getMetadata(url)
       res.send(md)
