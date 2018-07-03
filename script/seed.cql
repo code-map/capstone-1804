@@ -444,7 +444,7 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (jsadvs2)-[:RESOURCE]->(jsalgo),
 (jsadvpath)-[:STEPS]->(jsadvs1),
 (jsadvs1)-[:STEPS]->(jsadvs2),
-(jsadv_2path:Path {name:'Advanced Javascript by JS Master Jami!', description:'I guarantee this will get you a job, or your money back!', level:'advanced',status:'public', createdDate:timestamp(), owner:Jami.name}),
+(jsadv_2path:Path {name:'Ultimate Javascript!', description:'I guarantee this will get you a job, or your money back!', level:'advanced',status:'public', createdDate:timestamp(), owner:Jami.name}),
 (jsadv_2r1:Review {score:4, comments:'Really loved this course!', createdDate: timestamp()}),
 (Chan)-[:REVIEWS]->(jsadv_2r1)-[:REVIEWS]->(jsadv_2path),
 (jsadv_2r2:Review {score:3, comments:'Pretty good for learning data structures', createdDate: timestamp()}),
@@ -471,6 +471,13 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (jsadv_2s3)-[:STEPS]->(jsadv_2s4),
 (jsadv_2s4)-[:STEPS]->(jsadv_2s5),
 (jsadv_2s5)-[:STEPS]->(jsadv_2s6),
+
+(jsadv_3path:Path {name:'JS Masters', description:'Master Javascript course for those who need to know more than you need to know', level:'advanced',status:'public', createdDate:timestamp(), owner:Justin.name}),
+
+(jsr_WTJ:Resource {name:'Javascript Algorithms',url:'https://www.youtube.com/watch?v=2pL28CcEijU', description:'Kyle Simpsons talk for Forward 2 attempts to “pull out the crazy” from JavaScript. He wants to help you produce cleaner, more elegant, more readable code, then inspire people to contribute to the open source community.', type:'video',level:'Advanced', createdDate:timestamp()}),
+(jsadv_3s1:Step {name:'Step 1'}),
+(jsadv_1s1)-[:RESOURCE]->(jsWTJ),
+
 (nullpath:Path {name:'Placeholder title', description:'nothing here yet.  I will add materials when I have time.', level:'advanced',status:'public', createdDate:timestamp(), owner:Justin.name}),
 (Python101)-[:CATEGORY]->(Python),
 (DataScience)-[:CATEGORY]->(Data),
