@@ -89,26 +89,6 @@ const getAverageReviewRating = (reviews) => {
   }
 }
 
-export default function( state = initialState, action ){
-  switch (action.type) {
-    case SET_ALL_REVIEWS_OF_RESOURCE: {
-      const totalAvg = getAverageReviewRating(action.reviews)
-      const totalReviews = action.reviews.data.length
-      const result = {
-        resource: {...action.reviews, totalAvg, totalReviews}
-      }
-      return {
-        ...state,
-        allResourceReviews: [...state.allResourceReviews, result]
-      }
-    }
-    case GOT_USER_RESOURCE_REVIEW: {
-      let resourceReviewRating = action.rating.low ? action.rating.low : action.rating
-
-      return {...state, resourceReviewRating}
-    }
-}
-  
 const initialState = {
   pathReview: {},
   allResourceReviews: [],
