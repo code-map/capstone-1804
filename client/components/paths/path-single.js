@@ -5,12 +5,19 @@ import {ResourceCard} from '../resources'
 import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
-import { withRouter } from 'react-router-dom'
+import Sortable from 'react-sortablejs'
 import { ReviewPathDialog } from '../'
-
-
-import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, togglePublicThunk, unfollowPathThunk, addPathReviewThunk, getCurrentPathReviewThunk } from '../../store'
-
+import {
+       deleteSinglePathThunk, 
+       getStepCompletionSingleUserThunk, 
+       toggleStepCompletionThunk, 
+       togglePublicThunk , 
+       unfollowPathThunk,
+       addPathReviewThunk, 
+       getCurrentPathReviewThunk,
+       reorderStepsThunk
+     } from '../../store'
+import { withRouter } from 'react-router-dom'
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
 import Chip from '@material-ui/core/Chip'
@@ -41,15 +48,18 @@ const styles = {
 }
 
 class SinglePath extends Component {
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
+
+    let pathStepsArray =  this.props.path[0].steps || []
 
     this.state = {
       selectedItems: [],
       cleared: false,
       open: false,
       pathStars: 0,
-      review: ''
+      review: '',
+      pathSteps: pathStepsArray,
     }
   }
 
@@ -65,9 +75,14 @@ class SinglePath extends Component {
 
   componentWillReceiveProps(nextProps){
     if(nextProps.path[0] !== this.props.path[0]){
+
       const pathUid = nextProps.path[0].details.properties.uid
       const username = this.props.user
+      const pathStepsArray =  nextProps.path[0].steps || []
 
+      this.setState({
+        pathSteps: pathStepsArray
+      })
 
       this.props.getCompletedSteps(pathUid, username)
       this.props.getPathRating(pathUid, username)
@@ -95,13 +110,26 @@ class SinglePath extends Component {
     }
   }
 
+  handleOrderChange = (evt) => {
+
+    const path = this.props.path[0]
+    const pathUid = path.details.properties.uid
+    //add 1 to each index since variable length queries
+    //in neo4j start from index 1
+    const oldIndex = evt.oldIndex + 1
+    const newIndex = evt.newIndex + 1
+    const stepCount = path.steps.length
+
+
+    this.props.reorderSteps(pathUid,stepCount,oldIndex,newIndex)
+  }
+
   handleUnfollowPath = (event) => {
-    event.preventDefault
+    event.preventDefault()
     const { slug, uid } = this.props.path[0].details.properties
     const username = this.props.user
     this.props.unfollowPath(uid, username, slug)
     history.push('/user/dashboard/add-new-path')
-
   }
 
   checkForComplete = (url) => {
@@ -163,7 +191,9 @@ class SinglePath extends Component {
     const pathDetails = path[0].details.properties
     const status = pathDetails.status
     const pathSteps = path[0].steps
+
     const isOwner = pathDetails.owner === user
+    
     return (
       <div>
         <h2>
@@ -178,26 +208,54 @@ class SinglePath extends Component {
           <PathProgress progress={this.getCompletePercentage()} />
         }
         <div style={styles.container}>
-          <List>
-            { pathSteps[0].step !== null &&
-              pathSteps.map(step => {
+        <Sortable
+          options={{
+            animation: 100,
+            onStart: (evt) => {
+              evt.item.style.opacity          = 0.2
+            },
+            onEnd: (evt) => {
+              evt.item.style.opacity          = ""
+            },
+            onSort: (evt) => {
+            },
+
+            handle: ".resource-handle"
+          }}
+          ref={(c) => {
+              if (c) {
+                  this.sortable = c.sortable;
+              }
+          }}
+          onChange={(order, sortable, evt) => {
+            this.handleOrderChange(evt)
+          }}
+        >
+          {
+            
+            this.state.pathSteps[0].step !== null &&
+              this.state.pathSteps.map(step => {
                 const stepUrl = step.resource.properties.url
                 return (
                   <ResourceCard
                     key={step.resource.identity.low}
                     isLoggedIn={!!user}
+                    userUid={user.uid}
+                    isOwner={path[0].details.properties.owner === user}
                     resourceProperties={step.resource.properties}
                     handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
                     checkForComplete={() => this.checkForComplete(stepUrl)}
                   />
                 )
-            } ) }
+              })
 
-          { path[0].details.properties.owner === user &&
-            <AddResource user={user} path={path} />
-          }
-          </List>
+            }
+        </Sortable>
+        { path[0].details.properties.owner === user &&
+          <AddResource user={user} path={path} />
+        }
         </div>
+
 
         { path[0].details.properties.owner === user &&
           <div>
@@ -309,6 +367,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getPathRating: (username, pathuid) => {
       dispatch(getCurrentPathReviewThunk(username, pathuid))
+    },
+    reorderSteps: (pathUid, stepCount, fromIndex, toIndex) => {
+      dispatch(reorderStepsThunk(pathUid, stepCount, fromIndex, toIndex))
     }
   }
 }
