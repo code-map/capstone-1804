@@ -12,6 +12,7 @@ const TOGGLE_PUBLIC = 'TOGGLE_PUBLIC'
 const FOLLOW_PATH = 'FOLLOW_PATH'
 const UNFOLLOW_PATH = 'UNFOLLOW_PATH'
 
+
 const SET_ALL_PATHS_IN_CATEGORY = 'SET_ALL_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_CATEGORY = 'SET_POPULAR_PATHS_IN_CATEGORY'
 const SET_POPULAR_PATHS_IN_ALL_CATEGORIES = 'SET_POPULAR_PATHS_IN_ALL_CATEGORIES'
@@ -222,6 +223,8 @@ export const searchPathsInCategory = (categoryName, searchVal) => {
     dispatch(setSearchedPathsInCategory(res.data))
   }
 }
+
+
 
 const initialState = {
   allUserPaths: [],
