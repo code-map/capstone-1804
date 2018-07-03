@@ -142,7 +142,7 @@ class ResourceCard extends React.Component{
               </div>
 
                 <div className={classes.details}>
-                  <i className="material-icons" onClick={this.props.removeResourceCard(stepIndex)>
+                  <i className="material-icons" onClick={this.props.removeResourceCard(stepIndex)}>
                     clear
                   </i>
                </div>

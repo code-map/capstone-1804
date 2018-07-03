@@ -123,7 +123,7 @@ class SinglePath extends Component {
         <div style={styles.container}>
           <List>
             { pathSteps[0].step !== null &&
-              pathSteps.map(step => {
+              pathSteps.map((step, stepIdx)=> {
                 const stepUrl = step.resource.properties.url
                 return (
                   <ResourceCard
@@ -132,7 +132,7 @@ class SinglePath extends Component {
                     resourceProperties={step.resource.properties}
                     handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
                     checkForComplete={() => this.checkForComplete(stepUrl)}
-                    removeResourceCard={(stepIndex) => this.props.removeResourceFromPath(pathUid, lastIndex, stepIndex)}
+                    removeResourceCard={() => this.props.removeResourceFromPath(pathUid, pathSteps.length, stepIdx)}
                   />
                 )
             } ) }
