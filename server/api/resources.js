@@ -6,25 +6,25 @@ let session = require('../db/neo')
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
 
-router.get(`/:resourceName/reviews`, async (req,res,next) => {
+router.get(`/:uid/reviews`, async (req,res,next) => {
   try{
-    const resourceName = req.params.resourceName
+    const uid = req.params.uid
     const query =
     `
       MATCH(u:User)-[:REVIEWS]->(rev:Review)-[:REVIEWS]->(r:Resource)
-      WHERE r.name={resourceName}
+      WHERE r.uid={uid}
       RETURN r.name AS resource,
              u.name AS author,
              rev.comments AS comments,
              rev.score AS score
-      ORDER BY score
-      limit 3
     `
-    const result = await session.run(query, {resourceName})
+    
+    const result = await session.run(query, {uid})
 
     const reducedResponse = recordsReducer(result.records)
     const groupedResponse = {}
-    groupedResponse[resourceName] = reducedResponse
+    groupedResponse['data'] = reducedResponse
+    groupedResponse.uid = uid
 
     res.send(groupedResponse)
     session.close()

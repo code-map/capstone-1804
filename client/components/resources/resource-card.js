@@ -2,23 +2,13 @@ import React from 'react'
 import {Stars} from '../reviews'
 import {connect} from 'react-redux'
 
-import {getAllReviewsOfResource} from '../../store'
+import {getAllReviewsOfResource, getUserResourceReview} from '../../store'
+import ResourceRating from './resource-rating'
 
-import Grid from '@material-ui/core/Grid'
-import Checkbox from '@material-ui/core/Checkbox'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
-import Collapse from '@material-ui/core/Collapse'
-import ExpandLess from '@material-ui/icons/ExpandLess'
-import ExpandMore from '@material-ui/icons/ExpandMore'
+import { Button, Grid, Checkbox, List, ListItem, Collapse, Card, Typography, Chip, Dialog} from '@material-ui/core'
+import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { withStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import Typography from '@material-ui/core/Typography'
-import CardMedia from '@material-ui/core/CardMedia'
-import Chip from '@material-ui/core/Chip'
 import PropTypes from 'prop-types'
-
 
 const styles = {
   container: {
@@ -37,6 +27,9 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  handle: {
+    cursor: 'row-resize',
   },
   description: {
     width: '100%'
@@ -71,6 +64,9 @@ const styles = {
     alignItems: 'flexStart',
     flexGrow: 10
   },
+  ratingCount: {
+    marginLeft: 5
+  },
   xButtonHover: {
     cursor: 'pointer',
   },
@@ -80,7 +76,6 @@ const styles = {
     alignItems: 'flexStart',
     justifyContent: 'flexStart',
   },
-
 }
 
 class ResourceCard extends React.Component{
@@ -88,26 +83,65 @@ class ResourceCard extends React.Component{
     super(props)
     this.state = {
       expanded : false,
+      totalAvg: 0,
+      totalReviews: 0,
+      ratingOpen: false
     }
-    this.props.getResourceReviews(this.props.resourceProperties.name)
+  }
+
+  componentDidMount = () => {
+    const resourceUid = this.props.resourceProperties.uid
+
+    const body = {
+      userUid: this.props.user.uid,
+      resourceUid
+    }
+
+    this.props.getResourceReviews(resourceUid)
+    this.props.getUserResourceRating(body)
   }
 
   handleDropdownCollapse = () => {
     this.setState({
-        expanded: false,
+      expanded: false,
     })
   }
 
-  handleDropdownExpand = (resourceName) => {
+  handleClickOpen = () => {
     this.setState({
-        expanded: true,
+      ratingOpen: true
+    })
+  }
+
+  handleClose = () => {
+    this.setState({ ratingOpen: false })
+  }
+
+  handleDropdownExpand = () => {
+    const uid = this.props.resourceProperties.uid
+    this.getCommunityRating(uid)
+    this.setState({
+      expanded: true
+    })
+  }
+
+
+  getCommunityRating = (uid) => {
+    const found =  this.props.reviews.find((item) => {
+      return item.resource.uid === uid
+    })
+
+    this.setState({
+      totalAvg: found.resource.totalAvg,
+      totalReviews: found.resource.totalReviews
     })
   }
 
   render() {
-    const {isLoggedIn} = this.props
+    const {isLoggedIn, isOwner} = this.props
     const {classes, theme} = this.props
     const resourceImg = this.props.resourceProperties.imageUrl
+
     return(
       <div style={styles.container}>
           <Card className={classes.card}>
@@ -150,6 +184,20 @@ class ResourceCard extends React.Component{
                 }
               </div>
 
+              { (isLoggedIn && isOwner) &&
+
+                <div className={classes.details}>
+                  <div className="resource-handle" >
+                    <i className="material-icons">
+                      <div className={classes.handle}>
+                        reorder
+                      </div>
+                    </i>
+                  </div>
+                </div>
+              }
+
+              { (isLoggedIn && isOwner) &&
                 <div className={classes.xButton}>
                   <i className="material-icons" onClick={()=>this.props.removeResourceCard()}>
                     <div className={classes.xButtonHover}>
@@ -157,7 +205,7 @@ class ResourceCard extends React.Component{
                     </div>
                   </i>
                </div>
-
+              }
 
         </Card>
         <Collapse
@@ -166,8 +214,23 @@ class ResourceCard extends React.Component{
         >
           <List component="div">
             <ListItem>
-              <Stars value={this.props.resourceProperties.rating} />
+              <Stars value={this.state.totalAvg}/>
+              <span style={styles.ratingCount}>({this.state.totalReviews})</span>
             </ListItem>
+
+            <ListItem>
+            <Button onClick={this.handleClickOpen} variant="outlined">Rate this resource</Button>
+              <Dialog open={this.state.ratingOpen}>
+                <ResourceRating
+                  userRating={this.props.resourceRating}
+                  resourceUid = {this.props.resourceProperties.uid}
+                  resourceName = {this.props.resourceProperties.name}
+                  userUid={this.props.userUid}
+                  handleClose={this.handleClose}
+                />
+              </Dialog>
+            </ListItem>
+
             <ListItem>
               <Typography style={styles.description}><b>Description</b>: {this.props.resourceProperties.description}</Typography>
             </ListItem>
@@ -177,7 +240,7 @@ class ResourceCard extends React.Component{
               </ListItem>
             }
             <ListItem>
-              <Typography>Link to <a href={this.props.resourceProperties.url} target="_blank">
+              <Typography>Visit <a href={this.props.resourceProperties.url} target="_blank">
                 {this.props.resourceProperties.name}</a>
               </Typography>
             </ListItem>
@@ -196,7 +259,9 @@ ResourceCard.propTypes = {
 
 const mapState = (state) => {
   return({
-    reviews: state.resource.reviews
+    user: state.user,
+    reviews: state.reviews.allResourceReviews,
+    resourceRating: state.reviews.resourceReviewRating
   })
 }
 
@@ -204,6 +269,12 @@ const mapDispatch = (dispatch) => {
   return({
     getResourceReviews : (resourceName) => {
       dispatch(getAllReviewsOfResource(resourceName))
+    },
+    lastUserResourceReview: (body) => {
+      dispatch(getUserResourceReview(body))
+    },
+    getUserResourceRating: (body) => {
+      dispatch(getUserResourceReview(body))
     }
   })
 }

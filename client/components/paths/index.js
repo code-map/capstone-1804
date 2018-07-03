@@ -6,3 +6,4 @@ export {default as PopularPaths} from './popular-paths'
 export {default as PathCard} from './path-card'
 export {default as PathCardSmallCategory} from './path-card-category'
 export {default as PublicSinglePath} from './public-single-path'
+
