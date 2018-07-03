@@ -179,7 +179,7 @@ export const searchPathsInCategory = (categoryName, searchVal) => {
 //
 export const removeResourceFromPathThunk = (pathId, lastIndex, stepIndex) => {
   return async (dispatch) => {
-    const { data } = await axios.post(`/api/paths/reorder/${pathId}/${lastIndex}/${stepIndex}`)
+    const { data } = await axios.post(`/api/paths/remove/${pathId}/${lastIndex}/${stepIndex}`)
     dispatch(getSinglePath(data))
   }
 }

@@ -132,7 +132,7 @@ class SinglePath extends Component {
                     resourceProperties={step.resource.properties}
                     handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
                     checkForComplete={() => this.checkForComplete(stepUrl)}
-                    removeResourceCard={() => this.props.removeResourceFromPath(pathUid, pathSteps.length, stepIdx)}
+                    removeResourceCard={() => this.props.removeResourceFromPath(pathUid, pathSteps.length, stepIdx+1)}
                   />
                 )
             } ) }

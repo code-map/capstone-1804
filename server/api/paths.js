@@ -304,13 +304,15 @@ router.delete('/:uid', async (req, res, next) => {
 
 // Removes a path's steps
 // it takes in the indexes to remove and the last index, otherwise a call will need to be made to check if the last index was removed
-// POST: /api/paths/reorder/:pathUid/:lastIndex/:stepIndex/
+// POST: /api/paths/remove/:pathUid/:lastIndex/:stepIndex/
 router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) => {
   try{
 
     const pathUid   = req.params.pathUid
-    const lastIndex = req.params.setpCount
+    const lastIndex = req.params.lastIndex
     const stepIndex = req.params.stepIndex
+
+    console.log('test point 1', pathUid, lastIndex, stepIndex)
     
     if( stepIndex < 1 ||
        stepIndex   > lastIndex) {
@@ -323,10 +325,10 @@ router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) =>
         //if removing the last index
           query = `  
             MATCH (p:Path {uid:{pUid}})-[:STEPS*` + stepIndex + `]->(stepRem:Step)
-            WITH stepRem 
+            WITH stepRem , p
             MATCH (stepRemP)-[stepRemPE:STEPS]->(stepRem)
             WITH stepRem, stepRemP, p, stepRemPE
-            DELETE stepRemPE, stemRem
+            DETACH DELETE stepRemPE, stemRem
           `
         }else{
           query = `  
@@ -334,11 +336,10 @@ router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) =>
             WITH stepRem, p
             MATCH (stepRemP)-[stepRemPE:STEPS]->(stepRem)-[stepRemNE:STEPS]->(stepRemN)
             WITH stepRem, stepRemP, stepRemN, p, stepRemPE, stepRemNE
-            DELETE stepRemPE, stepRemNE
+            DETACH DELETE stepRemPE, stepRemNE, stepRem
             CREATE (stepRemP)-[:STEPS]->(stepRemN)
           `
         }
-     }
       
    const queryReturn = `
       WITH p
@@ -357,6 +358,8 @@ router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) =>
 
     query += queryReturn
   
+    console.log('query is', query)
+
     const result = await session.run(query, {
        pUid : req.params.pathUid,
     })
@@ -367,7 +370,9 @@ router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) =>
     
     res.send(singlePath)
     session.close()
+    }
   }catch (err) { next(err) }
+
 })
 
 module.exports = router
