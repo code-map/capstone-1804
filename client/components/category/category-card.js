@@ -21,7 +21,7 @@ const CategoryCard = (props) => {
         <Card style={styles.container}>
           <h2 style={styles.header}>{props.categoryName}</h2>
           <Button color="primary">
-            {props.userCount} Subscribers
+            {props.pathCount} Learning Path{props.pathCount > 1 ? 's' : ''}
           </Button>
         </Card>
       </Link>

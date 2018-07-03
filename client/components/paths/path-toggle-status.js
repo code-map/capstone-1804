@@ -2,18 +2,9 @@ import React, {Component} from 'react'
 import Switch from '@material-ui/core/Switch'
 
 class PathToggleStatus extends Component {
-  // state = {
-  //   status: this.props.Status === 'public'
-  // }
-
-  // handleChange = name => event => {
-  //   this.props.togglePublic(this.props.uid, (this.props.Status==='public'))
-  //   this.setState({ [name]: event.target.checked });
-  // }
 
   handleChange = () => {
-    this.props.toggle(this.props.uid, this.props.Status === 'draft' ? 'public' : 'draft')
-    // this.setState({[name]: event.target.checked})
+    this.props.toggle(this.props.uid, this.props.Status === 'draft' ? 'public' : 'draft', this.props.username)
   }
 
   render() {

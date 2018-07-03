@@ -41,19 +41,20 @@ export const removeResourceFromStore = () => {
 /**
  * THUNK CREATORS
  */
+
+/** Authed User Endpoint **/
 export const getStepCompletionSingleUserThunk = (uid, username) => {
   return async (dispatch) => {
-    const { data } = await axios.get(`/api/paths/${uid}/user/${username}/completed`)
+    const { data } = await axios.get(`/api/userAuth/paths/${uid}/user/${username}/completed`)
     dispatch(getStepCompletionSingleUser(data))
   }
 }
 
+/** Authed User Endpoint **/
 export const toggleStepCompletionThunk = (pathUid, username, stepUrl, bool) => {
   return async (dispatch) => {
     const urlEncoded = encodeURIComponent(stepUrl)
-
-    await axios.put(`/api/paths/${pathUid}/user/${username}/status/${bool}/step/${urlEncoded}`)
-
+    await axios.put(`/api/userAuth/paths/${pathUid}/user/${username}/status/${bool}/step/${urlEncoded}`)
     dispatch(toggleStepCompletion(stepUrl))
   }
 }
