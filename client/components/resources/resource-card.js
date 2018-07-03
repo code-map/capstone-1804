@@ -140,6 +140,15 @@ class ResourceCard extends React.Component{
                   <ExpandMore onClick={() => this.handleDropdownExpand()} />
                 }
               </div>
+
+                <div className={classes.details}>
+                  <i className="material-icons" onClick={this.props.removeResourceCard(stepIndex)>
+                    clear
+                  </i>
+               </div>
+              }
+
+
         </Card>
         <Collapse
           in      = {this.state.expanded}

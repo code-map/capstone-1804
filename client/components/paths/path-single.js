@@ -6,7 +6,7 @@ import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
 
-import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk } from '../../store'
+import { deleteSinglePathThunk, getStepCompletionSingleUserThunk, toggleStepCompletionThunk, removeResourceFromPathThunk} from '../../store'
 
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
@@ -106,6 +106,7 @@ class SinglePath extends Component {
     const { user, path } = this.props
     const pathDetails = path[0].details.properties
     const pathSteps = path[0].steps
+    const pathUid = pathDetails.uid
     return (
       <div>
         <h2>
@@ -131,6 +132,7 @@ class SinglePath extends Component {
                     resourceProperties={step.resource.properties}
                     handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
                     checkForComplete={() => this.checkForComplete(stepUrl)}
+                    removeResourceCard={(stepIndex) => this.props.removeResourceFromPath(pathUid, lastIndex, stepIndex)}
                   />
                 )
             } ) }
@@ -180,6 +182,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     toggleStepCompletion: (pathUid, username, stepUrl, bool) => {
       dispatch(toggleStepCompletionThunk(pathUid, username, stepUrl, bool))
+    },
+    removeResourceFromPath: (pathId, lastIndex, stepIndex) => {
+      dispatch(removeResourceFromPathThunk(pathId, lastIndex, stepIndex))
     }
   }
 }

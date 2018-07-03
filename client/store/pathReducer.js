@@ -86,7 +86,6 @@ const setSearchedPathsInCategory = (paths) => {
     paths
   }
 }
-
 /**
  * THUNK CREATORS
  */
@@ -168,6 +167,20 @@ export const searchPathsInCategory = (categoryName, searchVal) => {
   return async (dispatch) => {
     const res = await axios.get(`/api/categories/${categoryName}/search`, searchVal)
     dispatch(setSearchedPathsInCategory(res.data))
+  }
+}
+
+//
+//
+//
+//
+//
+//
+//
+export const removeResourceFromPathThunk = (pathId, lastIndex, stepIndex) => {
+  return async (dispatch) => {
+    const { data } = await axios.post(`/api/paths/reorder/${pathId}/${lastIndex}/${stepIndex}`)
+    dispatch(getSinglePath(data))
   }
 }
 
