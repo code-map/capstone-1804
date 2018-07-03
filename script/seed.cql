@@ -474,24 +474,49 @@ url: 'https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/G
 (jsadv_2s4)-[:STEPS]->(jsadv_2s5),
 (jsadv_2s5)-[:STEPS]->(jsadv_2s6),
 
+
 (jsadv_3path:Path {name:'JS Masters', description:'Master Javascript course for those who need to know more than you need to know', level:'advanced',status:'public', createdDate:timestamp(), owner:Justin.name}),
+(jsadv_3path)-[:CATEGORY]->(JS),
 
 (jsR_WTJ:Resource {name:'What the Javascript',url:'https://www.youtube.com/watch?v=2pL28CcEijU', description:'Kyle Simpsons talk for Forward 2 attempts to “pull out the crazy” from JavaScript. He wants to help you produce cleaner, more elegant, more readable code, then inspire people to contribute to the open source community.', type:'video',level:'Advanced', createdDate:timestamp()}),
-(jsadv_3s1:step {name:'step 1'}),
+(jsR_WTJ)-[:CATEGORY]->(JS),
+(jsadv_3s1:Step {name:'Step 1'}),
+
 (jsadv_3path)-[:STEPS]->(jsadv_3s1),
-(jsadv_3s1)-[:resource]->(jsR_WTJ),
+(jsadv_3s1)-[:RESOURCE]->(jsR_WTJ),
 
 (jsR_HOF:Resource {name:'Eloquent Javascript: Higher Order Functions',url:'https://eloquentjavascript.net/05_higher_order.html', description:'Functions that operate on other functions, either by taking them as arguments or by returning them, are called higher-order functions', type:'article',level:'Advanced', createdDate:timestamp()}),
-(jsadv_3s2:step {name:'step 2'}),
+(jsR_HOF)-[:CATEGORY]->(JS),
+(jsadv_3s2:Step {name:'Step 2'}),
 (jsadv_3s1)-[:STEPS]->(jsadv_3s2),
-(jsadv_3s2)-[:resource]->(jsR_HOF),
+(jsadv_3s2)-[:RESOURCE]->(jsR_HOF),
+
+(jsR_TGP:Resource {name:'Javascript: The Good Parts',url:'http://shop.oreilly.com/product/9780596517748.do', description:'Most programming languages contain good and bad parts, but JavaScript has more than its share of the bad, having been developed and released in a hurry before it could be refined', type:'book',level:'Intermediate', createdDate:timestamp()}),
+(jsR_TGP)-[:CATEGORY]->(JS),
+(jsadv_3s3:Step {name:'Step 3'}),
+(jsadv_3s2)-[:STEPS]->(jsadv_3s3),
+(jsadv_3s3)-[:RESOURCE]->(jsR_TGP),
+
+(jsR_JSp:Resource {name:'Javascript Promises',url:' https://davidwalsh.name/promises ', description:'While synchronous code is easier to follow and debug, async is generally better for performance and flexibility', type:'blog',level:'Intermediate', createdDate:timestamp()}),
+(jsR_JSp)-[:CATEGORY]->(JS),
+(jsadv_3s4:Step {name:'Step 4'}),
+(jsadv_3s3)-[:STEPS]->(jsadv_3s4),
+(jsadv_3s4)-[:RESOURCE]->(jsR_JSp),
+
+(jsR_CST:Resource {name:'Client Side Templates',url:' https://www.smashingmagazine.com/2012/12/client-side-templating/ ', description:'Using templates in the browser is becoming more and more widespread. Moving application logic from the server to the client, and the increasing usage of MVC-like patterns (model–view–controller) inspired templates to embrace the browser.', type:'article',level:'Intermediate', createdDate:timestamp()}),
+(jsR_CST)-[:CATEGORY]->(JS),
+(jsadv_3s5:Step {name:'Step 5'}),
+(jsadv_3s4)-[:STEPS]->(jsadv_3s5),
+(jsadv_3s5)-[:RESOURCE]->(jsR_CST),
 
 (Jami        )-[:PATHS]->(jsadv_3path),
 (Justin      )-[:PATHS]->(jsadv_3path),
 (Chan        )-[:PATHS]->(jsadv_3path),
-(violetEyes  )-[:PATHS]->(jsadv_3path),
 (dwnberry    )-[:PATHS]->(jsadv_3path),
 (avaK        )-[:PATHS]->(jsadv_3path),
+
+
+
 
 (nullpath:Path {name:'Placeholder title', description:'nothing here yet.  I will add materials when I have time.', level:'advanced',status:'public', createdDate:timestamp(), owner:Justin.name}),
 (Python101)-[:CATEGORY]->(Python),
