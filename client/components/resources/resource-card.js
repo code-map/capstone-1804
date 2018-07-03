@@ -71,9 +71,12 @@ const styles = {
     cursor: 'pointer',
   },
   xButton: {
+    opacity: 0.3,
+    fontSize: "14px", 
+    fontColor: "#AAAAAA",
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flexStart',
+    alignItems: 'flexEnd',
     justifyContent: 'flexStart',
   },
 }
@@ -198,13 +201,11 @@ class ResourceCard extends React.Component{
               }
 
               { (isLoggedIn && isOwner) &&
-                <div className={classes.xButton}>
-                  <i className="material-icons" onClick={()=>this.props.removeResourceCard()}>
-                    <div className={classes.xButtonHover}>
-                        clear
-                    </div>
-                  </i>
-               </div>
+                 <div className={classes.xButton}  onClick={()=>this.props.removeResourceCard()} >
+                   <div className={classes.xButtonHover}>
+                     x
+                   </div>
+                 </div>
               }
 
         </Card>
