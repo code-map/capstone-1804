@@ -5,7 +5,6 @@ import {ResourceCard} from '../resources'
 import AddResource from './add-resource'
 import PathToggleStatus from './path-toggle-status'
 import history from '../../history'
-//import SortableList from './sortable-list'
 import Sortable from 'react-sortablejs'
 
 import {
@@ -19,8 +18,6 @@ import {
 import List from '@material-ui/core/List'
 import Button from '@material-ui/core/Button'
 import Chip from '@material-ui/core/Chip'
-
-
 
 const styles = {
   container: {
@@ -40,13 +37,16 @@ const styles = {
 }
 
 class SinglePath extends Component {
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
+
+    let pathStepsArray =  this.props.path[0].steps || []
 
     this.state = {
       selectedItems: [],
       cleared: false,
-      items: [1,2,3,4,5,6]
+      items: [1,2,3,4,5,6],
+      pathSteps: pathStepsArray,
     }
   }
 
@@ -61,9 +61,14 @@ class SinglePath extends Component {
 
   componentWillReceiveProps(nextProps){
     if(nextProps.path[0] !== this.props.path[0]){
+
       const pathUid = nextProps.path[0].details.properties.uid
       const username = this.props.user
+      const pathStepsArray =  nextProps.path[0].steps || []
 
+      this.setState({
+        pathSteps: pathStepsArray
+      })
       this.props.getCompletedSteps(pathUid, username)
     }
   }
@@ -134,20 +139,6 @@ class SinglePath extends Component {
     const status = pathDetails.status
     const pathSteps = path[0].steps
 
-    let mutablePathSteps = pathSteps[0].step !== null &&
-      pathSteps.map(step => {
-        const stepUrl = step.resource.properties.url
-        return (
-          <ResourceCard
-            key={step.resource.identity.low}
-            isLoggedIn={!!user}
-            resourceProperties={step.resource.properties}
-            handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
-            checkForComplete={() => this.checkForComplete(stepUrl)}
-          />
-        )
-      })
-
     return (
       <div>
         <h2>
@@ -166,11 +157,14 @@ class SinglePath extends Component {
           options={{
             animation: 100,
             onStart: (evt) => {
+              evt.item.style.opacity          = 0.2
+            },
+            onEnd: (evt) => {
+              evt.item.style.opacity          = ""
+            },
+            onSort: (evt) => {
+            },
 
-            },
-            onEnd:    (evt) => {
-              mutablePathSteps = evt.to
-            },
             handle: ".resource-handle"
           }}
           ref={(c) => {
@@ -182,7 +176,24 @@ class SinglePath extends Component {
             this.handleOrderChange(evt)
           }}
         >
-          {mutablePathSteps}
+          {
+            
+            this.state.pathSteps[0].step !== null &&
+              this.state.pathSteps.map(step => {
+                const stepUrl = step.resource.properties.url
+                return (
+                  <ResourceCard
+                    key={step.resource.identity.low}
+                    isLoggedIn={!!user}
+                    isOwner={path[0].details.properties.owner === user}
+                    resourceProperties={step.resource.properties}
+                    handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
+                    checkForComplete={() => this.checkForComplete(stepUrl)}
+                  />
+                )
+              })
+
+            }
         </Sortable>
         { path[0].details.properties.owner === user &&
           <AddResource user={user} path={path} />
@@ -242,25 +253,5 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-/*
-            <SortableList
-              items = { pathSteps[0].step !== null &&
-                pathSteps.map(step => {
-                  const stepUrl = step.resource.properties.url
-                  return (
-                    <ResourceCard
-                      key={step.resource.identity.low}
-                      isLoggedIn={!!user}
-                      resourceProperties={step.resource.properties}
-                      handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
-                      checkForComplete={() => this.checkForComplete(stepUrl)}
-                    />
-                  )
-              })}
-              tag="ul"
-              onChange={(order,sortable,evt) => }
-            />
-
-*/
 
 export default connect(mapStateToProps, mapDispatchToProps)(SinglePath)
