@@ -7,6 +7,8 @@ const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
 const {getMetadata} = require('../../script/metadata')
 
+const shortid = require('shortid')
+
 // GET: /api/paths/step/:url
 router.get('/step/:url', async (req, res, next) => {
   try {
