@@ -224,6 +224,12 @@ export const searchPathsInCategory = (categoryName, searchVal) => {
   }
 }
 
+export const reorderStepsThunk = (pathId, pathLength, fromIndex, toIndex) => {
+  return async (dispatch) => {
+    const { data } = await axios.post(`/api/paths/reorder/${pathId}/${pathLength}/${fromIndex}/${toIndex}`)
+    dispatch(getSinglePath(data))
+  }
+}
 
 
 const initialState = {
