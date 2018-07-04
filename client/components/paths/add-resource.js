@@ -57,14 +57,15 @@ class AddResource extends Component {
     this.props.removeResourceFromStore()
   }
 
-  handleResourceSubmit = async () => {
+  handleResourceSubmit = async (event) => {
+    event.preventDefault()
 
-  if (!this.state.url.startsWith('http')) {
-    await this.setState((previousState) => {
-      let newUrl = 'http://' + previousState.url
-      return { ...previousState, url: newUrl };
-  });
-  }
+    if (!this.state.url.startsWith('http')) {
+      await this.setState((previousState) => {
+        let newUrl = 'http://' + previousState.url
+        return { ...previousState, url: newUrl }
+      })
+    }
 
     const duplicateCheck = this.props.path[0].steps.find((step) => {
       if(step.resource !== null){
@@ -83,7 +84,6 @@ class AddResource extends Component {
 
   render() {
     const { user, path, resource} = this.props
-
     return (
       <div>
 
@@ -121,7 +121,7 @@ class AddResource extends Component {
               />
 
               { !this.state.errorMessage &&
-                <Button onClick={this.handleResourceSubmit} color="primary">
+                <Button type="submit" color="primary">
                   Submit Resource
                 </Button>
               }

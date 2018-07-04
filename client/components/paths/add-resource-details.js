@@ -23,7 +23,7 @@ class AddResourceDetails extends Component {
     }
   }
 
-  componentDidMount = () => {
+  componentWillMount = () => {
     this.setState({
       title: this.props.resource[0].name,
       description: this.props.resource[0].description,
