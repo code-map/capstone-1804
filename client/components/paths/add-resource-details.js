@@ -63,7 +63,7 @@ class AddResourceDetails extends Component {
     const { username, pathUid, resource, url } = this.props
     return (
       <div>
-        { typeof resource !== 'string' ? (
+        { resource[0].found === false ? (
           <div>
             <p>We don't know this resource yet:</p>
             <p>{url}</p>
