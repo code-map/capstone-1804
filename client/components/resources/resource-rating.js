@@ -22,7 +22,7 @@ class ResourceRating extends Component {
 
   componentDidMount = () => {
     this.setState({
-      rating: this.props.userRating
+      rating: this.props.userRating[0][0]
     })
   }
 
@@ -48,6 +48,7 @@ class ResourceRating extends Component {
 
   render(){
     const { rating } = this.state
+
     return (
       <div style={styles.container}>
 

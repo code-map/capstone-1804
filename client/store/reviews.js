@@ -58,16 +58,14 @@ export const getAllReviewsOfResource = (uid) => {
   }
 }
 
-export const addResourceReview = (rating) => {
-  return async (dispatch) => {
-    await axios.post(`/api/userAuth/reviews/review`, rating)
-  }
+export const addResourceReview = async (rating) => {
+  await axios.post(`/api/userAuth/reviews/review`, rating)
 }
 
 export const getUserResourceReview = (body) => {
   return async (dispatch) => {
     const { data } = await axios.get(`/api/userAuth/reviews/resource/${body.resourceUid}/user/${body.userUid}`)
-    // dispatch(gotUserResourceReview(data[0]))
+    dispatch(gotUserResourceReview(data))
   }
 }
 
