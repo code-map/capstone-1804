@@ -6,6 +6,7 @@ let session = require('../../db/neo')
 const express = require('express')
 const router = express.Router()
 const shortid = require('shortid')
+const recordsReducer = require('../records-reducer.js')
 
 const makeSlug = string => {
   return string.replace(/[^a-z0-9]/gi, '')
@@ -252,56 +253,58 @@ router.post(
         })
       }
 
-      // Get last step name in path
-      const query = `
-    MATCH (u:User)-[:PATHS]->(p:Path)
-    WHERE p.uid = {uid} AND u.name = {username}
-    OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)
-    RETURN s.name
-    ORDER BY s.name DESC
-    LIMIT 1
-    `
-      const result = await session.run(query, {uid, username, stepUrl})
+      // Get number of steps(count) in the Path
+      const pathLengthQuery = 
+        `MATCH (p:Path)-[:STEPS*]->(s:Step)
+         WHERE p.uid={uid}
+         WITH count(distinct s) as cnt
+         RETURN cnt
+        `
+      const resultForCount = await session.run(pathLengthQuery, {uid})
+      
+      const count = resultForCount.records[0]._fields[0].low
 
-      // If there aren't any steps yet, add resource as 'Step 1'
-      if (!result.records[0]._fields[0]) {
+      if(count < 1){
+        // if there are no steps in the Path ...
+        // create a new step as Step 1
+        // , and connect it with the resource
         const addStep1Query = `
-      MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
-      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
-      CREATE (s:Step { name: "Step 1"}),
-      (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
-      `
-        const addedAsStep1 = await session.run(addStep1Query, {
-          uid,
-          username,
-          stepUrl
-        })
+        MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
+        WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
+        CREATE (s:Step { name: "Step 1"}),
+        (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
+        `
+          const addedAsStep1 = await session.run(addStep1Query, {
+            uid,
+            username,
+            stepUrl
+          })
 
-        res.send(addedAsStep1)
-      } else {
-        // Else get last digit of last existing step and increment new step name
-        const lastStepName = result.records[0]._fields[0]
-        const newStepNum = lastStepName.substr(
-          lastStepName.indexOf(' '),
-          lastStepName.length - 1
-        )
-        const newStepName = `Step ` + (Number(newStepNum) + 1)
+          res.send(addedAsStep1)
 
+      }else{
+        // there are steps in the Path ...
+        // so create a new step as the last step and name it 'Step {lastIndex +1}'
+        // , and connect it with the resource
+        const newStepName = 'Step '+(Number(count) + 1)
         const addStepQuery = `
-      MATCH (u:User)-[:PATHS]->(p:Path), (r:Resource)
-      WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
-      CREATE (s:Step { name: {newStepName} }),
-      (p)-[:STEPS]->(s)-[:RESOURCE]->(r)
-      `
+          MATCH (u:User)-[:PATHS]->(p:Path)-[:STEPS*` + count + `]->(ls:Step), (r:Resource)
+          WHERE p.uid = {uid} AND u.name = {username} AND r.url = {stepUrl}
+          WITH ls, p, r
+          CREATE (s:Step { name: {newStepName} }),
+          (ls)-[:STEPS]->(s)-[:RESOURCE]->(r)
+        `
+
         const addedNewStep = await session.run(addStepQuery, {
           uid,
           username,
           stepUrl,
-          newStepName
+          newStepName,
         })
 
         res.send(addedNewStep)
       }
+
     } catch (err) {
       next(err)
     }
