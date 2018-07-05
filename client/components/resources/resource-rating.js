@@ -48,6 +48,7 @@ class ResourceRating extends Component {
 
   render(){
     const { rating } = this.state
+
     return (
       <div style={styles.container}>
 

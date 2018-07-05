@@ -207,7 +207,6 @@ class ResourceCard extends React.Component{
                    </div>
                  </div>
               }
-
         </Card>
         <Collapse
           in      = {this.state.expanded}
