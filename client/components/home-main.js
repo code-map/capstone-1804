@@ -1,6 +1,5 @@
 import React from 'react'
 import CallToAction from './home/call-to-action'
-import InfoBlock from './home/info-block'
 import HomeStepper from './home/home-stepper'
 import SearchAny from './search-bar-any'
 import PopularCategories from './category/popular-category'
