@@ -61,12 +61,12 @@ router.get('/resource/:resourceUid/user/:userUid', async (req, res, next) => {
       return record._fields
     })
 
-    // const data = {
-    //   userRating: records[0][0],
-    //   resourceUid: records[0][1]
-    // }
+    const data = {
+      userRating: records[0][0],
+      resourceUid: records[0][1]
+    }
 
-    res.send(records)
+    res.send(data)
   } catch(err) { next(err) }
 })
 
