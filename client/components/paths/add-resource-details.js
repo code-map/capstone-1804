@@ -23,7 +23,7 @@ class AddResourceDetails extends Component {
     }
   }
 
-  componentDidMount = () => {
+  componentWillMount = () => {
     this.setState({
       title: this.props.resource[0].name,
       description: this.props.resource[0].description,
@@ -63,7 +63,7 @@ class AddResourceDetails extends Component {
     const { username, pathUid, resource, url } = this.props
     return (
       <div>
-        { typeof resource !== 'string' ? (
+        { resource[0].found === false ? (
           <div>
             <p>We don't know this resource yet:</p>
             <p>{url}</p>

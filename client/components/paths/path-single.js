@@ -8,12 +8,12 @@ import history from '../../history'
 import Sortable from 'react-sortablejs'
 import { ReviewPathDialog } from '../'
 import {
-       deleteSinglePathThunk, 
-       getStepCompletionSingleUserThunk, 
-       toggleStepCompletionThunk, 
-       togglePublicThunk , 
+       deleteSinglePathThunk,
+       getStepCompletionSingleUserThunk,
+       toggleStepCompletionThunk,
+       togglePublicThunk ,
        unfollowPathThunk,
-       addPathReviewThunk, 
+       addPathReviewThunk,
        getCurrentPathReviewThunk,
        reorderStepsThunk
      } from '../../store'
@@ -193,7 +193,7 @@ class SinglePath extends Component {
     const pathSteps = path[0].steps
 
     const isOwner = pathDetails.owner === user
-    
+
     return (
       <div>
         <h2>
@@ -232,7 +232,7 @@ class SinglePath extends Component {
           }}
         >
           {
-            
+
             this.state.pathSteps[0].step !== null &&
               this.state.pathSteps.map(step => {
                 const stepUrl = step.resource.properties.url
@@ -338,7 +338,6 @@ class SinglePath extends Component {
 }
 
 const mapStateToProps = (state) => {
-  //console.log('REVIEW ON STATE', state.reviews)
   return {
     completedSteps: state.step.completedSteps,
     displayedPathReview: state.reviews.pathReview
