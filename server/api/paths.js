@@ -439,6 +439,72 @@ router.post('/:uid/rate-path', async (req, res, next) => {
   }
 })
 
+// Removes a path's step
+// it takes in the index to remove and the last index(for count: otherwise a 
+// separate call will need to be made to check if the last index was removed)
+// POST: /api/paths/remove/:pathUid/:lastIndex/:stepIndex/
+router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) => {
+  try{
+    const pathUid   = req.params.pathUid
+    const lastIndex = req.params.lastIndex
+    const stepIndex = req.params.stepIndex
+
+    if(stepIndex   < 1 || stepIndex   > lastIndex) {
+       throw new Error('"stepIndex" value is either out of range!!')
+    }
+
+    let query = ''
+
+    if(stepIndex === lastIndex) {
+    //if removing the last index
+      query = `  
+        MATCH (p:Path {uid:{pUid}})-[:STEPS*` + stepIndex + `]->(stepRem:Step)
+        WITH stepRem , p
+        MATCH (stepRemP)-[stepRemPE:STEPS]->(stepRem)
+        WITH stepRem, stepRemP, p, stepRemPE
+        DETACH DELETE stepRemPE, stepRem
+      `
+    }else{
+      query = `  
+        MATCH (p:Path {uid:{pUid}})-[:STEPS*` + stepIndex + `]->(stepRem:Step)
+        WITH stepRem, p
+        MATCH (stepRemP)-[stepRemPE:STEPS]->(stepRem)-[stepRemNE:STEPS]->(stepRemN)
+        WITH stepRem, stepRemP, stepRemN, p, stepRemPE, stepRemNE
+        DETACH DELETE stepRemPE, stepRemNE, stepRem
+        CREATE (stepRemP)-[:STEPS]->(stepRemN)
+      `
+    }
+      
+    const queryReturn = `
+       WITH p
+       MATCH (u:User)-[:PATHS]->(p)
+       WITH p, count(distinct u) as subscribers
+   
+       OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
+       RETURN { 
+         details: p, 
+         steps: collect({
+           step: s, 
+           resource: r }), 
+         subscribers: subscribers 
+       }
+    `
+
+    query += queryReturn
+  
+    const result = await session.run(query, {
+       pUid : req.params.pathUid,
+    })
+  
+    const singlePath = result.records.map(record => {
+      return record._fields
+    })
+    
+    res.send(singlePath)
+    session.close()
+  } catch (err) { next(err) }
+})
+
 // Reorders a path's steps
 // it takes in the indexes to move: from, to
 // POST: /api/paths/reorder/:stepCount/:uid/:fromIndex/:toIndex
@@ -453,7 +519,7 @@ router.post('/reorder/:pathUid/:stepCount/:fromIndex/:toIndex', async (req, res,
        to   < 1 ||
        from > lastIndex ||
        to   > lastIndex) {
-        throw new Error('"from" and "to" values are either out of range or the same value!!')
+       throw new Error('"from" and "to" values are either out of range or the same value!!')
     } else {
 
         let query = ''
