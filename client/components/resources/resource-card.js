@@ -66,7 +66,19 @@ const styles = {
   },
   ratingCount: {
     marginLeft: 5
-  }
+  },
+  xButtonHover: {
+    cursor: 'pointer',
+  },
+  xButton: {
+    opacity: 0.3,
+    fontSize: "14px", 
+    fontColor: "#AAAAAA",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flexEnd',
+    justifyContent: 'flexStart',
+  },
 }
 
 class ResourceCard extends React.Component{
@@ -176,6 +188,7 @@ class ResourceCard extends React.Component{
               </div>
 
               { (isLoggedIn && isOwner) &&
+
                 <div className={classes.details}>
                   <div className="resource-handle" >
                     <i className="material-icons">
@@ -184,10 +197,16 @@ class ResourceCard extends React.Component{
                       </div>
                     </i>
                   </div>
-               </div>
+                </div>
               }
 
-
+              { (isLoggedIn && isOwner) &&
+                 <div className={classes.xButton}  onClick={()=>this.props.removeResourceCard()} >
+                   <div className={classes.xButtonHover}>
+                     x
+                   </div>
+                 </div>
+              }
         </Card>
         <Collapse
           in      = {this.state.expanded}

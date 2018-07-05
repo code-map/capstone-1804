@@ -47,7 +47,7 @@ router.get('/:categoryName/popular-paths', async (req,res,next) => {
     return {
       category: el._fields[0],
       name:  el._fields[1],
-      userCount: el._fieldLookup.Users,
+      userCount: el._fields[2].low,
       rating: el._fields[3],
       owner: el._fields[4],
       slug: el._fields[5],
@@ -62,10 +62,10 @@ router.get('/:categoryName/all-paths', async (req,res,next) => {
   const category = req.params.categoryName
 
   const query = `
-  MATCH (u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
-  WHERE c.name = {category} AND p.status = "public"
-  WITH count(u) as Users,c,p
-  OPTIONAL MATCH (rev:Review)-[:REVIEWS]->(p)
+    MATCH (u:User)-[r:PATHS]->(p:Path)-[:CATEGORY]->(c:Category)
+    WHERE c.name = {category} AND p.status = "public"
+    WITH count(u) as Users,c,p
+    OPTIONAL MATCH (rev:Review)-[:REVIEWS]->(p)
   RETURN c.name as Category, p.name as Path, Users, avg(rev.score) as Rating, p.owner as Owner, p.slug as Slug, p.uid as uid`
 
   const pathsInCategory = await session.run(query, { category })
@@ -74,7 +74,7 @@ router.get('/:categoryName/all-paths', async (req,res,next) => {
     return {
       category: el._fields[0],
       name:  el._fields[1],
-      userCount: el._fieldLookup.Users,
+      userCount: el._fields[2].low,
       rating: el._fields[3],
       owner: el._fields[4],
       slug: el._fields[5],
