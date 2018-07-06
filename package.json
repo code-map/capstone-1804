@@ -1,7 +1,7 @@
 {
   "name": "code-map",
   "version": "1.0.0",
-  "description": "Some boilerplate code to get you started - get shakin'!",
+  "description": "A learning application to help you learn to code.",
   "engines": {
     "node": ">= 7.0.0"
   },
