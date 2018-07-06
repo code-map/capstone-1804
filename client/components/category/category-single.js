@@ -18,8 +18,11 @@ const styles = {
   header: {
     textAlign: 'center',
     fontWeight: 300,
-    fontSize: 36,
-    marginTop: 75
+    fontSize: 36
+  },
+  image: {
+    textAlign: 'center',
+    marginTop: 40
   }
 }
 
@@ -37,9 +40,14 @@ class CategorySinglePage extends Component {
     }
   }
 
+  createImageSlug = (str) => {
+    return str.toLowerCase().replace(/\s/g, '')
+  }
+
   render() {
     const paths = this.props.pathsInCategory
     const {categoryName} = this.props.match.params
+    const imageSlug = this.createImageSlug(categoryName)
 
     if(paths.length === 0){
       return (
@@ -52,6 +60,9 @@ class CategorySinglePage extends Component {
     return (
       <Grid container>
         <Grid item lg={12}>
+          <div style={styles.image}>
+            <img src={`/category-logos/${imageSlug}.png`} width={75} />
+          </div>
           <h2 style={styles.header}>Category: {categoryName}</h2>
         </Grid>
 
