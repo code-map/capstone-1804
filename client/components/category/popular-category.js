@@ -29,6 +29,10 @@ class PopularCategories extends React.Component {
     this.props.getPopularCategories()
   }
 
+  createImageSlug = (str) => {
+    return str.toLowerCase().replace(/\s/g, '')
+  }
+
   render() {
     const popularCategories = this.props.popularCategories
     return(
@@ -40,6 +44,7 @@ class PopularCategories extends React.Component {
           ? popularCategories.map(cat =>
             <Grid item xs={3} key={cat.Category.identity.low}>
               <CategoryCard
+                imageSlug={this.createImageSlug(cat.Category.properties.name)}
                 categoryName={cat.Category.properties.name}
                 pathCount={cat.Paths.low}
               />
