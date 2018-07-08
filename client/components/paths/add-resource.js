@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getStepResourceThunk, getSinglePathByUidThunk, removeResourceFromStore } from '../../store'
+import { getStepResourceThunk, getSinglePathByUidThunk, removeResourceFromStore, makeSuggestionsThunk, clear_suggestions } from '../../store'
 import AddResourceDetails from './add-resource-details'
+import { withRouter } from 'react-router-dom'
 
 import ListItem from '@material-ui/core/ListItem'
 import {AddCircleOutline} from '@material-ui/icons'
@@ -11,6 +12,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import StarRatingComponent from 'react-star-rating-component';
 
 
 const styles = {
@@ -21,6 +23,23 @@ const styles = {
     fontStyle: 'italic',
     fontSize: 16,
     lineHeight: '0.95em'
+  },
+  suggestCenter: {
+    display: 'flex',
+    width: '400px',
+    alignItems: 'baseline',
+    justifyContent: 'space-around'
+  },
+  suggest: {
+    marginTop: 0,
+    marginBottom: 0
+  },
+  suggestBorder: {
+    marginLeft: 20
+  },
+  noSuggestions: {
+    paddingLeft: 30,
+    marginTop: 0
   }
 }
 
@@ -32,6 +51,19 @@ class AddResource extends Component {
       url: '',
       errorMessage: ''
     }
+  }
+
+  async componentWillMount () {
+    const steps = this.props.path[0].steps
+    if(steps.length){
+      const resourceuid = steps[steps.length-1].resource.properties.uid
+      const pathuid = this.props.path[0].details.properties.uid
+      await this.props.getSuggestion(pathuid, resourceuid)
+    }
+  }
+
+  componentWillUnmount () {
+    this.props.clear()
   }
 
   handleResourceChange = event => {
@@ -57,6 +89,8 @@ class AddResource extends Component {
     this.props.removeResourceFromStore()
   }
 
+
+
   handleResourceSubmit = async () => {
 
   if (!this.state.url.startsWith('http')) {
@@ -81,12 +115,12 @@ class AddResource extends Component {
     }
   }
 
-  render() {
-    const { user, path, resource} = this.props
 
+
+  render() {
+    const { user, path, resource } = this.props
     return (
       <div>
-
         <ListItem button={true} onClick={this.handleClickOpen}>
           <AddCircleOutline style={styles.icon}/>
           <p style={styles.text}>Add a new resource to this path</p>
@@ -139,7 +173,6 @@ class AddResource extends Component {
           }
 
           </DialogContent>
-
         </Dialog>
       </div>
     );
@@ -148,7 +181,7 @@ class AddResource extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    resource: state.step.resource
+    resource: state.step.resource,
   }
 }
 
@@ -166,4 +199,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddResource)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddResource))

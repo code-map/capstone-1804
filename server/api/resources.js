@@ -18,7 +18,7 @@ router.get(`/:uid/reviews`, async (req,res,next) => {
              rev.comments AS comments,
              rev.score AS score
     `
-    
+
     const result = await session.run(query, {uid})
 
     const reducedResponse = recordsReducer(result.records)
@@ -54,6 +54,41 @@ router.get('/:resourceUid', async (req, res, next) => {
     console.error(err)
     next(err)
   }
+})
+
+
+
+
+
+
+
+router.get('/:pathuid/:resourceuid/suggestions', async (req, res, next) => {
+  try {
+    const { resourceuid, pathuid } = req.params
+    const getCategoryQuery = `
+    MATCH (p:Path)-[:CATEGORY]->(c)
+    WHERE p.uid = {pathuid}
+    RETURN c
+    `
+    const findCategory = await session.run(getCategoryQuery, {pathuid})
+    const category = findCategory.records[0]._fields[0].properties.name
+    console.log(category)
+    const query =  `MATCH (c:Category), (rev:Review), (resource:Resource),
+    (rev)-[re:REVIEWS]->(resource)-[:CATEGORY]->(c:Category)
+    WHERE c.name = {category} AND resource.uid <> {resourceuid}
+    WITH resource.name as name, resource.uid as uid, resource.url as url, resource.slug as slug, count(rev) AS numReviews , avg(rev.score) AS averageRating
+    RETURN name, uid, url, slug, numReviews, averageRating, averageRating * log(numReviews)/log(15) as WeightedScore
+    ORDER BY WeightedScore desc`
+
+    const { records } = await session.run(query, {category, resourceuid})
+
+    res.json(records)
+
+  }catch(err){
+    console.error(err)
+    next(err)
+  }
+
 })
 
 module.exports = router

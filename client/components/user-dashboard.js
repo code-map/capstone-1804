@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavDashboard from './nav-dashboard'
 import DashboardLanding from './dashboard-landing'
-import { getSingleUserPathsThunk, getSinglePathByUidThunk, getCurrentPathReviewThunk } from '../store'
+import { getSingleUserPathsThunk, getSinglePathByUidThunk, getCurrentPathReviewThunk, clear_suggestions } from '../store'
 import { PathUserDirectory, PathSingle, PathBuilder } from './paths'
 import Grid from '@material-ui/core/Grid'
 import history from '../history'
@@ -36,6 +36,7 @@ class UserDashboard extends Component {
   }
 
   handleSelect = (uid) => {
+    this.props.clear()
     const username = this.props.user.name
     const selectedPath = this.props.allUserPaths.find((path) => {
       return path[0].details.properties.uid === uid
@@ -133,6 +134,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getSinglePathReview: (username, uid) => {
       dispatch(getCurrentPathReviewThunk(username, uid))
+    },
+    clear: () => {
+      dispatch(clear_suggestions())
     }
   }
 }

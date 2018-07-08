@@ -37,9 +37,9 @@ const gotUserResourceReview = (rating) => {
 export const getCurrentPathReviewThunk = (username, pathuid) => {
   return async (dispatch) => {
     const { data } = await axios.get(`/api/paths/${pathuid}/${username}/get-review`)
-    const score = data.records[0]._fields[0]
-    const comments = data.records[0]._fields[1]
-    dispatch(getCurrentPathReview({score, comments}))
+    //const score = data.records[0]._fields[0]
+    //const comments = data.records[0]._fields[1]
+    //dispatch(getCurrentPathReview({score, comments}))
   }
 }
 
