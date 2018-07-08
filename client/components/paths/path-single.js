@@ -8,14 +8,15 @@ import history from '../../history'
 import Sortable from 'react-sortablejs'
 import { ReviewPathDialog } from '../'
 import {
-       deleteSinglePathThunk, 
-       getStepCompletionSingleUserThunk, 
-       toggleStepCompletionThunk, 
-       togglePublicThunk , 
+       deleteSinglePathThunk,
+       getStepCompletionSingleUserThunk,
+       toggleStepCompletionThunk,
+       togglePublicThunk ,
        unfollowPathThunk,
-       addPathReviewThunk, 
+       addPathReviewThunk,
        getCurrentPathReviewThunk,
-       reorderStepsThunk
+       reorderStepsThunk,
+       removeResourceFromPathThunk
      } from '../../store'
 import { withRouter } from 'react-router-dom'
 import List from '@material-ui/core/List'
@@ -191,9 +192,9 @@ class SinglePath extends Component {
     const pathDetails = path[0].details.properties
     const status = pathDetails.status
     const pathSteps = path[0].steps
-
+    const pathUid = pathDetails.uid
     const isOwner = pathDetails.owner === user
-    
+
     return (
       <div>
         <h2>
@@ -232,9 +233,9 @@ class SinglePath extends Component {
           }}
         >
           {
-            
+
             this.state.pathSteps[0].step !== null &&
-              this.state.pathSteps.map(step => {
+              this.state.pathSteps.map((step, stepIdx) => {
                 const stepUrl = step.resource.properties.url
                 return (
                   <ResourceCard
@@ -245,6 +246,7 @@ class SinglePath extends Component {
                     resourceProperties={step.resource.properties}
                     handleCompletedClick={() => this.handleCompletedClick(stepUrl)}
                     checkForComplete={() => this.checkForComplete(stepUrl)}
+                    removeResourceCard={() => this.props.removeResourceFromPath(pathUid, pathSteps.length, stepIdx+1)}
                   />
                 )
               })
@@ -338,7 +340,6 @@ class SinglePath extends Component {
 }
 
 const mapStateToProps = (state) => {
-  //console.log('REVIEW ON STATE', state.reviews)
   return {
     completedSteps: state.step.completedSteps,
     displayedPathReview: state.reviews.pathReview
@@ -355,6 +356,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     toggleStepCompletion: (pathUid, username, stepUrl, bool) => {
       dispatch(toggleStepCompletionThunk(pathUid, username, stepUrl, bool))
+    },
+    removeResourceFromPath: (pathId, lastIndex, stepIndex) => {
+      dispatch(removeResourceFromPathThunk(pathId, lastIndex, stepIndex))
     },
     togglePublic: (uid, status, username) => {
       dispatch(togglePublicThunk(uid, status, username))

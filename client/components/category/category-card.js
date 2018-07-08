@@ -14,14 +14,15 @@ const styles = {
   }
 }
 
-const CategoryCard = (props) => {
+const CategoryCard = ({imageSlug, categoryName, pathCount}) => {
   return(
     <div>
-      <Link to={`/category/${props.categoryName}`}>
+      <Link to={`/category/${categoryName}`}>
         <Card style={styles.container}>
-          <h2 style={styles.header}>{props.categoryName}</h2>
+          <img src={`/category-logos/${imageSlug}.png`} width={75} />
+          <h2 style={styles.header}>{categoryName}</h2>
           <Button color="primary">
-            {props.pathCount} Learning Path{props.pathCount > 1 ? 's' : ''}
+            {pathCount} Learning Path{pathCount > 1 ? 's' : ''}
           </Button>
         </Card>
       </Link>
