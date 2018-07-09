@@ -2,7 +2,7 @@ import createHistory from 'history/createBrowserHistory'
 import createMemoryHistory from 'history/createMemoryHistory'
 
 import ReactGA from 'react-ga'
-ReactGA.initialize(' UA-121827451-1')
+ReactGA.initialize('UA-121827451-1')
 
 
 const history =
