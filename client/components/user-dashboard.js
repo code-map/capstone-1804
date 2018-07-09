@@ -36,7 +36,6 @@ class UserDashboard extends Component {
   }
 
   handleSelect = (uid) => {
-    this.props.clear()
     const username = this.props.user.name
     const selectedPath = this.props.allUserPaths.find((path) => {
       return path[0].details.properties.uid === uid
@@ -134,9 +133,6 @@ const mapDispatchToProps = (dispatch) => {
     },
     getSinglePathReview: (username, uid) => {
       dispatch(getCurrentPathReviewThunk(username, uid))
-    },
-    clear: () => {
-      dispatch(clear_suggestions())
     }
   }
 }

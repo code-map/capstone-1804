@@ -18,4 +18,5 @@ export {default as PublicSinglePath} from './paths'
 export {default as Resource} from './resources'
 export {default as Footer} from './footer'
 export {default as ReviewPathDialog} from './reviews'
+export {default as Suggestions} from './paths'
 

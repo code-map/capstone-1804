@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { getStepResourceThunk, getSinglePathByUidThunk, removeResourceFromStore, makeSuggestionsThunk, clear_suggestions } from '../../store'
 import AddResourceDetails from './add-resource-details'
 import { withRouter } from 'react-router-dom'
+import { Suggestions } from './'
 
 import ListItem from '@material-ui/core/ListItem'
 import {AddCircleOutline} from '@material-ui/icons'
@@ -12,7 +13,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import StarRatingComponent from 'react-star-rating-component';
+
 
 
 const styles = {
@@ -23,23 +24,6 @@ const styles = {
     fontStyle: 'italic',
     fontSize: 16,
     lineHeight: '0.95em'
-  },
-  suggestCenter: {
-    display: 'flex',
-    width: '400px',
-    alignItems: 'baseline',
-    justifyContent: 'space-around'
-  },
-  suggest: {
-    marginTop: 0,
-    marginBottom: 0
-  },
-  suggestBorder: {
-    marginLeft: 20
-  },
-  noSuggestions: {
-    paddingLeft: 30,
-    marginTop: 0
   }
 }
 
@@ -53,18 +37,6 @@ class AddResource extends Component {
     }
   }
 
-  async componentWillMount () {
-    const steps = this.props.path[0].steps
-    if(steps.length){
-      const resourceuid = steps[steps.length-1].resource.properties.uid
-      const pathuid = this.props.path[0].details.properties.uid
-      await this.props.getSuggestion(pathuid, resourceuid)
-    }
-  }
-
-  componentWillUnmount () {
-    this.props.clear()
-  }
 
   handleResourceChange = event => {
     this.setState({
@@ -168,9 +140,12 @@ class AddResource extends Component {
               />
             )
           }
-
           </DialogContent>
         </Dialog>
+        {
+          path[0].steps.length > 1 ? <Suggestions path={path} />
+          : <p style={styles.noSuggestions}>no suggestions at this time...</p>
+        }
       </div>
     );
   }

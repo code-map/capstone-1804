@@ -12,7 +12,7 @@ const makeSuggestions = (suggestions) => {
   }
 }
 
-export const clear_suggestions = () => {
+export const clearSuggestions = () => {
   return {
     type: CLEAR_SUGGESTIONS
   }
