@@ -21,9 +21,22 @@ router.get('/all/user/:username/', async (req, res, next) => {
       res.status(403).send('Unauthorized')
     }
 
-    const query = `match(u:User)-[:PATHS]->(p:Path)
+    const query = `match(u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step),
+    (s)<-[c:COMPLETED]-(u)
     where u.name = {username}
+
     return {details: p}`
+
+    /*
+    //below query gets the total number of Completed Steps and Steps in a Path
+    `
+    match(u:User)-[:PATHS]->(p:Path)-[:STEPS*]->(s:Step)
+    where u.name = 'Chan'
+    with count(s) as TotalStepCount, p, u
+    match(p)-[:STEPS*]->(s)<-[c:COMPLETED]-(u)
+    return TotalStepCount, count(c) as  TotalCompletionCount, p
+    `
+    */
 
     const result = await session.run(query, {username: param})
 
