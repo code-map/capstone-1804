@@ -24,6 +24,7 @@ const createTestUser = async () => {
 
   await session.run(query, { name: user.name, email: user.email, password, salt })
   driver.close()
+  session.close()
 }
 
 function promisedAuthRequest() {
@@ -61,6 +62,7 @@ describe("routes", () => {
     const query = `MATCH (u:User { name: 'testUser' }) DELETE u`
     await session.run(query)
     driver.close()
+    session.close()
   })
 
   it('hits a public route successfully', (done) => {
