@@ -6,7 +6,8 @@ const crypto = require('crypto')
 
 const user = {
   name: 'testUser',
-  password: '1234'
+  password: '1234',
+  email: 'test@user.com'
 }
 
 const createTestUser = async () => {
@@ -21,7 +22,7 @@ const createTestUser = async () => {
   CREATE (newuser:User {name: {name}, email: {email}, password: {password}, googleId: '',  createdDate: timestamp(), isAdmin: false, salt: {salt}})
     RETURN newuser`
 
-  await session.run(query, { name: user.name, email: 'test@user.com', password, salt })
+  await session.run(query, { name: user.name, email: user.email, password, salt })
 }
 
 function promisedAuthRequest() {
@@ -66,8 +67,7 @@ describe("routes", () => {
       .expect(200)
       .then( (res) => {
         expect(res.body.answer).to.be.null // eslint-disable-line
-        done()
-      })
+      }).then(done)
     })
 
   it('hits a private route with superagent authentication', () => {
@@ -100,7 +100,7 @@ describe("routes", () => {
       const req = authenticatedagent.get(`/api/userAuth/paths/all/user/${user.name}`)
         .expect(200)
         .then(res => {
-          expect(res.body).to.be.an('array');
+          expect(res.body).to.be.an('array')
       })
       return req
     })
