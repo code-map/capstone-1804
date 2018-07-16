@@ -17,11 +17,6 @@ router.get('/public', (req, res) => {
   res.json({ answer: null })
 })
 
-// a simple authed route to test
-router.get("/answer/:name", requireUserLogin, (req, res) => {
-  res.json({ answer: 42 });
-})
-
 // GET: api/paths/all/user/:username/
 router.get('/all/user/:name/', requireUserLogin, async (req, res, next) => {
   try {

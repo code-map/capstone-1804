@@ -28,7 +28,7 @@ const createTestUser = async () => {
 }
 
 function promisedAuthRequest() {
-  var authenticatedagent2b = request.agent(app)
+  const authenticatedagent2b = request.agent(app)
   return new Promise((resolve, reject) => {
     authenticatedagent2b
       .post("/auth/login")
@@ -37,18 +37,6 @@ function promisedAuthRequest() {
         if (error) reject(error)
         resolve(authenticatedagent2b)
       })
-  })
-}
-
-function promisedCookie() {
-  return new Promise((resolve, reject) => {
-    request(app).post('/auth/login')
-    .send(user)
-    .end(function(error, res) {
-      if (error) throw error
-      var loginCookie = res.headers["set-cookie"]
-      resolve(loginCookie)
-    })
   })
 }
 
@@ -67,37 +55,12 @@ describe("routes", () => {
 
   it('hits a public route successfully', (done) => {
     request(app).get("/api/userAuth/paths/public")
-    .type('json')
+      .type('json')
       .expect(200)
       .then( (res) => {
         expect(res.body.answer).to.be.null // eslint-disable-line
       }).then(done)
     })
-
-  it('hits a private route with superagent authentication', () => {
-    return promisedAuthRequest().then(authenticatedagent => {
-      const req = authenticatedagent.get(`/api/userAuth/paths/answer/${user.name}`)
-        .expect(200)
-        .then(res => {
-          expect(res.body.answer).to.equal(42)
-      })
-      return req
-    })
-  })
-
-  it('hits a private route with supertest authentication and cookie', () => {
-    return promisedCookie().then(cookie => {
-      //console.log("cookie is called", cookie)
-      const req = request(app)
-        .get(`/api/userAuth/paths/answer/${user.name}`)
-        .set("cookie", cookie)
-        .expect(200)
-        .then(res => {
-          expect(res.body.answer).to.equal(42)
-        })
-      return req
-    })
-  })
 
   it('GET: api/userAuth/paths/all/user/:username/', () => {
     return promisedAuthRequest().then(authenticatedagent => {
