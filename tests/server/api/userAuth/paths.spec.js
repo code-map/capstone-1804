@@ -23,6 +23,10 @@ const createTestUser = async () => {
     RETURN newuser`
 
   await session.run(query, { name: user.name, email: user.email, password, salt })
+    .then(() => {
+      session.close()
+    })
+
 }
 
 function promisedAuthRequest() {
@@ -58,7 +62,9 @@ describe("routes", () => {
 
   after( async () => {
     const query = `MATCH (u:User { name: 'testUser' }) DELETE u`
-    await session.run(query)
+    await session.run(query).then(() => {
+      session.close()
+    })
   })
 
   it('hits a public route successfully', (done) => {
