@@ -51,8 +51,8 @@ function promisedCookie() {
 
 describe("routes", () => {
 
-  before( () => {
-    createTestUser()
+  before( async () => {
+    await createTestUser()
   })
 
   after( async () => {
@@ -74,7 +74,7 @@ describe("routes", () => {
       const req = authenticatedagent.get(`/api/userAuth/paths/answer/${user.name}`)
         .expect(200)
         .then(res => {
-          expect(res.body.answer).to.equal(42);
+          expect(res.body.answer).to.equal(42)
       })
       return req
     })
