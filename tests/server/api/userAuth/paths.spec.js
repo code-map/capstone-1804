@@ -23,10 +23,7 @@ const createTestUser = async () => {
     RETURN newuser`
 
   await session.run(query, { name: user.name, email: user.email, password, salt })
-    .then(() => {
-      session.close()
-    })
-
+  session.close()
 }
 
 function promisedAuthRequest() {
@@ -56,16 +53,14 @@ function promisedCookie() {
 
 describe("routes", () => {
 
-  before( (done) => {
+  before( () => {
     createTestUser()
-    done()
   })
 
   after( async () => {
     const query = `MATCH (u:User { name: 'testUser' }) DELETE u`
-    await session.run(query).then(() => {
-      session.close()
-    })
+    await session.run(query)
+    session.close()
   })
 
   it('hits a public route successfully', (done) => {
