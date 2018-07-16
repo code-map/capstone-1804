@@ -42,8 +42,8 @@ function promisedAuthRequest() {
 
 describe("routes", () => {
 
-  before( () => {
-    createTestUser()
+  before( async () => {
+    await createTestUser()
   })
 
   after( async () => {
