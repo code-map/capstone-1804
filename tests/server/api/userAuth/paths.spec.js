@@ -60,12 +60,13 @@ describe("routes", () => {
     await session.run(query)
   })
 
-  it('hits a public route successfully', () => {
+  it('hits a public route successfully', (done) => {
     request(app).get("/api/userAuth/paths/public")
     .type('json')
       .expect(200)
       .then( (res) => {
         expect(res.body.answer).to.be.null // eslint-disable-line
+        done()
       })
     })
 
