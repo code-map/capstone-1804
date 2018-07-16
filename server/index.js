@@ -3,9 +3,9 @@ const express = require('express')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const compression = require('compression')
-const session = require('express-session')
+const sessionExpress = require('express-session')
 const passport = require('passport')
-const SequelizeStore = require('connect-session-sequelize')(session.Store)
+const SequelizeStore = require('connect-session-sequelize')(sessionExpress.Store)
 // const db = require('./db')
 // const sessionStore = new SequelizeStore({db})
 const PORT = process.env.PORT || 8080
@@ -14,7 +14,7 @@ const socketio = require('socket.io')
 // const neo4j = require('neo4j-driver').v1;
 // const driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
 // const neoSession = driver.session();
-const neoSession = require('../server/db/neo')
+const {session} = require('../server/db/neo')
 module.exports = app
 
 // This is a global Mocha hook, used for resource cleanup.
@@ -38,7 +38,7 @@ passport.serializeUser((user, done) => {done(null, user.name) })
 
 passport.deserializeUser(async (name, done) => {
   try {
-    const response = await neoSession.run(`
+    const response = await session.run(`
       MATCH (u:User)
       WHERE u.name ={name}
       RETURN u
@@ -63,7 +63,7 @@ const createApp = () => {
 
   // session middleware with passport
   app.use(
-    session({
+    sessionExpress({
       secret: process.env.SESSION_SECRET || 'my best friend is Cody',
       // store: sessionStore,
       resave: false,

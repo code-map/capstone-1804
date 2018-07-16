@@ -1,12 +1,7 @@
-// let neo4j = require('neo4j-driver').v1
-// let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
-// let session = driver.session()
-let session = require('../db/neo')
-
+const { session } = require('../db/neo')
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
 const {getMetadata} = require('../../script/metadata')
-
 const shortid = require('shortid')
 
 // GET: /api/paths/step/:url
@@ -440,7 +435,7 @@ router.post('/:uid/rate-path', async (req, res, next) => {
 })
 
 // Removes a path's step
-// it takes in the index to remove and the last index(for count: otherwise a 
+// it takes in the index to remove and the last index(for count: otherwise a
 // separate call will need to be made to check if the last index was removed)
 // POST: /api/paths/remove/:pathUid/:lastIndex/:stepIndex/
 router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) => {
@@ -457,7 +452,7 @@ router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) =>
 
     if(stepIndex === lastIndex) {
     //if removing the last index
-      query = `  
+      query = `
         MATCH (p:Path {uid:{pUid}})-[:STEPS*` + stepIndex + `]->(stepRem:Step)
         WITH stepRem , p
         MATCH (stepRemP)-[stepRemPE:STEPS]->(stepRem)
@@ -465,7 +460,7 @@ router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) =>
         DETACH DELETE stepRemPE, stepRem
       `
     }else{
-      query = `  
+      query = `
         MATCH (p:Path {uid:{pUid}})-[:STEPS*` + stepIndex + `]->(stepRem:Step)
         WITH stepRem, p
         MATCH (stepRemP)-[stepRemPE:STEPS]->(stepRem)-[stepRemNE:STEPS]->(stepRemN)
@@ -474,32 +469,32 @@ router.post('/remove/:pathUid/:lastIndex/:stepIndex/', async (req, res, next) =>
         CREATE (stepRemP)-[:STEPS]->(stepRemN)
       `
     }
-      
+
     const queryReturn = `
        WITH p
        MATCH (u:User)-[:PATHS]->(p)
        WITH p, count(distinct u) as subscribers
-   
+
        OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-       RETURN { 
-         details: p, 
+       RETURN {
+         details: p,
          steps: collect({
-           step: s, 
-           resource: r }), 
-         subscribers: subscribers 
+           step: s,
+           resource: r }),
+         subscribers: subscribers
        }
     `
 
     query += queryReturn
-  
+
     const result = await session.run(query, {
        pUid : req.params.pathUid,
     })
-  
+
     const singlePath = result.records.map(record => {
       return record._fields
     })
-    
+
     res.send(singlePath)
     session.close()
   } catch (err) { next(err) }
@@ -513,8 +508,8 @@ router.post('/reorder/:pathUid/:stepCount/:fromIndex/:toIndex', async (req, res,
     const from   = req.params.fromIndex
     const to     = req.params.toIndex
     const lastIndex = req.params.stepCount
-    
-    if(from === to || 
+
+    if(from === to ||
        from < 1 ||
        to   < 1 ||
        from > lastIndex ||
@@ -528,7 +523,7 @@ router.post('/reorder/:pathUid/:stepCount/:fromIndex/:toIndex', async (req, res,
           //moving from top down
           if(to === lastIndex) {
             //if moving TO the last index
-            query = `  
+            query = `
               MATCH (p:Path {uid : {pUid}})-[:STEPS*` + from + `]->(fromC:Step)
               WITH fromC, p
               MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
@@ -540,7 +535,7 @@ router.post('/reorder/:pathUid/:stepCount/:fromIndex/:toIndex', async (req, res,
               CREATE (fromP)-[:STEPS]->(fromN), (toC)-[:STEPS]->(fromC)
             `
           } else{
-            query = `  
+            query = `
               MATCH (p:Path {uid : {pUid}})-[:STEPS*` + from + `]->(fromC:Step)
               WITH fromC, p
               MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
@@ -550,25 +545,25 @@ router.post('/reorder/:pathUid/:stepCount/:fromIndex/:toIndex', async (req, res,
               MATCH (toP)-[toPE:STEPS]->(toC)-[toNE:STEPS]->(toN)
               DELETE fromPE, fromNE, toNE
               CREATE (fromP)-[:STEPS]->(fromN), (toC)-[:STEPS]->(fromC)-[:STEPS]->(toN)
-            ` 
+            `
           }
         }else{
           //moving from bottom up
           if(from === lastIndex) {
           //if moving FROM the last index
-            query = `  
+            query = `
               MATCH (p:Path {uid:{pUid}})-[:STEPS*` + from + `]->(fromC:Step)
               WITH fromC, p
               MATCH (fromP)-[fromPE:STEPS]->(fromC)
               WITH fromC, fromP, p, fromPE
               MATCH (p)-[:STEPS*` + to + `]->(toC:Step)
-              WITH fromC, fromP, p, fromPE, toC 
+              WITH fromC, fromP, p, fromPE, toC
               MATCH (toP)-[toPE:STEPS]->(toC)-[toNE:STEPS]->(toN)
               DELETE fromPE, toPE
-              CREATE (toP)-[:STEPS]->(fromC)-[:STEPS]->(toC) 
+              CREATE (toP)-[:STEPS]->(fromC)-[:STEPS]->(toC)
             `
           }else{
-            query = `  
+            query = `
               MATCH (p:Path {uid:{pUid}})-[:STEPS*` + from + `]->(fromC:Step)
               WITH fromC, p
               MATCH (fromP)-[fromPE:STEPS]->(fromC)-[fromNE:STEPS]->(fromN)
@@ -577,36 +572,36 @@ router.post('/reorder/:pathUid/:stepCount/:fromIndex/:toIndex', async (req, res,
               WITH toC, fromC, fromP, fromN, fromPE, fromNE, p
               MATCH (toP)-[toPE:STEPS]->(toC)-[toNE:STEPS]->(toN)
               DELETE fromPE, fromNE, toPE
-              CREATE (fromP)-[:STEPS]->(fromN), (toP)-[:STEPS]->(fromC)-[:STEPS]->(toC) 
+              CREATE (fromP)-[:STEPS]->(fromN), (toP)-[:STEPS]->(fromC)-[:STEPS]->(toC)
             `
           }
         }
-      
+
         const queryReturn = `
           WITH p
           MATCH (u:User)-[:PATHS]->(p)
           WITH p, count(distinct u) as subscribers
-  
+
           OPTIONAL MATCH (p)-[:STEPS*]->(s:Step)-[:RESOURCE]->(r:Resource)
-          RETURN { 
-            details: p, 
+          RETURN {
+            details: p,
             steps: collect({
-              step: s, 
-              resource: r }), 
-            subscribers: subscribers 
+              step: s,
+              resource: r }),
+            subscribers: subscribers
           }
         `
 
         query += queryReturn
-  
+
         const result = await session.run(query, {
            pUid : req.params.pathUid,
         })
-  
+
         const singlePath = result.records.map(record => {
           return record._fields
         })
-    
+
         res.send(singlePath)
         session.close()
 
