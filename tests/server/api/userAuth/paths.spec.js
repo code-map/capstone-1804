@@ -56,8 +56,9 @@ function promisedCookie() {
 
 describe("routes", () => {
 
-  before( async () => {
-    await createTestUser()
+  before( (done) => {
+    createTestUser()
+    done()
   })
 
   after( async () => {
