@@ -1,7 +1,4 @@
-// let neo4j = require('neo4j-driver').v1;
-// let driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "1234"))
-// let session = driver.session();
-let session = require('../db/neo')
+const { session } = require('../db/neo')
 
 const router = require('express').Router()
 const recordsReducer = require('./records-reducer.js')
@@ -18,7 +15,7 @@ router.get(`/:uid/reviews`, async (req,res,next) => {
              rev.comments AS comments,
              rev.score AS score
     `
-    
+
     const result = await session.run(query, {uid})
 
     const reducedResponse = recordsReducer(result.records)

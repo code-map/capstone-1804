@@ -11,4 +11,4 @@ const driver = neo4j.driver(
 
 const session = driver.session()
 
-module.exports = session
+module.exports = {session, driver}

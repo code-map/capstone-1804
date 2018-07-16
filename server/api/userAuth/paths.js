@@ -1,8 +1,4 @@
-// let neo4j = require('neo4j-driver').v1
-// let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
-// let session = driver.session()
-let session = require('../../db/neo')
-
+const { session } = require('../../db/neo')
 const express = require('express')
 const router = express.Router()
 const shortid = require('shortid')
@@ -12,14 +8,24 @@ const makeSlug = string => {
   return string.replace(/[^a-z0-9]/gi, '')
 }
 
-// GET: api/paths/all/user/:username/
-router.get('/all/user/:username/', async (req, res, next) => {
-  try {
-    const param = req.params.username
+const requireUserLogin = function(req, res, next) {
+  return req.params.name == req.user.name ? next() : res.err("unauthorised");
+}
 
-    if (req.user.name !== param ){
-      res.status(403).send('Unauthorized')
-    }
+// an unshielded public route just to make sure mocha/chai/supertest work
+router.get('/public', (req, res) => {
+  res.json({ answer: null })
+})
+
+// a simple authed route to test
+router.get("/answer/:name", requireUserLogin, (req, res) => {
+  res.json({ answer: 42 });
+})
+
+// GET: api/paths/all/user/:username/
+router.get('/all/user/:name/', requireUserLogin, async (req, res, next) => {
+  try {
+    const param = req.params.name
 
     const query = `match(u:User)-[:PATHS]->(p:Path)
     where u.name = {username}
@@ -254,14 +260,14 @@ router.post(
       }
 
       // Get number of steps(count) in the Path
-      const pathLengthQuery = 
+      const pathLengthQuery =
         `MATCH (p:Path)-[:STEPS*]->(s:Step)
          WHERE p.uid={uid}
          WITH count(distinct s) as cnt
          RETURN cnt
         `
       const resultForCount = await session.run(pathLengthQuery, {uid})
-      
+
       const count = resultForCount.records[0]._fields[0].low
 
       if(count < 1){
