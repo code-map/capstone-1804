@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const request = require('supertest')
 const app = require('../../../../server/index.js')
-let session = require('../../../../server/db/neo')
+let { session, driver } = require('../../../../server/db/neo')
 const crypto = require('crypto')
 
 const user = {
@@ -23,7 +23,7 @@ const createTestUser = async () => {
     RETURN newuser`
 
   await session.run(query, { name: user.name, email: user.email, password, salt })
-  session.close()
+  driver.close()
 }
 
 function promisedAuthRequest() {
@@ -60,7 +60,7 @@ describe("routes", () => {
   after( async () => {
     const query = `MATCH (u:User { name: 'testUser' }) DELETE u`
     await session.run(query)
-    session.close()
+    driver.close()
   })
 
   it('hits a public route successfully', (done) => {
@@ -83,7 +83,7 @@ describe("routes", () => {
     })
   })
 
-  xit('hits a private route with supertest authentication and cookie', () => {
+  it('hits a private route with supertest authentication and cookie', () => {
     return promisedCookie().then(cookie => {
       //console.log("cookie is called", cookie)
       const req = request(app)

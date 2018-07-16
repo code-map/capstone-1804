@@ -1,12 +1,7 @@
+const { session, driver } = require('../db/neo')
 const router = require('express').Router()
 const User = require('../db/models/user')
 const crypto = require('crypto')
-
-// let neo4j = require('neo4j-driver').v1
-// let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '1234'))
-// let session = driver.session()
-let session = require('../db/neo')
-
 
 router.post('/signup', async (req, res, next) => {
   try {
@@ -81,6 +76,7 @@ router.post('/login', async (req, res, next) => {
     user = response.records[0]._fields[0].properties
 
     req.login(user, err => (err ? next(err) : res.json(user)))
+    driver.close()
   } catch (err) {
     res.status(401).send('Wrong username or password')
   }
