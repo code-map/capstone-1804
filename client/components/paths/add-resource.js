@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getStepResourceThunk, getSinglePathByUidThunk, removeResourceFromStore } from '../../store'
+import { getStepResourceThunk, getSinglePathByUidThunk, removeResourceFromStore, makeSuggestionsThunk, clear_suggestions } from '../../store'
 import AddResourceDetails from './add-resource-details'
+import { withRouter } from 'react-router-dom'
+import { Suggestions } from './'
 
 import ListItem from '@material-ui/core/ListItem'
 import {AddCircleOutline} from '@material-ui/icons'
@@ -11,6 +13,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
+
 
 
 const styles = {
@@ -33,6 +36,7 @@ class AddResource extends Component {
       errorMessage: ''
     }
   }
+
 
   handleResourceChange = event => {
     this.setState({
@@ -86,7 +90,6 @@ class AddResource extends Component {
     const { user, path, resource} = this.props
     return (
       <div>
-
         <ListItem button={true} onClick={this.handleClickOpen}>
           <AddCircleOutline style={styles.icon}/>
           <p style={styles.text}>Add a new resource to this path</p>
@@ -137,10 +140,12 @@ class AddResource extends Component {
               />
             )
           }
-
           </DialogContent>
-
         </Dialog>
+        {
+          path[0].steps.length > 1 ? <Suggestions path={path} />
+          : <p style={styles.noSuggestions}>no suggestions at this time...</p>
+        }
       </div>
     );
   }
@@ -148,7 +153,7 @@ class AddResource extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    resource: state.step.resource
+    resource: state.step.resource,
   }
 }
 
@@ -166,4 +171,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddResource)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddResource))

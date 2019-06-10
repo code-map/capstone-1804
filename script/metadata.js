@@ -111,6 +111,6 @@ const updateSeed = async () => {
   }
 }
 
-// updateSeed()
+ updateSeed()
 // getMetadata('https://www.codeproject.com/Articles/126380/Writing-Readable-SQL')
 module.exports = {getMetadata, updateSeed}
